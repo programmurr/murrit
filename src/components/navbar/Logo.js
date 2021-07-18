@@ -4,9 +4,8 @@ import Image from '../../img/Logo.png';
 
 const LogoContainer = styled.div`
   display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 10vw;
+  justify-content: center;
+  width: 100%;
 `;
 
 const LogoImage = styled.img`
