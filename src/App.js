@@ -1,30 +1,20 @@
-import './App.css';
-import { db } from './firebase';
-import { useEffect, useState } from 'react';
+import React from 'react';
+import styled from 'styled-components';
+import NavBar from './components/navbar/NavBar';
+
+const GlobalStyles = styled.div`
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  line-height: 1;
+  height: 100vh;
+  width: 100vw;
+`;
 
 function App() {
-  const [testData, setTestData] = useState([]);
-  useEffect(() => {
-    let data = [];
-    db.collection('test')
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          data.push(doc.data());
-        })
-      })
-      .then(() => {
-        setTestData(data);
-      })
-  }, []);
-
   return (
-    <div className="App">
-      {testData.map((dataObj, index) => (
-        <p key={dataObj.testData + index}>{dataObj.testData}</p>
-      ))}
-    </div>
-  );
+    <GlobalStyles className="App">
+      <NavBar />
+    </GlobalStyles>
+  )
 }
 
 export default App;

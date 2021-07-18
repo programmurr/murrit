@@ -8,7 +8,7 @@ Capstone JavaScript project from [The Odin Project](https://www.theodinproject.c
 - ReactJS
   - [Styled Components](https://styled-components.com/)
   - [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
-- Firebase
+- [Firebase](https://firebase.google.com/)
   - Authentication
   - Cloud Firestore
   - Cloud Storage
