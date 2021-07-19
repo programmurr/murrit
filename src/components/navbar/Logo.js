@@ -9,8 +9,8 @@ const LogoContainer = styled.div`
 `;
 
 const LogoImage = styled.img`
-  max-width: 50px;
-  max-height: 50px;
+  max-width: 40px;
+  max-height: 40px;
 `;
 
 function Logo() {

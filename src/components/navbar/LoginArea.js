@@ -8,13 +8,13 @@ const LoginAreaContainer = styled.div`
 `;
 
 const LoginButton = styled.button`
-  width: 100px;
-  height: 30px;
+  width: 90px;
+  height: 25px;
   background-color: #ffffff;
   border-radius: 15px;
   border: 1px solid #008cff;
   color: #008cff;
-  font-weight: bold;
+  font-weight: 600;
   &:hover {
     cursor: pointer;
   }

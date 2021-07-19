@@ -5,11 +5,12 @@ import Title from './Title';
 import LoginArea from './LoginArea';
 
 const NavContainer = styled.div`
-  height: 7vh;
-  min-height: 55px;
+  height: 6vh;
+  min-height: 50px;
   border-bottom: 1px solid black;
   background-color: #ffffff;
   width: 100vw;
+  max-width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   justify-items: center;
