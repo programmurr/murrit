@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import UpIcon from '../../img/up-arrow.svg'
 import DownIcon from '../../img/down-arrow.svg'
 
+// TODO:
+// Being too specific with px styles
 const PostContainer = styled.div`
   display: flex;
   width: 97%;
@@ -125,9 +127,9 @@ function Post(props) {
   return (
     <PostContainer className="PostContainer">
       <VoteContainer className="VoteContainer">
-        <UpvoteIcon src={UpIcon} onClick={handleUpvote}/>
+          <UpvoteIcon src={UpIcon} onClick={handleUpvote}/>
         <VoteCount>{data.votes}</VoteCount>
-        <DownvoteIcon src={DownIcon} onClick={handleDownvote}/>
+          <DownvoteIcon src={DownIcon} onClick={handleDownvote}/>
       </VoteContainer>
       <InnerPostContainer className="InnerPostContainer">
         <InfoContainer className="InfoContainer">

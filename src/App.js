@@ -8,6 +8,7 @@ const GlobalStyles = styled.div`
   line-height: 1;
 `;
 
+// Make page for user posts
 function App() {
   return (
     <GlobalStyles className="App">
