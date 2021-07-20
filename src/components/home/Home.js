@@ -8,8 +8,21 @@ const HomeContainer = styled.div`
   max-width: 100%;
   height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   background-color: #dbdbdb;
+`;
+
+const HomeHeaderContainer = styled.div`
+  width: 95%;
+  margin-top: 10px;
+  max-width: 955.6px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+`;
+
+const HomeHeader = styled.h4`
 `;
 
 const HomeWall = styled.div`
@@ -33,6 +46,9 @@ function Home() {
   // Lazy load posts
   return (
     <HomeContainer className="HomeContainer">
+    <HomeHeaderContainer>
+      <HomeHeader>All Posts</HomeHeader>
+    </HomeHeaderContainer>
       <HomeWall className="HomeWall">
         {data.map((post, index) => (
           <Post
