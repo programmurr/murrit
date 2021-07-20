@@ -9,13 +9,13 @@ const HomeContainer = styled.div`
   height: 100vh;
   display: flex;
   justify-content: center;
-  background-color: #ececec;
+  background-color: #dbdbdb;
 `;
 
 const HomeWall = styled.div`
   margin-top: 0.75%;
   width: 97%;
-  background-color: #ffffff;
+  max-width: 980px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -23,10 +23,14 @@ const HomeWall = styled.div`
 `;
 
 function Home() {
-  const [data, setData] = useState(testPostData);
 
-  // format date to 'X ago'
-  // recursively count comments and pass in with data
+  // setData later
+  const [data] = useState(testPostData);
+
+  // TODO: 
+  // Format date to 'X ago'
+  // Recursively count comments and pass in with data
+  // Lazy load posts
   return (
     <HomeContainer className="HomeContainer">
       <HomeWall className="HomeWall">
