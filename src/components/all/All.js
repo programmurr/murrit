@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import testPostData from '../../utils/posts';
-import Post from './Post';
+import Post from '../post/Post';
 
-const HomeContainer = styled.div`
+const AllContainer = styled.div`
   width: 100vw;
   max-width: 100%;
   height: 100vh;
@@ -13,7 +13,7 @@ const HomeContainer = styled.div`
   background-color: #dbdbdb;
 `;
 
-const HomeHeaderContainer = styled.div`
+const AllHeaderContainer = styled.div`
   width: 95%;
   margin-top: 10px;
   max-width: 955.6px;
@@ -22,10 +22,10 @@ const HomeHeaderContainer = styled.div`
   align-items: start;
 `;
 
-const HomeHeader = styled.h4`
+const AllHeader = styled.h4`
 `;
 
-const HomeWall = styled.div`
+const AllWall = styled.div`
   margin-top: 0.75%;
   width: 97%;
   max-width: 980px;
@@ -35,30 +35,30 @@ const HomeWall = styled.div`
   align-items: center;
 `;
 
-function Home() {
+function All() {
 
   // setData later
   const [data] = useState(testPostData);
 
   // TODO: 
   // Format date to 'X ago'
-  // Recursively count comments and pass in with data
   // Lazy load posts
+  // Add "Sort By New/Rating" to All Posts Header
   return (
-    <HomeContainer className="HomeContainer">
-    <HomeHeaderContainer>
-      <HomeHeader>All Posts</HomeHeader>
-    </HomeHeaderContainer>
-      <HomeWall className="HomeWall">
+    <AllContainer className="AllContainer">
+    <AllHeaderContainer>
+      <AllHeader>All Posts</AllHeader>
+    </AllHeaderContainer>
+      <AllWall className="AllWall">
         {data.map((post, index) => (
           <Post
             key={post.title + index} 
             data={post}
           />
         ))}
-      </HomeWall>
-    </HomeContainer>
+      </AllWall>
+    </AllContainer>
   )
 }
 
-export default Home;
+export default All;

@@ -1,19 +1,34 @@
 import React from 'react';
 import styled from 'styled-components';
+import { 
+  BrowserRouter as Router,
+  Switch,
+  Route
+ } from 'react-router-dom';
 import NavBar from './components/navbar/NavBar';
-import Home from './components/home/Home';
+import All from './components/all/All';
+import Board from './components/board/Board';
 
 const GlobalStyles = styled.div`
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-family: Arial, sans serif;
   line-height: 1;
 `;
 
-// Make page for user posts
+// TODO:
+// Finish adapting Home board to be generic
+// So same board template can be used for Home and all Boards
 function App() {
   return (
     <GlobalStyles className="App">
-      <NavBar />
-      <Home />
+      <Router>
+        <NavBar />
+        <Switch>
+          <Route exact path="/">
+            <All />  
+          </Route>
+          {/* One board to rule them all HERE */}
+        </Switch>
+      </Router>
     </GlobalStyles>
   )
 }

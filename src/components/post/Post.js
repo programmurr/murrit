@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import UpIcon from '../../img/up-arrow.svg'
 import DownIcon from '../../img/down-arrow.svg'
@@ -69,19 +69,20 @@ const Info = styled.p`
 const PostContentContainer = styled.div`
   height: 100%;
   position: relative;
+  &:hover {
+    cursor: pointer
+  }
 `;
 
 const PostTitle = styled.h3`
   margin: 5px 0 5px 0;
   font-size: 1.25rem;
-  &:hover {
-    cursor: pointer;
-  }
 `;
 
 const PostBody = styled.p`
   max-height: 140px;
   overflow: hidden;
+  font-size: 0.85rem;
 `;
 
 // TODO:
@@ -95,9 +96,6 @@ const CommentCount = styled.p`
   margin: 0;
   padding-top: 30px;
   background-image: linear-gradient(to bottom, transparent, white);
-  &:hover {
-    cursor: pointer;
-  }
 `;
 
 const FakeLink = styled.button`
@@ -111,6 +109,23 @@ const FakeLink = styled.button`
 
 function Post(props) {
   const { data } = props;
+
+  const [commentCount, setCommentCount] = useState(0);
+  useEffect(() => {
+    function flatComments(comments) {
+      let result = [];
+      comments.forEach((comment) => {
+        result.push(comment);
+        if (Array.isArray(comment.comments)) {
+          result = result.concat(flatComments(comment.comments));
+        }
+      });
+      return result;
+    };
+    const count = flatComments(data.comments).length;
+    setCommentCount(count);
+  }, [data.comments]);
+
 
   const handlePostClick = () => {
     // Go to the post
@@ -142,12 +157,12 @@ function Post(props) {
             <PostBody className="PostBody">
               {data.content}
             </PostBody>
-            <CommentCount onClick={handlePostClick}>{
-              data.comments.length === 0
+            <CommentCount className="CommentCount" onClick={handlePostClick}>{
+              commentCount === 0
               ? "No comments"
-              : data.comments.length === 1
+              : commentCount === 1
                 ? "1 comment"
-                : `${data.comments.length} comments`
+                : `${commentCount} comments`
             }</CommentCount>
         </PostContentContainer>
       </InnerPostContainer>
