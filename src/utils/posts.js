@@ -2,9 +2,6 @@ import { format } from 'date-fns';
 
 // TODO: 
 // Character limit on post title and content
-// Post ID
-// Comment ID
-// Comment Parent ref
 const testPostData = [
   {
     postId: "1",

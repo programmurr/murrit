@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import UpIcon from '../../img/up-arrow.svg'
 import DownIcon from '../../img/down-arrow.svg'
 
-// TODO:
+// FIXME:
 // Being too specific with px styles
 const PostContainer = styled.div`
   display: flex;
@@ -149,7 +150,7 @@ function Post(props) {
       <InnerPostContainer className="InnerPostContainer">
         <InfoContainer className="InfoContainer">
           <Info>
-            Posted by <FakeLink>{data.author}</FakeLink> {data.time} to <FakeLink>{data.board}</FakeLink>
+            Posted by <FakeLink>{data.author}</FakeLink> {data.time} to <Link to={`/m/${data.board}`}>{data.board}</Link>
           </Info>
         </InfoContainer>
         <PostContentContainer className="PostContentContainer" onClick={handlePostClick}>

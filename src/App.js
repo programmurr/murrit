@@ -15,7 +15,7 @@ const GlobalStyles = styled.div`
 `;
 
 // TODO:
-// Finish adapting Home board to be generic
+// Finish adapting All board to be generic
 // So same board template can be used for Home and all Boards
 function App() {
   return (
@@ -26,7 +26,9 @@ function App() {
           <Route exact path="/">
             <All />  
           </Route>
-          {/* One board to rule them all HERE */}
+          <Route path="/m/:boardName">
+            <Board />  
+          </Route>
         </Switch>
       </Router>
     </GlobalStyles>

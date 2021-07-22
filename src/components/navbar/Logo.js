@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Image from '../../img/Logo.png';
 
@@ -16,7 +17,9 @@ const LogoImage = styled.img`
 function Logo() {
   return (
     <LogoContainer className="LogoContainer">
-      <LogoImage className="LogoImage" src={Image}/>
+      <Link to="/">
+        <LogoImage className="LogoImage" src={Image}/>
+      </Link>
     </LogoContainer>
   )
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 const TitleContainer = styled.div`
@@ -10,10 +11,16 @@ const TitleContainer = styled.div`
 const TitleHeader = styled.h2`
 `;
 
+const linkStyle = {
+  color: "black"
+}
+
 function Title() {
   return (
     <TitleContainer className="TitleContainer">
-      <TitleHeader className="TitleHeader">murrit</TitleHeader>
+      <NavLink to="/" activeStyle={linkStyle}>
+        <TitleHeader className="TitleHeader">murrit</TitleHeader>
+      </NavLink>
     </TitleContainer>
   );
 };
