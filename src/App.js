@@ -12,6 +12,7 @@ import Board from './components/board/Board';
 const GlobalStyles = styled.div`
   font-family: Arial, sans serif;
   line-height: 1;
+  height: 100vh;
 `;
 
 // TODO:
