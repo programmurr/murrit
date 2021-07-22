@@ -17,6 +17,7 @@ const NavContainer = styled.div`
   align-items: center;
 `;
 
+// TODO: Make sticky
 function NavBar() {
   return (
     <NavContainer className="NavBar">

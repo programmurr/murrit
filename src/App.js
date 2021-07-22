@@ -8,6 +8,7 @@ import {
 import NavBar from './components/navbar/NavBar';
 import All from './components/all/All';
 import Board from './components/board/Board';
+import User from './components/user/User';
 
 const GlobalStyles = styled.div`
   font-family: Arial, sans serif;
@@ -29,6 +30,9 @@ function App() {
           </Route>
           <Route path="/m/:boardName">
             <Board />  
+          </Route>
+          <Route path="/u/:username">
+            <User />  
           </Route>
         </Switch>
       </Router>

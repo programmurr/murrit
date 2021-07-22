@@ -150,7 +150,7 @@ function Post(props) {
       <InnerPostContainer className="InnerPostContainer">
         <InfoContainer className="InfoContainer">
           <Info>
-            Posted by <FakeLink>{data.author}</FakeLink> {data.time} to <Link to={`/m/${data.board}`}>{data.board}</Link>
+            Posted by <Link to={`/u/${data.author}`}>{data.author}</Link> {data.time} to <Link to={`/m/${data.board}`}>{data.board}</Link>
           </Info>
         </InfoContainer>
         <PostContentContainer className="PostContentContainer" onClick={handlePostClick}>
