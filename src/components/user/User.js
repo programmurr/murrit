@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  Switch,
-  Route,
   useParams,
 } from 'react-router-dom';
 import styled from 'styled-components';
@@ -33,25 +31,78 @@ const ContentSelector = styled.p`
 function User() {
   let { username } = useParams();
 
+  const [data, setData] = useState(testPostData);
   const [posts, setPosts] = useState([]);
+  useEffect(() => {
+    const authorPosts = data.filter((post) => post.author === username);
+    setPosts(authorPosts);
+  }, [data, username]);
+
   const [comments, setComments] = useState([]);
+  useEffect(() => {
+    function flatComments(allPosts) {
+      // debugger;
+      let result = [];
+      allPosts.forEach((post) => {
+        if (
+          post.comment !== undefined 
+          && post.parentId !== undefined
+          && post.author === username
+        ) {
+          result.push(post);
+        }
+        if (Array.isArray(post.comments)) {
+          result = result.concat(flatComments(post.comments));
+        }
+      });
+      return result;
+    };
+    const authorComments = flatComments(data);
+    console.log(authorComments);
+    setComments(authorComments);
+  }, []);
+
   const [postsSelected, setPostsSelected] = useState(true);
   const [commentsSelected, setCommentsSelected] = useState(false);
 
+  const togglePosts = () => {
+    if (!postsSelected) {
+      setPostsSelected(true);
+      setCommentsSelected(false);
+    }
+  }
   
+  const toggleComments = () => {
+    if (!commentsSelected) {
+      setCommentsSelected(true);
+      setPostsSelected(false);
+    }
+  }
+
   return (
-    <ContentSelectorContainer className="ContentSelectorContainer">
-      <ContentSelector 
-        active={postsSelected}
-      >
-          ALL POSTS
-      </ContentSelector>
-      <ContentSelector 
-        active={commentsSelected}
-      >
-        ALL COMMENTS
-      </ContentSelector>
-    </ContentSelectorContainer>
+    <div>
+      <ContentSelectorContainer className="ContentSelectorContainer">
+        <ContentSelector 
+          active={postsSelected}
+          onClick={togglePosts}
+        >
+            ALL POSTS
+        </ContentSelector>
+        <ContentSelector 
+          active={commentsSelected}
+          onClick={toggleComments}
+        >
+          ALL COMMENTS
+        </ContentSelector>
+      </ContentSelectorContainer>
+      {
+        postsSelected
+        ? posts.map((post, index) => (<Post key={post.title + index} data={post}/>))
+        : comments.map((comment, index) => (
+            <div key={comment.author + index}>{comment.author}, {comment.comment}</div>
+          ))
+      }
+    </div>
   );
 }
 

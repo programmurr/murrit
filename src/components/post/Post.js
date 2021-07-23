@@ -99,15 +99,6 @@ const CommentCount = styled.p`
   background-image: linear-gradient(to bottom, transparent, white);
 `;
 
-const FakeLink = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  color: #069;
-  text-decoration: underline;
-  cursor: pointer;
-`;
-
 function Post(props) {
   const { data } = props;
 
