@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import UpIcon from '../../img/up-arrow.svg'
 import DownIcon from '../../img/down-arrow.svg'
@@ -101,6 +101,7 @@ const CommentCount = styled.p`
 `;
 
 function Post(props) {
+  let history = useHistory();
   const { data } = props;
 
   const [commentCount, setCommentCount] = useState(0);
@@ -121,7 +122,7 @@ function Post(props) {
 
 
   const handlePostClick = () => {
-    // Go to the post
+    history.push(`/p/${data.postId}`);
   }
 
   const handleUpvote = () => {

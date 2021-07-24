@@ -16,6 +16,7 @@ const testPostData = [
       {
         commentId: "c1",
         parentId: "1",
+        parentPostId: "1",
         author: "poster2",
         comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
         time: format(new Date(2021, 7, 19, 10), 'yyyy-MM-dd:HH:mm:ss'),
@@ -46,6 +47,7 @@ const testPostData = [
       {
         commentId: "c2",
         parentId: "3",
+        parentPostId: "3",
         author: "poster2",
         comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
         time: format(new Date(2021, 7, 18, 21), 'yyyy-MM-dd:HH:mm:ss'),
@@ -54,6 +56,7 @@ const testPostData = [
           {
             commentId: "c3",
             parentId: "c2",    
+            parentPostId: "3",
             author: "poster1",
             comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
             time: format(new Date(2021, 7, 18, 22), 'yyyy-MM-dd:HH:mm:ss'),
@@ -77,6 +80,7 @@ const testPostData = [
       {
         commentId: "c4",
         parentId: "4",
+        parentPostId: "4",
         author: "poster2",
         comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         time: format(new Date(2021, 7, 17, 21), 'yyyy-MM-dd:HH:mm:ss'),
@@ -85,6 +89,7 @@ const testPostData = [
           {
             commentId: "c5",
             parentId: "c4",
+            parentPostId: "4",
             author: "poster1",
             comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
             time: format(new Date(2021, 7, 17, 22), 'yyyy-MM-dd:HH:mm:ss'),
@@ -96,6 +101,7 @@ const testPostData = [
       {
         commentId: "c6",
         parentId: "4",
+        parentPostId: "4",
         author: "poster3",
         comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
         time: format(new Date(2021, 7, 18, 10), 'yyyy-MM-dd:HH:mm:ss'),

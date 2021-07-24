@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 const CommentContainer = styled.div`
   display: flex;
@@ -22,6 +23,7 @@ const InnerCommentContainer = styled.div`
   padding: 10px 10px 10px 10px;
   &:hover {
     cursor: pointer;
+    border: 3px solid #c4c4c4;
   }
 `;
 
@@ -35,9 +37,10 @@ const CommentBody = styled.p`
 
 function Comment(props) {
   const { data } = props;
+  let history = useHistory();
 
   const handleClick = () => {
-    // Go to post
+    history.push(`/p/${data.parentPostId}`);
   }
 
   return (

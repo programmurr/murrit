@@ -9,6 +9,7 @@ import NavBar from './components/navbar/NavBar';
 import All from './components/all/All';
 import Board from './components/board/Board';
 import User from './components/user/User';
+import ViewPost from './components/post/ViewPost';
 
 const GlobalStyles = styled.div`
   font-family: Arial, sans serif;
@@ -17,9 +18,6 @@ const GlobalStyles = styled.div`
   min-height: 100vh;
 `;
 
-// TODO:
-// Finish adapting All board to be generic
-// So same board template can be used for Home and all Boards
 function App() {
   return (
     <GlobalStyles className="App">
@@ -34,6 +32,9 @@ function App() {
           </Route>
           <Route path="/u/:username">
             <User />  
+          </Route>
+          <Route path="/p/:postid">
+            <ViewPost />  
           </Route>
         </Switch>
       </Router>
