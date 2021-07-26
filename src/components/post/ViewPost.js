@@ -5,18 +5,24 @@ import UpIcon from '../../img/up-arrow.svg'
 import DownIcon from '../../img/down-arrow.svg'
 import testPostData from '../../utils/posts';
 import PostComment from './PostComment';
+import SortBox from '../sort/SortBox';
 
 const PostPage = styled.div`
+  width: 100vw;
+  max-width: 100%;
+  height: 100vh%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  background-color: #dae0e6;
 
 `;
 const PostContainer = styled.div`
   display: flex;
   width: 97%;
   max-width: 955.6px;
-  margin-top: 5px;
-  margin-bottom: 20px;
+  margin-top: 15px;
   border-top: 5px solid white;
   border-right: 5px solid white;
   border-bottom: 5px solid white;
@@ -94,7 +100,15 @@ const CommentCount = styled.p`
   margin: 0;
 `;
 
-const CommentWall = styled.div``;
+const CommentWall = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 97%;
+  max-width: 955.6px;
+  border: 2px solid #c4c4c4;
+  border-radius: 5px;
+`;
 
 function ViewPost() {
   let { postid } = useParams();
@@ -135,7 +149,7 @@ function ViewPost() {
 
   if (livePost !== undefined) {
     return (
-      <PostPage>
+      <PostPage className="PostPage">
         <PostContainer className="PostContainer">
           <VoteContainer className="VoteContainer">
             <UpvoteIcon src={UpIcon} onClick={handleUpvote}/>
@@ -163,15 +177,14 @@ function ViewPost() {
           </PostContentContainer>
           </InnerPostContainer>
         </PostContainer>
-        <CommentWall>
-            Comments <br />
-            Sort By: New
+        <SortBox />
+        <CommentWall className="CommentWall">
           {
             commentCount > 0
             ? livePost.comments.map((comment, index) => (
-              <PostComment key={comment.author + index} data={comment}/>
+              <PostComment key={comment.author + index} data={comment} isReply={false}/>
             ))
-            : <div>No one commented!</div>
+            : <div>Be the first to comment!</div>
           }
         </CommentWall>
       </PostPage>

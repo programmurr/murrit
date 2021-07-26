@@ -94,7 +94,18 @@ const testPostData = [
             comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
             time: format(new Date(2021, 7, 17, 22), 'yyyy-MM-dd:HH:mm:ss'),
             votes: 0,
-            comments: []
+            comments: [
+              {
+                commentId: "c6",
+                parentId: "c5",
+                parentPostId: "4",
+                author: "poster2",
+                comment: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+                time: format(new Date(2021, 7, 17, 23), 'yyyy-MM-dd:HH:mm:ss'),
+                votes: 0,
+                comments: []
+              }
+            ]
           }
         ]
       },

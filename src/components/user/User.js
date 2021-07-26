@@ -4,9 +4,9 @@ import {
 } from 'react-router-dom';
 import styled from 'styled-components';
 import testPostData from '../../utils/posts';
-import DownTriangle from '../../img/downward-triangle.svg'
 import Post from '../post/Post';
 import Comment from '../comment/Comment';
+import SortBox from '../sort/SortBox';
 
 const UserProfileContainer = styled.div`
   width: 100vw;
@@ -42,25 +42,6 @@ const ContentSelector = styled.p`
   }
 `;
 
-const SortContainer = styled.div`
-  width: 97%;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  max-width: 955.6px;
-  display: flex;
-  align-items: center;
-  &:hover {
-    cursor: pointer;
-  }
-`;
-
-const SortHeader = styled.h4``;
-
-const DropIcon = styled.img`
-  width: 10px;
-  margin-top: 2px;
-  margin-left: 4px;
-`;
 
 function User() {
   let { username } = useParams();
@@ -127,10 +108,7 @@ function User() {
           ALL COMMENTS
         </ContentSelector>
       </ContentSelectorContainer>
-      <SortContainer className="SortContainer">
-        <SortHeader>Sort by: New</SortHeader>
-        <DropIcon src={DownTriangle} />
-      </SortContainer>
+      <SortBox />
       {
         postsSelected
         ? posts.map((post, index) => (
