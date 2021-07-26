@@ -108,6 +108,8 @@ const CommentWall = styled.div`
   max-width: 955.6px;
   border: 2px solid #c4c4c4;
   border-radius: 5px;
+  padding-bottom: 5px;
+  background-color: #c6e8fc
 `;
 
 function ViewPost() {

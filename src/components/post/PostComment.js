@@ -44,6 +44,7 @@ const CommentBody = styled.p`
   padding-top: 2px;
 `;
 
+// TODO: Add vote icons to comment
 function PostComment(props) {
   const { data, isReply } = props;
 
