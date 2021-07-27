@@ -9,12 +9,18 @@ const SortContainer = styled.div`
   max-width: 955.6px;
   display: flex;
   align-items: center;
+`;
+
+const SortElements = styled.div`
+  display: flex;
+  align-items: center;
   &:hover {
     cursor: pointer;
   }
 `;
 
-const SortHeader = styled.h4``;
+const SortHeader = styled.h4`
+`;
 
 const DropIcon = styled.img`
   width: 10px;
@@ -25,8 +31,10 @@ const DropIcon = styled.img`
 function SortBox() {
   return (
     <SortContainer className="SortContainer">
-      <SortHeader>Sort by: New</SortHeader>
-      <DropIcon src={DownTriangle} />
+      <SortElements className="SortElements">
+        <SortHeader>Sort by: New</SortHeader>
+        <DropIcon src={DownTriangle} />
+      </SortElements>
     </SortContainer>
   );
 }

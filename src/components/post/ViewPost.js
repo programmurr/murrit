@@ -89,9 +89,8 @@ const PostTitle = styled.h3`
 `;
 
 const PostBody = styled.p`
-  max-height: 140px;
   overflow: hidden;
-  font-size: 0.85rem;
+  font-size: 1rem;
 `;
 
 const CommentCount = styled.p`
@@ -105,12 +104,12 @@ const CommentWall = styled.div`
   flex-direction: column;
   align-items: center;
   width: 97%;
-  max-width: 955.6px;
-  border: 2px solid #c4c4c4;
+  max-width: 955.6px; 
+  border: ${props => props.commentCount === 0 ? "none" : "2px solid #c4c4c4"};
   border-radius: 5px;
-  padding-bottom: 5px;
-  background-color: #c6e8fc
+  background-color: ${props => props.commentCount === 0 ? "#dae0e6" : "c6e8fc"};
 `;
+
 
 function ViewPost() {
   let { postid } = useParams();
@@ -180,13 +179,15 @@ function ViewPost() {
           </InnerPostContainer>
         </PostContainer>
         <SortBox />
-        <CommentWall className="CommentWall">
+        <CommentWall className="CommentWall" commentCount={commentCount}>
           {
             commentCount > 0
             ? livePost.comments.map((comment, index) => (
               <PostComment key={comment.author + index} data={comment} isReply={false}/>
             ))
-            : <div>Be the first to comment!</div>
+            : <div>
+                Be the first to comment by logging in or signing up!
+              </div>
           }
         </CommentWall>
       </PostPage>

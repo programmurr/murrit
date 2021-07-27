@@ -42,7 +42,6 @@ const ContentSelector = styled.p`
   }
 `;
 
-
 function User() {
   let { username } = useParams();
 
@@ -115,7 +114,12 @@ function User() {
           <Post key={post.title + index} data={post} />
           ))
         : comments.map((comment, index) => (
-            <Comment key={comment.author + index} data={comment}/>
+            <Comment 
+              key={comment.author + index} 
+              data={comment} 
+              index={index}
+              length={comments.length - 1}
+            />
           ))
       }
     </UserProfileContainer>

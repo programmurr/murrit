@@ -11,6 +11,10 @@ const CommentContainer = styled.div`
   border-right: 5px solid #ffffff;
   border-bottom: 5px solid #ffffff;
   background-color: #ffffff;
+  border-top-left-radius: ${props => props.index === 0 ? "5px" : "0"};
+  border-top-right-radius: ${props => props.index === 0 ? "5px" : "0"};
+  border-bottom-right-radius: ${props => props.index === props.length ? "5px" : "0"};
+  border-bottom-right-radius: ${props => props.index === props.length ? "5px" : "0"};
 `;
 
 const InnerCommentContainer = styled.div`
@@ -36,7 +40,7 @@ const CommentBody = styled.p`
 `;
 
 function Comment(props) {
-  const { data } = props;
+  const { data, index, length } = props;
   let history = useHistory();
 
   const handleClick = () => {
@@ -44,7 +48,7 @@ function Comment(props) {
   }
 
   return (
-    <CommentContainer className="CommentContainer">
+    <CommentContainer className="CommentContainer" index={index} length={length}>
       <InnerCommentContainer className="InnerCommentContainer" onClick={handleClick}>
         <CommentInfo>{data.author} | {data.votes} votes | {data.time}</CommentInfo>
         <CommentBody>{data.comment}</CommentBody>
