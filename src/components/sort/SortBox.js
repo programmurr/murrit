@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import DownTriangle from '../../img/downward-triangle.svg'
 
@@ -29,11 +29,22 @@ const DropIcon = styled.img`
 `;
 
 function SortBox() {
+
+  const [category, setCategory] = useState("New");
+
+  const handleChange = (event) => {
+    setCategory(event.target.value);
+  }
+
   return (
     <SortContainer className="SortContainer">
-      <SortElements className="SortElements">
-        <SortHeader>Sort by: New</SortHeader>
-        <DropIcon src={DownTriangle} />
+      <SortElements className="SortElements" >
+        <label htmlFor="SortSelect">Sort by:
+          <select value={category} onChange={handleChange}>
+            <option value="new">New</option>
+            <option value="best">Best</option>
+          </select>
+        </label>
       </SortElements>
     </SortContainer>
   );

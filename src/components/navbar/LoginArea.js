@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
+import { AuthContext } from '../../contexts/AuthContext';
 
 const LoginAreaContainer = styled.div`
   width: 100%;
@@ -29,9 +30,22 @@ const SignUpButton = styled(LoginButton)`
 `;
 
 function LoginArea() {
+
+  const { authState, setAuthState } = useContext(AuthContext);
+
+  const handleLogin = () => {
+    setAuthState(prev => !authState);
+  }
+  
   return (
     <LoginAreaContainer className="LoginContainer">
-      <LoginButton>Login</LoginButton>
+      <LoginButton onClick={handleLogin}>
+        {
+          authState
+          ? "Yer in!"
+          : "Login"
+        }
+      </LoginButton>
       <SignUpButton>Sign Up</SignUpButton>
     </LoginAreaContainer>
   );

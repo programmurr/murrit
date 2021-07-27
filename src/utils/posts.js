@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 
 // TODO: 
 // Character limit on post title and content
-// author must be unique
+// usernames must be unique
 const testPostData = [
   {
     postId: "1",

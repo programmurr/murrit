@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import testPostData from '../../utils/posts';
 import Post from '../post/Post';
+import SortBox from '../sort/SortBox';
 
 const BoardContainer = styled.div`
   width: 100vw;
@@ -28,7 +29,6 @@ const BoardHeader = styled.h4`
 `;
 
 const BoardWBoard = styled.div`
-  margin-top: 0.75%;
   width: 97%;
   max-width: 980px;
   border-radius: 10px;
@@ -60,6 +60,7 @@ function Board() {
     <BoardContainer className="BoardContainer">
     <BoardHeaderContainer>
       <BoardHeader>{boardName}</BoardHeader>
+      <SortBox />
     </BoardHeaderContainer>
       <BoardWBoard className="BoardWBoard">
         {data.map((post, index) => (
