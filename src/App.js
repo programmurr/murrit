@@ -10,6 +10,7 @@ import All from './components/all/All';
 import Board from './components/board/Board';
 import User from './components/user/User';
 import ViewPost from './components/post/ViewPost';
+import Submit from './components/submit/Submit';
 import AuthContextProvider from './contexts/AuthContext';
 
 const GlobalStyles = styled.div`
@@ -40,6 +41,9 @@ function App() {
             </Route>
             <Route path="/p/:postid">
               <ViewPost />  
+            </Route>
+            <Route path="/submit">
+              <Submit />  
             </Route>
           </Switch>
           </AuthContextProvider>

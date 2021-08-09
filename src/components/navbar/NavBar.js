@@ -17,7 +17,9 @@ const NavContainer = styled.div`
   align-items: center;
 `;
 
-// TODO: Make sticky
+// TODO: 
+// Make sticky
+// Set max width to stop elements spreading in full screen compared to walls
 function NavBar() {
   return (
     <NavContainer className="NavBar">

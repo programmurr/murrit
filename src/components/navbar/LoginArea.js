@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 
 const LoginAreaContainer = styled.div`
@@ -30,11 +31,20 @@ const SignUpButton = styled(LoginButton)`
 `;
 
 function LoginArea() {
+  let history = useHistory();
 
   const { authState, setAuthState } = useContext(AuthContext);
 
   const handleLogin = () => {
     setAuthState(prev => !authState);
+  }
+
+  const handleSignUpClick = () => {
+    if (authState) {
+      history.push(`/submit`);
+    }
+    // TODO:
+    // Else - launch the login feature
   }
   
   return (
@@ -42,11 +52,17 @@ function LoginArea() {
       <LoginButton onClick={handleLogin}>
         {
           authState
-          ? "Yer in!"
+          ? "Log Out"
           : "Login"
         }
       </LoginButton>
-      <SignUpButton>Sign Up</SignUpButton>
+      <SignUpButton onClick={handleSignUpClick}>
+        {
+          authState
+          ? "+ Create"
+          : "Sign up"
+        }
+      </SignUpButton>
     </LoginAreaContainer>
   );
 };

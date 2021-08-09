@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import DownTriangle from '../../img/downward-triangle.svg'
 
 const SortContainer = styled.div`
   width: 97%;
@@ -19,14 +18,6 @@ const SortElements = styled.div`
   }
 `;
 
-const SortHeader = styled.h4`
-`;
-
-const DropIcon = styled.img`
-  width: 10px;
-  margin-top: 2px;
-  margin-left: 4px;
-`;
 
 function SortBox() {
 
