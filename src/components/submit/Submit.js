@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import testPostData from '../../utils/posts';
+import useFormInput from '../../hooks/useFormInput';
+import TextareaAutosize from 'react-textarea-autosize';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+// import TextPost from './TextPost';
 
 const SubmitContainer = styled.div`
   width: 100vw;
@@ -64,8 +69,6 @@ const TabContainer = styled.div`
   align-items: center;
   grid-gap: 1px;
   background-color: #c4c4c4;
-  border: 1px solid white;
-  border-radius: 5px;
 `;
 
 const Tab = styled.div`
@@ -75,6 +78,7 @@ const Tab = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  border-bottom: 1px solid #c4c4c4;
   &:hover {
     cursor: pointer;
     background-color: #c6e8fc;
@@ -82,20 +86,59 @@ const Tab = styled.div`
   font-weight: ${props => props.selected ? "600" : "200"};
 `;
 
+const CreatePostContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+`;
+const TitleContainer = styled.div`
+  display: grid;
+  grid-template-columns: 9fr 1fr;
+  place-items: center;
+`;
+
+const textAreaStyle = {
+  "width": "95%",
+  "padding": "0.5rem",
+  "margin": "0.5rem 0 0.5rem 0",
+  "font-size": "1rem",
+  "line-height": "1.25rem",
+  "font-family": "Arial, sans-serif",
+  "resize": "none",
+  "border": "1px solid #a0a0a0",
+  "border-radius": "3px",
+}
+
+const TitleLengthPara = styled.p`
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #a0a0a0;
+`;
+
 function Submit() {
   const [data] = useState(testPostData);
-  const [boards, setBoards] = useState([]);
-  const [selectedBoard, setSelectedBoard] = useState(boards[0]);
-  const [postTabSelected, setPostTabSelected] = useState(true);
-  const [imageTabSelected, setImageTabSelected] = useState(false);
-
   useEffect(() => {
     const boards = data.map(post => post.board).sort();
     const uniqueBoards = [...new Set(boards)];
     setBoards(uniqueBoards);
   }, [data]);
 
-  const handleChange = (event) => {
+  const [boards, setBoards] = useState([]);
+  const [selectedBoard, setSelectedBoard] = useState(boards[0]);
+  const [postTabSelected, setPostTabSelected] = useState(true);
+  const [imageTabSelected, setImageTabSelected] = useState(false);
+
+  const title = useFormInput("");
+  const [titleLength, setTitleLength] = useState(0);
+  useEffect(() => {
+    setTitleLength(title.value.length);
+  }, [title]);
+
+  const text = useFormInput("");
+
+  const handleBoardChange = (event) => {
     setSelectedBoard(event.target.value);
   }
 
@@ -109,6 +152,10 @@ function Submit() {
     }
   }
 
+  const handleSubmit = (event) => {
+    // handle post submission
+  }
+
   return (
     <SubmitContainer>
       <SubmitHeaderContainer>
@@ -116,7 +163,7 @@ function Submit() {
       </SubmitHeaderContainer>
       <BoardSelectionContainer>
         <BoardSelectionLabel htmlFor="board-select">Choose board:
-          <BoardSelectionSelect value={selectedBoard} onChange={handleChange}>
+          <BoardSelectionSelect value={selectedBoard} onChange={handleBoardChange}>
             {boards.map((board, index) => (
               <option value={board} key={`${board}${index}`}>{board}</option>
             ))}
@@ -132,6 +179,22 @@ function Submit() {
             <p>Image</p>
           </Tab>
         </TabContainer>
+        <CreatePostContainer>
+          <form onSubmit={handleSubmit}>
+            <TitleContainer>
+              <TextareaAutosize
+                style={textAreaStyle} 
+                placeholder="Title"
+                required
+                maxLength="300" 
+                value={title.value}
+                onChange={title.onChange} 
+              />
+              <TitleLengthPara>{titleLength}/300</TitleLengthPara>
+            </TitleContainer>
+            <ReactQuill theme="snow" value={text.value} onChange={text.onChange} />
+          </form>
+        </CreatePostContainer>
       </SubmissionContainer>
     </SubmitContainer>
   )

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import testPostData from '../../utils/posts';
 import Post from '../post/Post';
+import SortBox from '../sort/SortBox';
 
 const AllContainer = styled.div`
   width: 100vw;
@@ -21,9 +22,6 @@ const AllHeaderContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: start;
-`;
-
-const AllHeader = styled.h4`
 `;
 
 const AllWall = styled.div`
@@ -48,7 +46,8 @@ function All() {
   return (
     <AllContainer className="AllContainer">
     <AllHeaderContainer>
-      <AllHeader>All Posts</AllHeader>
+      <h4>All Posts</h4>
+      <SortBox />
     </AllHeaderContainer>
       <AllWall className="AllWall">
         {data.map((post, index) => (

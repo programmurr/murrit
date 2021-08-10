@@ -23,6 +23,7 @@ const GlobalStyles = styled.div`
 // TODO: 
 // Add CreatePost component
 // Figure out where to put icons for it
+// Re-route submit access if user not logged in
 function App() {
   return (
     <GlobalStyles className="App">
