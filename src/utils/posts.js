@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 
 // TODO: 
 // Character limit on post title and content
+// Be aware quill submits text as markdown
 // usernames must be unique
 // character limit for board name
 const testPostData = [

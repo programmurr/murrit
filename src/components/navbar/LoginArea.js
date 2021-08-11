@@ -18,6 +18,7 @@ const LoginButton = styled.button`
   color: #008cff;
   font-weight: 600;
   &:hover {
+    background-color: #f7f8fd;
     cursor: pointer;
   }
 `;

@@ -5,7 +5,7 @@ import useFormInput from '../../hooks/useFormInput';
 import TextareaAutosize from 'react-textarea-autosize';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-// import TextPost from './TextPost';
+import { CancelPost, SubmitPost } from './SubmissionButtons';
 
 const SubmitContainer = styled.div`
   width: 100vw;
@@ -67,8 +67,8 @@ const TabContainer = styled.div`
   grid-template-columns: 1fr 1fr;
   justify-items: center;
   align-items: center;
-  grid-gap: 1px;
-  background-color: #c4c4c4;
+  grid-gap: 2px;
+  background-color: #ccc;
 `;
 
 const Tab = styled.div`
@@ -78,7 +78,10 @@ const Tab = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-bottom: 1px solid #c4c4c4;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  border-left: ${props => props.name === "Post" ? "1px solid #ccc" : "0"};
+  border-right: ${props => props.name === "Post" ? "0" : "1px solid #ccc"};
   &:hover {
     cursor: pointer;
     background-color: #c6e8fc;
@@ -87,6 +90,7 @@ const Tab = styled.div`
 `;
 
 const CreatePostContainer = styled.div`
+  margin-top: 1px;
   width: 100%;
   height: 100%;
   background-color: #ffffff;
@@ -97,24 +101,35 @@ const TitleContainer = styled.div`
   display: grid;
   grid-template-columns: 9fr 1fr;
   place-items: center;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
 `;
 
 const textAreaStyle = {
   "width": "95%",
   "padding": "0.5rem",
   "margin": "0.5rem 0 0.5rem 0",
-  "font-size": "1rem",
-  "line-height": "1.25rem",
-  "font-family": "Arial, sans-serif",
+  "fontSize": "1rem",
+  "lineHeight": "1.25rem",
+  "fontFamily": "Arial, sans-serif",
   "resize": "none",
   "border": "1px solid #a0a0a0",
-  "border-radius": "3px",
+  "borderRadius": "3px",
 }
 
 const TitleLengthPara = styled.p`
   font-size: 0.8rem;
   font-weight: 600;
   color: #a0a0a0;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
 `;
 
 function Submit() {
@@ -136,7 +151,11 @@ function Submit() {
     setTitleLength(title.value.length);
   }, [title]);
 
-  const text = useFormInput("");
+  const [text, setText] = useState('');
+  const [textLength, setTextLength] = useState(0);
+  useEffect(() => {
+    setTextLength(text.length);
+  }, [text]);
 
   const handleBoardChange = (event) => {
     setSelectedBoard(event.target.value);
@@ -153,7 +172,13 @@ function Submit() {
   }
 
   const handleSubmit = (event) => {
-    // handle post submission
+    if (textLength < 15000) {
+      console.log(text);
+    }
+  }
+
+  const handleCancelSubmit = () => {
+    console.log('Cancel');
   }
 
   return (
@@ -172,28 +197,35 @@ function Submit() {
       </BoardSelectionContainer>
       <SubmissionContainer>
         <TabContainer>
-          <Tab selected={postTabSelected} onClick={handleTabClick}>
+          <Tab selected={postTabSelected} onClick={handleTabClick} name="Post">
             <p onClick={handleTabClick}>Post</p>
           </Tab>
-          <Tab selected={imageTabSelected} onClick={handleTabClick}>
+          <Tab selected={imageTabSelected} onClick={handleTabClick} name="Image">
             <p>Image</p>
           </Tab>
         </TabContainer>
         <CreatePostContainer>
-          <form onSubmit={handleSubmit}>
-            <TitleContainer>
-              <TextareaAutosize
-                style={textAreaStyle} 
-                placeholder="Title"
-                required
-                maxLength="300" 
-                value={title.value}
-                onChange={title.onChange} 
-              />
-              <TitleLengthPara>{titleLength}/300</TitleLengthPara>
-            </TitleContainer>
-            <ReactQuill theme="snow" value={text.value} onChange={text.onChange} />
-          </form>
+          <TitleContainer>
+            <TextareaAutosize
+              style={textAreaStyle} 
+              placeholder="Title"
+              required
+              maxLength="300" 
+              value={title.value}
+              onChange={title.onChange} 
+            />
+            <TitleLengthPara>{titleLength}/300</TitleLengthPara>
+          </TitleContainer>
+          <ReactQuill 
+            theme="snow"
+            value={text}
+            placeholder="Write your post here (optional)" 
+            onChange={setText} 
+          />
+          <ButtonContainer>
+            <CancelPost handleCancelClick={handleCancelSubmit}/>
+            <SubmitPost handleSubmitClick={handleSubmit}/>
+          </ButtonContainer>
         </CreatePostContainer>
       </SubmissionContainer>
     </SubmitContainer>
