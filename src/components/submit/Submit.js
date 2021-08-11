@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router';
 import testPostData from '../../utils/posts';
 import useFormInput from '../../hooks/useFormInput';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -132,7 +133,22 @@ const ButtonContainer = styled.div`
   border-bottom: 1px solid #ccc;
 `;
 
+const TitleError = styled.span`
+  background-color: #ff0000;
+  color: #ffffff;
+`;
+
+const TextError = styled.span`
+  background-color: #ff0000;
+  color: #ffffff;
+`;
+
 function Submit() {
+  let history = useHistory();
+
+  const titleError = useRef(null);
+  const textError = useRef(null);
+
   const [data] = useState(testPostData);
   useEffect(() => {
     const boards = data.map(post => post.board).sort();
@@ -172,13 +188,19 @@ function Submit() {
   }
 
   const handleSubmit = (event) => {
-    if (textLength < 15000) {
-      console.log(text);
+    if (textLength < 15001 && titleLength > 0) {
+      console.log('success');
+      titleError.current.textContent = "";
+      textError.current.textContent = "";
+    } else if (textLength < 15001 && titleLength === 0) {
+      titleError.current.textContent = "Error - No title";
+    } else if (textLength > 15000) {
+      textError.current.textContent = `Post needs to be less than 15,000 characters. Current number of characters is ${textLength}`;
     }
   }
 
   const handleCancelSubmit = () => {
-    console.log('Cancel');
+    history.push(`/`);
   }
 
   return (
@@ -209,12 +231,12 @@ function Submit() {
             <TextareaAutosize
               style={textAreaStyle} 
               placeholder="Title"
-              required
               maxLength="300" 
               value={title.value}
               onChange={title.onChange} 
             />
             <TitleLengthPara>{titleLength}/300</TitleLengthPara>
+            <TitleError ref={titleError}></TitleError>
           </TitleContainer>
           <ReactQuill 
             theme="snow"
@@ -222,6 +244,7 @@ function Submit() {
             placeholder="Write your post here (optional)" 
             onChange={setText} 
           />
+          <TextError ref={textError}></TextError>
           <ButtonContainer>
             <CancelPost handleCancelClick={handleCancelSubmit}/>
             <SubmitPost handleSubmitClick={handleSubmit}/>
