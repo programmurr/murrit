@@ -109,7 +109,7 @@ const TitleContainer = styled.div`
 const textAreaStyle = {
   "width": "95%",
   "padding": "0.5rem",
-  "margin": "0.5rem 0 0.5rem 0",
+  "margin": "0.5rem 0 0 0",
   "fontSize": "1rem",
   "lineHeight": "1.25rem",
   "fontFamily": "Arial, sans-serif",
@@ -134,8 +134,18 @@ const ButtonContainer = styled.div`
 `;
 
 const TitleError = styled.span`
+  visibility: ${props => props.active ? "block" : "hidden" };
+  width: 12.5%;
+  text-align: center;
+  justify-self: center;
+  font-size: 0.75rem;
   background-color: #ff0000;
   color: #ffffff;
+  padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid black;
+  border-radius: 3px;
+  font-weight: 600;
 `;
 
 const TextError = styled.span`
@@ -146,9 +156,13 @@ const TextError = styled.span`
 function Submit() {
   let history = useHistory();
 
+  const titleBox = useRef(null);
   const titleError = useRef(null);
   const textError = useRef(null);
+  const [titleErrorActive, setTitleErrorActive] = useState(false);
+  const [textErrorActive, setTextErrorActive] = useState(false);
 
+  const [boards, setBoards] = useState([]);
   const [data] = useState(testPostData);
   useEffect(() => {
     const boards = data.map(post => post.board).sort();
@@ -156,7 +170,6 @@ function Submit() {
     setBoards(uniqueBoards);
   }, [data]);
 
-  const [boards, setBoards] = useState([]);
   const [selectedBoard, setSelectedBoard] = useState(boards[0]);
   const [postTabSelected, setPostTabSelected] = useState(true);
   const [imageTabSelected, setImageTabSelected] = useState(false);
@@ -187,15 +200,24 @@ function Submit() {
     }
   }
 
+  const resetErrors = () => {
+    titleError.current.textContent = "";
+    textError.current.textContent = "";
+    setTextErrorActive(false);
+    setTitleErrorActive(false);
+  }
+
   const handleSubmit = (event) => {
     if (textLength < 15001 && titleLength > 0) {
       console.log('success');
-      titleError.current.textContent = "";
-      textError.current.textContent = "";
+      resetErrors();
     } else if (textLength < 15001 && titleLength === 0) {
+      titleBox.current.focus();
       titleError.current.textContent = "Error - No title";
+      setTitleErrorActive(true);
     } else if (textLength > 15000) {
       textError.current.textContent = `Post needs to be less than 15,000 characters. Current number of characters is ${textLength}`;
+      setTextErrorActive(true);
     }
   }
 
@@ -229,6 +251,7 @@ function Submit() {
         <CreatePostContainer>
           <TitleContainer>
             <TextareaAutosize
+              ref={titleBox}
               style={textAreaStyle} 
               placeholder="Title"
               maxLength="300" 
@@ -236,7 +259,7 @@ function Submit() {
               onChange={title.onChange} 
             />
             <TitleLengthPara>{titleLength}/300</TitleLengthPara>
-            <TitleError ref={titleError}></TitleError>
+            <TitleError ref={titleError} active={titleErrorActive}></TitleError>
           </TitleContainer>
           <ReactQuill 
             theme="snow"
@@ -244,7 +267,7 @@ function Submit() {
             placeholder="Write your post here (optional)" 
             onChange={setText} 
           />
-          <TextError ref={textError}></TextError>
+          <TextError ref={textError} active={textErrorActive}></TextError>
           <ButtonContainer>
             <CancelPost handleCancelClick={handleCancelSubmit}/>
             <SubmitPost handleSubmitClick={handleSubmit}/>
