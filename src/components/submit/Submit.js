@@ -124,15 +124,6 @@ const TitleLengthPara = styled.p`
   color: #a0a0a0;
 `;
 
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding: 1rem;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
-`;
-
 const TitleError = styled.span`
   visibility: ${props => props.active ? "block" : "hidden" };
   width: 12.5%;
@@ -148,9 +139,26 @@ const TitleError = styled.span`
   font-weight: 600;
 `;
 
-const TextError = styled.span`
-  background-color: #ff0000;
-  color: #ffffff;
+const ButtonContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+`;
+
+const SubButtonContainer = styled.div`
+  grid-column: 2/3;
+  grid-row: 2/3;
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 1rem;
+`;
+
+const TextError = styled(TitleError)`
+  visibility: ${props => props.active ? "block" : "hidden" };
+  width: 95%;
+  grid-column: 1/3;
 `;
 
 function Submit() {
@@ -207,17 +215,33 @@ function Submit() {
     setTitleErrorActive(false);
   }
 
-  const handleSubmit = (event) => {
-    if (textLength < 15001 && titleLength > 0) {
-      console.log('success');
-      resetErrors();
-    } else if (textLength < 15001 && titleLength === 0) {
+
+  const checkForErrors = () => {
+    if (textLength < 15001 && titleLength === 0) {
       titleBox.current.focus();
-      titleError.current.textContent = "Error - No title";
+      titleError.current.textContent = "No title";
       setTitleErrorActive(true);
+      return true;
+    } else if (textLength > 15000 && titleLength === 0) {
+      titleBox.current.focus();
+      titleError.current.textContent = "No title";
+      setTitleErrorActive(true);
+      textError.current.textContent = `Post needs to be less than 15,000 characters. Current number of characters is ${textLength}`;
+      setTextErrorActive(true);
+      return true;
     } else if (textLength > 15000) {
       textError.current.textContent = `Post needs to be less than 15,000 characters. Current number of characters is ${textLength}`;
       setTextErrorActive(true);
+      return true;
+    }
+    return false;
+  }
+
+  const handleSubmit = (event) => {
+    const errors = checkForErrors();
+    if (!errors) {
+      resetErrors();
+      alert("Success");
     }
   }
 
@@ -226,11 +250,11 @@ function Submit() {
   }
 
   return (
-    <SubmitContainer>
-      <SubmitHeaderContainer>
+    <SubmitContainer className="SubmitContainer">
+      <SubmitHeaderContainer className="SubmitHeaderContainer">
         <h2>Create a post</h2>
       </SubmitHeaderContainer>
-      <BoardSelectionContainer>
+      <BoardSelectionContainer className="BoardSelectionContainer">
         <BoardSelectionLabel htmlFor="board-select">Choose board:
           <BoardSelectionSelect value={selectedBoard} onChange={handleBoardChange}>
             {boards.map((board, index) => (
@@ -239,8 +263,8 @@ function Submit() {
           </BoardSelectionSelect>
         </BoardSelectionLabel>
       </BoardSelectionContainer>
-      <SubmissionContainer>
-        <TabContainer>
+      <SubmissionContainer className="SubmissionContainer">
+        <TabContainer className="TabContainer">
           <Tab selected={postTabSelected} onClick={handleTabClick} name="Post">
             <p onClick={handleTabClick}>Post</p>
           </Tab>
@@ -248,8 +272,8 @@ function Submit() {
             <p>Image</p>
           </Tab>
         </TabContainer>
-        <CreatePostContainer>
-          <TitleContainer>
+        <CreatePostContainer className="CreatePostContainer">
+          <TitleContainer className="TitleContainer">
             <TextareaAutosize
               ref={titleBox}
               style={textAreaStyle} 
@@ -267,10 +291,12 @@ function Submit() {
             placeholder="Write your post here (optional)" 
             onChange={setText} 
           />
-          <TextError ref={textError} active={textErrorActive}></TextError>
-          <ButtonContainer>
-            <CancelPost handleCancelClick={handleCancelSubmit}/>
-            <SubmitPost handleSubmitClick={handleSubmit}/>
+          <ButtonContainer className="ButtonContainer">
+            <TextError ref={textError} active={textErrorActive}></TextError>
+            <SubButtonContainer className="SubButtonContainer">
+              <CancelPost handleCancelClick={handleCancelSubmit}/>
+              <SubmitPost handleSubmitClick={handleSubmit}/>
+            </SubButtonContainer>
           </ButtonContainer>
         </CreatePostContainer>
       </SubmissionContainer>

@@ -18,7 +18,6 @@ const CancelButton = styled.button`
 const SubmitButton = styled(CancelButton)`
   background-color: #008cff;
   color: #ffffff;
-  margin-left: 2rem;
   &:hover {
     background-color: #0099ff;
   }
