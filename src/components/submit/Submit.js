@@ -7,6 +7,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { CancelPost, SubmitPost } from './SubmissionButtons';
+import ImageUploader from './ImageUploader';
 
 const SubmitContainer = styled.div`
   width: 100vw;
@@ -119,6 +120,8 @@ const textAreaStyle = {
 }
 
 const TitleLengthPara = styled.p`
+  grid-column: 2/3;
+  grid-row: 1/3;
   font-size: 0.8rem;
   font-weight: 600;
   color: #a0a0a0;
@@ -179,8 +182,9 @@ function Submit() {
   }, [data]);
 
   const [selectedBoard, setSelectedBoard] = useState(boards[0]);
-  const [postTabSelected, setPostTabSelected] = useState(true);
-  const [imageTabSelected, setImageTabSelected] = useState(false);
+  // TODO: Switch values for post/image when finished developing ImageLoader
+  const [postTabSelected, setPostTabSelected] = useState(false);
+  const [imageTabSelected, setImageTabSelected] = useState(true);
 
   const title = useFormInput("");
   const [titleLength, setTitleLength] = useState(0);
@@ -208,13 +212,16 @@ function Submit() {
     }
   }
 
+  const handleImage = (image) => {
+    // handle image
+  }
+
   const resetErrors = () => {
     titleError.current.textContent = "";
     textError.current.textContent = "";
     setTextErrorActive(false);
     setTitleErrorActive(false);
   }
-
 
   const checkForErrors = () => {
     if (textLength < 15001 && titleLength === 0) {
@@ -285,12 +292,15 @@ function Submit() {
             <TitleLengthPara>{titleLength}/300</TitleLengthPara>
             <TitleError ref={titleError} active={titleErrorActive}></TitleError>
           </TitleContainer>
-          <ReactQuill 
-            theme="snow"
-            value={text}
-            placeholder="Write your post here (optional)" 
-            onChange={setText} 
-          />
+          {postTabSelected 
+          ? <ReactQuill 
+              theme="snow"
+              value={text}
+              placeholder="Write your post here (optional)" 
+              onChange={setText} 
+            />
+          : <ImageUploader handleFile={handleImage}/>
+          }
           <ButtonContainer className="ButtonContainer">
             <TextError ref={textError} active={textErrorActive}></TextError>
             <SubButtonContainer className="SubButtonContainer">
@@ -301,7 +311,7 @@ function Submit() {
         </CreatePostContainer>
       </SubmissionContainer>
     </SubmitContainer>
-  )
-}
+  );
+};
 
 export default Submit;
