@@ -64,31 +64,30 @@ const SubmissionContainer = styled.div`
 const TabContainer = styled.div`
   width: 100%;
   height: 2rem;
-  max-width: 955.6px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   justify-items: center;
   align-items: center;
-  grid-gap: 2px;
-  background-color: #ccc;
+  background-color: #ffffff;
 `;
 
-const Tab = styled.div`
+const PostTab = styled.div`
   width: 100%;
   height: 100%;
-  background-color: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
   border-top: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
-  border-left: ${props => props.name === "Post" ? "1px solid #ccc" : "0"};
-  border-right: ${props => props.name === "Post" ? "0" : "1px solid #ccc"};
   &:hover {
     cursor: pointer;
     background-color: #c6e8fc;
   }
   font-weight: ${props => props.selected ? "600" : "200"};
+`;
+
+const ImageTab = styled(PostTab)`
+  border-left: 1px solid #ccc;
 `;
 
 const CreatePostContainer = styled.div`
@@ -99,12 +98,11 @@ const CreatePostContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
 const TitleContainer = styled.div`
   display: grid;
   grid-template-columns: 9fr 1fr;
   place-items: center;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
 `;
 
 const textAreaStyle = {
@@ -121,7 +119,6 @@ const textAreaStyle = {
 
 const TitleLengthPara = styled.p`
   grid-column: 2/3;
-  grid-row: 1/3;
   font-size: 0.8rem;
   font-weight: 600;
   color: #a0a0a0;
@@ -145,9 +142,6 @@ const TitleError = styled.span`
 const ButtonContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
 `;
 
 const SubButtonContainer = styled.div`
@@ -158,7 +152,7 @@ const SubButtonContainer = styled.div`
   margin-bottom: 1rem;
 `;
 
-const TextError = styled(TitleError)`
+const SubmitError = styled(TitleError)`
   visibility: ${props => props.active ? "block" : "hidden" };
   width: 95%;
   grid-column: 1/3;
@@ -169,9 +163,9 @@ function Submit() {
 
   const titleBox = useRef(null);
   const titleError = useRef(null);
-  const textError = useRef(null);
+  const submitError = useRef(null);
   const [titleErrorActive, setTitleErrorActive] = useState(false);
-  const [textErrorActive, setTextErrorActive] = useState(false);
+  const [submitErrorActive, setSubmitErrorActive] = useState(false);
 
   const [boards, setBoards] = useState([]);
   const [data] = useState(testPostData);
@@ -182,9 +176,8 @@ function Submit() {
   }, [data]);
 
   const [selectedBoard, setSelectedBoard] = useState(boards[0]);
-  // TODO: Switch values for post/image when finished developing ImageLoader
-  const [postTabSelected, setPostTabSelected] = useState(false);
-  const [imageTabSelected, setImageTabSelected] = useState(true);
+  const [postTabSelected, setPostTabSelected] = useState(true);
+  const [imageTabSelected, setImageTabSelected] = useState(false);
 
   const title = useFormInput("");
   const [titleLength, setTitleLength] = useState(0);
@@ -197,6 +190,11 @@ function Submit() {
   useEffect(() => {
     setTextLength(text.length);
   }, [text]);
+
+  const [image, setImage] = useState(null);
+  const handleImage = (uploadImage) => {
+    setImage(uploadImage);
+  }
 
   const handleBoardChange = (event) => {
     setSelectedBoard(event.target.value);
@@ -212,34 +210,69 @@ function Submit() {
     }
   }
 
-  const handleImage = (image) => {
-    // handle image
-  }
 
   const resetErrors = () => {
     titleError.current.textContent = "";
-    textError.current.textContent = "";
-    setTextErrorActive(false);
+    submitError.current.textContent = "";
+    setSubmitErrorActive(false);
     setTitleErrorActive(false);
   }
 
+  const handleTitleError = () => {
+    titleBox.current.focus();
+    titleError.current.textContent = "No title";
+    setTitleErrorActive(true);
+  }
+
+  const clearTitleError = () => {
+    titleError.current.textContent = "";
+    setTitleErrorActive(false);
+  }
+
+  const handleTextError = () => {
+    submitError.current.textContent = `Post needs to be less than 15,000 characters. Current number of characters is ${textLength}`;
+    setSubmitErrorActive(true);
+  }
+
+  const clearSubmitError = () => {
+    submitError.current.textContent = "";
+    setSubmitErrorActive(false);
+  }
+
+  const handleImageError = () => {
+    submitError.current.textContent = "No image selected";
+    setSubmitErrorActive(true);
+  }
+
   const checkForErrors = () => {
-    if (textLength < 15001 && titleLength === 0) {
-      titleBox.current.focus();
-      titleError.current.textContent = "No title";
-      setTitleErrorActive(true);
-      return true;
-    } else if (textLength > 15000 && titleLength === 0) {
-      titleBox.current.focus();
-      titleError.current.textContent = "No title";
-      setTitleErrorActive(true);
-      textError.current.textContent = `Post needs to be less than 15,000 characters. Current number of characters is ${textLength}`;
-      setTextErrorActive(true);
-      return true;
-    } else if (textLength > 15000) {
-      textError.current.textContent = `Post needs to be less than 15,000 characters. Current number of characters is ${textLength}`;
-      setTextErrorActive(true);
-      return true;
+    if (postTabSelected) {
+      if (textLength < 15001 && titleLength === 0) {
+        handleTitleError();
+        clearSubmitError();
+        return true;
+      } else if (textLength > 15000 && titleLength === 0) {
+        handleTitleError();
+        handleTextError();
+        return true;
+      } else if (textLength > 15000) {
+        handleTextError();
+        clearTitleError();
+        return true;
+      }
+    } else {
+      if (image !== null && titleLength === 0) {
+        handleTitleError();
+        clearSubmitError();
+        return true;
+      } else if (image === null && titleLength === 0) {
+        handleImageError();
+        handleTitleError();
+        return true;
+      } else if (image === null) {
+        handleImageError();
+        clearTitleError();
+        return true;
+      }
     }
     return false;
   }
@@ -272,12 +305,12 @@ function Submit() {
       </BoardSelectionContainer>
       <SubmissionContainer className="SubmissionContainer">
         <TabContainer className="TabContainer">
-          <Tab selected={postTabSelected} onClick={handleTabClick} name="Post">
+          <PostTab selected={postTabSelected} onClick={handleTabClick}>
             <p onClick={handleTabClick}>Post</p>
-          </Tab>
-          <Tab selected={imageTabSelected} onClick={handleTabClick} name="Image">
+          </PostTab>
+          <ImageTab selected={imageTabSelected} onClick={handleTabClick}>
             <p>Image</p>
-          </Tab>
+          </ImageTab>
         </TabContainer>
         <CreatePostContainer className="CreatePostContainer">
           <TitleContainer className="TitleContainer">
@@ -302,7 +335,7 @@ function Submit() {
           : <ImageUploader handleFile={handleImage}/>
           }
           <ButtonContainer className="ButtonContainer">
-            <TextError ref={textError} active={textErrorActive}></TextError>
+            <SubmitError ref={submitError} active={submitErrorActive}></SubmitError>
             <SubButtonContainer className="SubButtonContainer">
               <CancelPost handleCancelClick={handleCancelSubmit}/>
               <SubmitPost handleSubmitClick={handleSubmit}/>

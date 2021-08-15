@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 
-// TODO: Change height/weight values once drop zone is complete
 const UploaderContainer = styled.div`
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-  height: 400px;
+  height: 50vh;
+  min-height: 350px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,30 +14,45 @@ const DropZone = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;;
   height: 200px;
   border: 2px dashed black;
   border-radius: 6px;
+  width: 80%;
+  height: 80%;
 `;
 
 const PreviewContainer = styled.div`
   display: ${props => props.active ? "block" : "none"};
-  width: 100px;
-  height: 100px;
+  max-width: 150px;
+  max-height: 150px;
 `;
 const PreviewImage = styled.img`
   width: 100px;
   height: 100px;
+  opacity: 60%;
 `;
 
-// TODO:
-// Re-style the ugly button and label with this advice https://developer.mozilla.org/en-US/docs/Web/API/File/Using_files_from_web_applications#using_hidden_file_input_elements_using_the_click_method
-// i.e. have a nice translucent image svg, rounded dashed border, cursor pointer over a large area
+const HiddenInput = styled.input`
+  display: none;
+`;
+
+const UploadButton = styled.button`
+  border: 1px solid black;
+  padding: 0.5rem; 
+  border-radius: 3px;
+  &:hover{
+    cursor: pointer;
+    background-color: #dbdbdb;
+  }
+`;
+
 function ImageUploader(props) {
 
   const { handleFile } = props;
 
   const imgPreview = useRef(null);
+  const fileInput = useRef(null);
 
   const [previewActive, setPreviewActive] = useState(false);
 
@@ -52,6 +65,7 @@ function ImageUploader(props) {
     const file = event.target.files[0]
     showThumbnail(file);
     setFile(file);
+    setPreviewActive(true);
   }
 
   const onDragEnter = (event) => {
@@ -79,20 +93,32 @@ function ImageUploader(props) {
     showThumbnail(file);
     setFile(file);
   }
+
+  const clickInput = () => {
+    fileInput.current.click();
+  }
   
   return (
     <UploaderContainer className="UploaderContainer">
-      <PreviewContainer className="PreviewContainer" active={previewActive}>
-        <PreviewImage ref={imgPreview}/>
-      </PreviewContainer>
       <DropZone 
         className="DropZone"
         onDragEnter={onDragEnter}
         onDragOver={onDragOver}
         onDrop={onDrop}
       >
+        <PreviewContainer className="PreviewContainer" active={previewActive}>
+          <PreviewImage ref={imgPreview}/>
+        </PreviewContainer>
         <label htmlFor="file-input">Drag your picture here or select to upload</label>
-        <input type="file" name="file-input" id="file-input" onChange={handleChange}/>
+        <HiddenInput 
+          type="file" 
+          name="file-input" 
+          id="file-input" 
+          accept="image/*"
+          ref={fileInput}
+          onChange={handleChange}
+        />
+        <UploadButton onClick={clickInput}>Select Image</UploadButton>
       </DropZone>
     </UploaderContainer>
   );
