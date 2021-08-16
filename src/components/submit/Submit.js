@@ -18,7 +18,7 @@ const SubmitContainer = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #dae0e6;
-  margin-top: ${props => props.expand ? "6vh" : "" };
+  margin-top: 6vh;
 `;
 
 const SubmitHeaderContainer = styled.div`
@@ -192,21 +192,6 @@ function Submit() {
     setTextLength(text.length);
   }, [text]);
 
-  const [expand, setExpand] = useState(false);
-  useEffect(() => {
-    let isMounted = true;
-    const navContainer = document.getElementById('nav-bar');
-    const sticky = navContainer.offsetTop;
-    document.addEventListener('scroll', () => {
-      if (window.pageYOffset > sticky) {
-        if (isMounted) setExpand(true);
-      } else {
-        if (isMounted) setExpand(false);
-      }
-    });
-    return () => { isMounted = false };
-  });
-
   const [image, setImage] = useState(null);
   const handleImage = (uploadImage) => {
     setImage(uploadImage);
@@ -306,7 +291,7 @@ function Submit() {
   }
 
   return (
-    <SubmitContainer className="SubmitContainer" expand={expand}>
+    <SubmitContainer className="SubmitContainer">
       <SubmitHeaderContainer className="SubmitHeaderContainer">
         <h2>Create a post</h2>
       </SubmitHeaderContainer>

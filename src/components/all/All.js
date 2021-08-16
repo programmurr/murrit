@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import testPostData from '../../utils/posts';
 import Post from '../post/Post';
@@ -13,7 +13,7 @@ const AllContainer = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #dae0e6;
-  margin-top: ${props => props.expand ? "6vh" : "" };
+  margin-top: 6vh;
 `;
 
 const AllHeaderContainer = styled.div`
@@ -40,26 +40,11 @@ function All() {
   // setData later
   const [data] = useState(testPostData);
   
-  const [expand, setExpand] = useState(false);
-  useEffect(() => {
-    let isMounted = true;
-    const navContainer = document.getElementById('nav-bar');
-    const sticky = navContainer.offsetTop;
-    document.addEventListener('scroll', () => {
-      if (window.pageYOffset > sticky) {
-        if (isMounted) setExpand(true);
-      } else {
-        if (isMounted) setExpand(false);
-      }
-    });
-    return () => { isMounted = false };
-  });
-
   // TODO: 
   // Format date to 'X ago'
   // Lazy load posts
   return (
-    <AllContainer className="AllContainer" expand={expand}>
+    <AllContainer className="AllContainer">
       <AllHeaderContainer>
         <h4>All Posts</h4>
         <SortBox />

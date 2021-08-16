@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Logo from './Logo';
 import Title from './Title';
@@ -23,30 +23,14 @@ const NavContainer = styled.div`
   grid-template-columns: 1fr 1fr 1fr;
   justify-items: center;
   align-items: center;
-  position: ${props => props.sticky ? "fixed" : ""};
+  position: fixed;
   z-index: 1;
 `;
 
 function NavBar() {
-  const navContainer = useRef(null);
-
-  const [sticky, setSticky] = useState(false);
-  useEffect(() => {
-    let isMounted = true;
-    const sticky = navContainer.current.offsetTop;
-    document.addEventListener('scroll', () => {
-      if (window.pageYOffset > sticky) {
-        if (isMounted) setSticky(true);
-      } else {
-        if (isMounted) setSticky(false);
-      }
-    });
-    return () => { isMounted = false };
-  });
-
   return (
     <OuterNavContainer className="NavBarContainer">
-      <NavContainer className="NavBar" id="nav-bar" ref={navContainer} sticky={sticky}>
+      <NavContainer className="NavBar" id="nav-bar">
         <Logo />
         <Title />
         <LoginArea />

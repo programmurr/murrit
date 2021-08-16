@@ -8,9 +8,6 @@ const TitleContainer = styled.div`
   width: 100%;
 `;
 
-const TitleHeader = styled.h2`
-`;
-
 const linkStyle = {
   color: "black"
 }
@@ -19,7 +16,7 @@ function Title() {
   return (
     <TitleContainer className="TitleContainer">
       <NavLink to="/" activeStyle={linkStyle}>
-        <TitleHeader className="TitleHeader">murrit</TitleHeader>
+        <h2 className="TitleHeader">murrit</h2>
       </NavLink>
     </TitleContainer>
   );
