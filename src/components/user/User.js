@@ -17,14 +17,17 @@ const UserProfileContainer = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #dae0e6;
+  margin-top: ${props => props.expand ? "6vh" : "" };
 `;
 
 const ContentSelectorContainer = styled.div`
-  width: 100%;
+  margin-top: 1rem;
+  width: 95%;
   background-color: #ffffff;
   height: 4vh;
   min-height: 30px;
-  border-bottom: 1px solid black;
+  border: 1px solid #ffffff;
+  border-radius: 5px;
   display: flex;
 `;
 
@@ -77,6 +80,21 @@ function User() {
   const [postsSelected, setPostsSelected] = useState(true);
   const [commentsSelected, setCommentsSelected] = useState(false);
 
+  const [expand, setExpand] = useState(false);
+  useEffect(() => {
+    let isMounted = true;
+    const navContainer = document.getElementById('nav-bar');
+    const sticky = navContainer.offsetTop;
+    document.addEventListener('scroll', () => {
+      if (window.pageYOffset > sticky) {
+        if (isMounted) setExpand(true);
+      } else {
+        if (isMounted) setExpand(false);
+      }
+    });
+    return () => { isMounted = false };
+  });
+
   const togglePosts = () => {
     if (!postsSelected) {
       setPostsSelected(true);
@@ -92,7 +110,7 @@ function User() {
   }
 
   return (
-    <UserProfileContainer className="UserProfileContainer">
+    <UserProfileContainer className="UserProfileContainer" expand={expand}>
       <ContentSelectorContainer className="ContentSelectorContainer">
         <ContentSelector 
           active={postsSelected}

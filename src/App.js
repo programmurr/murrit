@@ -18,12 +18,11 @@ const GlobalStyles = styled.div`
   line-height: 1;
   height: 100vh;
   min-height: 100vh;
+  background-color: #dae0e6;
 `;
 
 // TODO: 
-// Add CreatePost component
-// Figure out where to put icons for it
-// Re-route submit access if user not logged in
+// Re-route submit access to Submit if user not logged in
 function App() {
   return (
     <GlobalStyles className="App">

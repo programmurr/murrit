@@ -8,7 +8,7 @@ import DownIcon from '../../img/down-arrow.svg'
 // Being too specific with px styles
 const PostContainer = styled.div`
   display: flex;
-  width: 97%;
+  width: 95%;
   max-width: 955.6px;
   max-height: 200px;
   margin-top: 5px;

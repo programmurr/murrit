@@ -14,6 +14,7 @@ const BoardContainer = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #dae0e6;
+  margin-top: ${props => props.expand ? "6vh" : "" };
 `;
 
 const BoardHeaderContainer = styled.div`
@@ -51,13 +52,27 @@ function Board() {
     // eslint-disable-next-line
   }, [boardName])
 
+  const [expand, setExpand] = useState(false);
+  useEffect(() => {
+    let isMounted = true;
+    const navContainer = document.getElementById('nav-bar');
+    const sticky = navContainer.offsetTop;
+    document.addEventListener('scroll', () => {
+      if (window.pageYOffset > sticky) {
+        if (isMounted) setExpand(true);
+      } else {
+        if (isMounted) setExpand(false);
+      }
+    });
+    return () => { isMounted = false };
+  });
 
   // TODO: 
   // Format date to 'X ago'
   // Lazy load posts
   // Add "Sort By New/Rating" to Board Posts Header
   return (
-    <BoardContainer className="BoardContainer">
+    <BoardContainer className="BoardContainer" expand={expand}>
     <BoardHeaderContainer>
       <BoardHeader>{boardName}</BoardHeader>
       <SortBox />

@@ -16,7 +16,7 @@ const PostPage = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #dae0e6;
-
+  margin-top: ${props => props.expand ? "6vh" : "" };
 `;
 const PostContainer = styled.div`
   display: flex;
@@ -139,6 +139,20 @@ function ViewPost() {
     }
   }, [livePost]);
 
+  const [expand, setExpand] = useState(false);
+  useEffect(() => {
+    let isMounted = true;
+    const navContainer = document.getElementById('nav-bar');
+    const sticky = navContainer.offsetTop;
+    document.addEventListener('scroll', () => {
+      if (window.pageYOffset > sticky) {
+        if (isMounted) setExpand(true);
+      } else {
+        if (isMounted) setExpand(false);
+      }
+    });
+    return () => { isMounted = false };
+  });
 
   const handleUpvote = () => {
     // handle Upvote
@@ -150,7 +164,7 @@ function ViewPost() {
 
   if (livePost !== undefined) {
     return (
-      <PostPage className="PostPage">
+      <PostPage className="PostPage" expand={expand}>
         <PostContainer className="PostContainer">
           <VoteContainer className="VoteContainer">
             <UpvoteIcon src={UpIcon} onClick={handleUpvote}/>
