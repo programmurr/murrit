@@ -11,6 +11,9 @@ import Board from './components/board/Board';
 import User from './components/user/User';
 import ViewPost from './components/post/ViewPost';
 import Submit from './components/submit/Submit';
+import SignUp from './components/sign-up/SignUp';
+import SignIn from './components/sign-in/SignIn';
+import PasswordReset from './components/password-reset/PasswordReset';
 import AuthContextProvider from './contexts/AuthContext';
 
 const GlobalStyles = styled.div`
@@ -39,8 +42,17 @@ function App() {
             <Route path="/u/:username">
               <User />  
             </Route>
+            <Route path="/password-reset">
+              <PasswordReset />  
+            </Route>
             <Route path="/p/:postid">
               <ViewPost />  
+            </Route>
+            <Route path="/sign-in">
+              <SignIn />  
+            </Route>
+            <Route path="/sign-up">
+              <SignUp />  
             </Route>
             <Route path="/submit">
               <Submit />  

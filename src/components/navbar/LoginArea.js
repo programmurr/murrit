@@ -1,7 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-import { AuthContext } from '../../contexts/AuthContext';
 
 const LoginAreaContainer = styled.div`
   width: 100%;
@@ -34,35 +33,21 @@ const SignUpButton = styled(LoginButton)`
 function LoginArea() {
   let history = useHistory();
 
-  const { authState, setAuthState } = useContext(AuthContext);
-
-  const handleLogin = () => {
-    setAuthState(prev => !authState);
+  const handleLoginClick = () => {
+    history.push(`/sign-in`);
   }
 
   const handleSignUpClick = () => {
-    if (authState) {
-      history.push(`/submit`);
-    }
-    // TODO:
-    // Else - launch the login feature
+    history.push(`/sign-up`);
   }
   
   return (
     <LoginAreaContainer className="LoginContainer">
-      <LoginButton onClick={handleLogin}>
-        {
-          authState
-          ? "Log Out"
-          : "Login"
-        }
+      <LoginButton onClick={handleLoginClick}>
+        Sign In
       </LoginButton>
       <SignUpButton onClick={handleSignUpClick}>
-        {
-          authState
-          ? "+ Create"
-          : "Sign up"
-        }
+        Sign Up
       </SignUpButton>
     </LoginAreaContainer>
   );

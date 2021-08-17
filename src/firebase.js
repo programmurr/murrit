@@ -1,5 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
+import "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDMls1bWaSm9CtXGMZN0Ad4VoUWNtDb_mc",
@@ -13,5 +14,13 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
+if (window.location.hostname === "localhost") {
+  db.settings({
+    host: "localhost:8080",
+    ssl: false
+  });
+};
 
-export { db };
+const auth = firebase.auth();
+
+export { db, auth };
