@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import Logo from './Logo';
 import Title from './Title';
 import LoginArea from './LoginArea';
+import ProfileArea from './ProfileArea';
+import { UserContext } from '../../providers/UserProvider';
+
 
 const OuterNavContainer = styled.div`
   width: 100%;
@@ -28,12 +31,17 @@ const NavContainer = styled.div`
 `;
 
 function NavBar() {
+  const user = useContext(UserContext);
+
   return (
     <OuterNavContainer className="NavBarContainer">
       <NavContainer className="NavBar" id="nav-bar">
         <Logo />
         <Title />
-        <LoginArea />
+        {user === null
+          ? <LoginArea />
+          : <ProfileArea /> 
+        }
       </NavContainer>
     </OuterNavContainer>
   )

@@ -23,4 +23,9 @@ if (window.location.hostname === "localhost") {
 
 const auth = firebase.auth();
 
-export { db, auth };
+const provider = new firebase.auth.GoogleAuthProvider();
+const signInWithGoogle = () => {
+  auth.signInWithPopup(provider)
+}
+
+export { db, auth, signInWithGoogle };

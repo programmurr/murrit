@@ -15,6 +15,7 @@ import SignUp from './components/sign-up/SignUp';
 import SignIn from './components/sign-in/SignIn';
 import PasswordReset from './components/password-reset/PasswordReset';
 import AuthContextProvider from './contexts/AuthContext';
+import UserProvider from './providers/UserProvider';
 
 const GlobalStyles = styled.div`
   font-family: Arial, sans serif;
@@ -29,37 +30,37 @@ const GlobalStyles = styled.div`
 function App() {
   return (
     <GlobalStyles className="App">
-      <Router>
-        <AuthContextProvider>
-          <NavBar />
-          <Switch>
-            <Route exact path="/">
-              <All />  
-            </Route>
-            <Route path="/m/:boardName">
-              <Board />  
-            </Route>
-            <Route path="/u/:username">
-              <User />  
-            </Route>
-            <Route path="/password-reset">
-              <PasswordReset />  
-            </Route>
-            <Route path="/p/:postid">
-              <ViewPost />  
-            </Route>
-            <Route path="/sign-in">
-              <SignIn />  
-            </Route>
-            <Route path="/sign-up">
-              <SignUp />  
-            </Route>
-            <Route path="/submit">
-              <Submit />  
-            </Route>
-          </Switch>
-          </AuthContextProvider>
-      </Router>
+        <Router>
+          <UserProvider>
+            <NavBar />
+            <Switch>
+              <Route exact path="/">
+                <All />  
+              </Route>
+              <Route path="/m/:boardName">
+                <Board />  
+              </Route>
+              <Route path="/u/:username">
+                <User />  
+              </Route>
+              <Route path="/password-reset">
+                <PasswordReset />  
+              </Route>
+              <Route path="/p/:postid">
+                <ViewPost />  
+              </Route>
+              <Route path="/sign-in">
+                <SignIn />  
+              </Route>
+              <Route path="/sign-up">
+                <SignUp />  
+              </Route>
+              <Route path="/submit">
+                <Submit />  
+              </Route>
+            </Switch>
+          </UserProvider>
+        </Router>
     </GlobalStyles>
   )
 }

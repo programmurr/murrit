@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { signInWithGoogle } from '../../firebase';
 
 const SignInContainer = styled.div`
   margin-top: 7vh
 `;
 
 const SignInElements = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const SignInForm = styled.form`
   display: flex;
   flex-direction: column;
 `;
@@ -34,7 +40,7 @@ function SignIn() {
       <h1>Sign In</h1>
       <SignInElements>
         {error !== null && <div>{error}</div>}
-        <form className="">
+        <SignInForm className="">
           <label htmlFor="userEmail">Email: </label>
           <input
             type="email"
@@ -60,9 +66,17 @@ function SignIn() {
           >
           Sign In
           </button>
-        </form>
+        </SignInForm>
         <p>or</p>
-        <button>Sign in with Google</button>
+        <button
+          onClick={() => {
+            try {
+              signInWithGoogle();
+            } catch (error) {
+              console.error("Error signing in with Google", error)
+            }
+          }}
+        >Sign in with Google</button>
         <p>Don't have an account?
           <Link to="/sign-up">Sign up here</Link>
           <Link to="/password-reset">Forgot Password?</Link>
