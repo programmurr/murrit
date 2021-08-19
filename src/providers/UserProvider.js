@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react';
-import { auth } from '../firebase';
+import { auth, generateUserDocument } from '../firebase';
 
 export const UserContext = createContext({ user: null });
 
@@ -7,10 +7,11 @@ function UserProvider(props) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    auth.onAuthStateChanged(userAuth => {
-      setUser(userAuth);
+    auth.onAuthStateChanged(async userAuth => {
+      const user = await generateUserDocument(userAuth);
+      setUser(user);
     });
-  });
+  }, []);
 
   return (
     <UserContext.Provider value={user}>

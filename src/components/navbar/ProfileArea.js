@@ -1,15 +1,13 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { UserContext } from '../../providers/UserProvider';
 import { auth } from '../../firebase';
 
 const ProfileAreaContainer = styled.div`
   display: flex;
 `;
 
-function ProfileArea() {
-  const user = useContext(UserContext);
-  const { displayName, email } = user;
+function ProfileArea(props) {
+  const { displayName, email } = props.user;
 
   return (
     <ProfileAreaContainer>

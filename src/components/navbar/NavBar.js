@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Logo from './Logo';
 import Title from './Title';
@@ -33,14 +33,21 @@ const NavContainer = styled.div`
 function NavBar() {
   const user = useContext(UserContext);
 
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => {
+    setCurrentUser(user);
+  }, [user]);
+
   return (
     <OuterNavContainer className="NavBarContainer">
       <NavContainer className="NavBar" id="nav-bar">
         <Logo />
         <Title />
-        {user === null
+        {currentUser === null
           ? <LoginArea />
-          : <ProfileArea /> 
+          : currentUser === undefined
+            ? <LoginArea />
+            : <ProfileArea user={currentUser}/>
         }
       </NavContainer>
     </OuterNavContainer>

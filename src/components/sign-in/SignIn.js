@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { signInWithGoogle } from '../../firebase';
+import { auth, signInWithGoogle } from '../../firebase';
 
 const SignInContainer = styled.div`
   margin-top: 7vh
@@ -24,6 +24,11 @@ function SignIn() {
 
   const signInWithEmailAndPasswordHandler = (event, email, password) => {
     event.preventDefault();
+    auth.signInWithEmailAndPassword(email, password)
+      .catch((error) => {
+        setError("Error signing in with password and email");
+        console.error("Error signing in with password and email", error);
+      });
   };
 
   const onChangeHandler = (event) => {
@@ -32,6 +37,14 @@ function SignIn() {
       setEmail(value);
     } else if (name === "userPassword") {
       setPassword(value);
+    }
+  };
+
+  const handleSignInWithGoogleClick = () => {
+    try {
+      signInWithGoogle();
+    } catch (error) {
+      console.error("Error signing in with Google", error)
     }
   };
 
@@ -69,13 +82,7 @@ function SignIn() {
         </SignInForm>
         <p>or</p>
         <button
-          onClick={() => {
-            try {
-              signInWithGoogle();
-            } catch (error) {
-              console.error("Error signing in with Google", error)
-            }
-          }}
+          onClick={handleSignInWithGoogleClick}
         >Sign in with Google</button>
         <p>Don't have an account?
           <Link to="/sign-up">Sign up here</Link>

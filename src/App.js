@@ -14,7 +14,6 @@ import Submit from './components/submit/Submit';
 import SignUp from './components/sign-up/SignUp';
 import SignIn from './components/sign-in/SignIn';
 import PasswordReset from './components/password-reset/PasswordReset';
-import AuthContextProvider from './contexts/AuthContext';
 import UserProvider from './providers/UserProvider';
 
 const GlobalStyles = styled.div`

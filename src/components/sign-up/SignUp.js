@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { signInWithGoogle } from '../../firebase';
+import { generateUserDocument, signInWithGoogle } from '../../firebase';
+import { auth } from '../../firebase';
 
 const SignUpContainer = styled.div`
   margin-top: 7vh
@@ -21,14 +22,35 @@ function SignUp() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState(null);
+  const posts = [];
+  const comments = [];
 
-  const createUserWithEmailAndPasswordHandler = (event, email, password) => {
+  const verifyPasswords = () => {
+    // verify passwords
+  }
+
+  const createUserWithEmailAndPasswordHandler = async (event, email, password) => {
     event.preventDefault();
-    setEmail("");
-    setPassword("");
-    setDisplayName("");
+    const verified = verifyPasswords();
+    if (verified) {
+      try {
+        const { user } = await auth.createUserWithEmailAndPassword(email, password);
+        generateUserDocument(user, { displayName, posts, comments });
+      } catch (error) {
+        setError("Error signing up with email and password");
+      }
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setDisplayName("");
+    } else {
+      setError("Passwords do not match");
+      setPassword("");
+      setConfirmPassword("");
+    }
   };
 
   const onChangeHandler = (event) => {
@@ -37,8 +59,18 @@ function SignUp() {
       setEmail(value);
     } else if (name === "userPassword") {
       setPassword(value);
+    } else if (name === "confirmPassword") {
+      setConfirmPassword(value);
     } else if (name === "displayName") {
       setDisplayName(value);
+    }
+  };
+
+  const handleSignInWithGoogleClick = () => {
+    try {
+      signInWithGoogle();
+    } catch (error) {
+      console.error("Error signing in with Google", error)
     }
   };
 
@@ -57,6 +89,7 @@ function SignUp() {
             value={displayName}
             placeholder="E.g. ElaineSmith1"
             id="displayName"
+            required
             onChange={event => onChangeHandler(event)}
           />
           <label htmlFor="userEmail">Email:</label>
@@ -66,6 +99,7 @@ function SignUp() {
             value={email}
             placeholder="elaine-smith01@gmail.com"
             id="userEmail"
+            required
             onChange={event => onChangeHandler(event)}
           />
           <label htmlFor="userPassword">Password:</label>
@@ -75,6 +109,21 @@ function SignUp() {
             value={password}
             placeholder="Your password"
             id="userPassword"
+            required
+            minLength="16"
+            maxLength="40"
+            onChange={event => onChangeHandler(event)}
+          />
+          <label htmlFor="confirmPassword">Confirm password:</label>
+          <input
+            type="password"
+            name="confirmPassword"
+            value={confirmPassword}
+            placeholder="Your password"
+            id="confirmPassword"
+            required
+            minLength="16"
+            maxLength="40"
             onChange={event => onChangeHandler(event)}
           />
           <button
@@ -86,13 +135,7 @@ function SignUp() {
           </button>
         </SignUpForm>
         <p>or</p>
-        <button onClick={() => {
-          try {
-            signInWithGoogle();
-          } catch (error) {
-            console.error("Error signing in with Google", error)
-          }
-        }}>
+        <button onClick={handleSignInWithGoogleClick}>
           Sign in with Google
         </button>
         <p>Already have an account?

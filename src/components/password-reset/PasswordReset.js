@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { auth } from '../../firebase';
 
 const PasswordResetContainer = styled.div`
   margin-top: 7vh;
@@ -31,6 +32,15 @@ function PasswordReset() {
 
   const sendResetEmail = (event) => {
     event.preventDefault();
+    auth
+      .sendPasswordResetEmail(email)
+      .then(() => {
+        setEmailHasBeenSent(true);
+        setTimeout(() => {setEmailHasBeenSent(false)}, 3000);
+      })
+      .catch(() => {
+        setError("Error resetting password");
+      });
   }
 
   return (
@@ -41,6 +51,9 @@ function PasswordReset() {
           {emailHasBeenSent && (
             <div>An email has been sent to you!</div>
           )}
+          {error !== null && (
+            <div>{error}</div>
+          )}
           <label htmlFor="userEmail">Email:</label>
           <input 
             type="email"
@@ -50,7 +63,12 @@ function PasswordReset() {
             placeholder="Type your email here"
             onChange={onChangeHandler}
           />
-          <button>Send me a reset link</button>
+          <button onClick={event => {
+            sendResetEmail(event);
+          }}
+          >
+            Send me a reset link
+          </button>
         </ResetForm>
         <Link to="/sign-in">&larr; Back to sign in page</Link>
       </FormContainer>
