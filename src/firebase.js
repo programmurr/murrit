@@ -3,9 +3,7 @@ import "firebase/firestore";
 import "firebase/auth";
 
 // TODO:
-// Add posts/comments to google sign-in user
 // Set up emulator to test auth functionality
-// Style auth pages
 
 const firebaseConfig = {
   apiKey: "AIzaSyDMls1bWaSm9CtXGMZN0Ad4VoUWNtDb_mc",

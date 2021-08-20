@@ -4,18 +4,92 @@ import styled from 'styled-components';
 import { auth, signInWithGoogle } from '../../firebase';
 
 const SignInContainer = styled.div`
-  margin-top: 7vh
+  margin-top: 7vh;
+  width: 100vw;
+  max-width: 100%;
+  height: 100vh%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #dae0e6;
+`;
+
+const SignInHeaderContainer = styled.div`
+  width: 95%;
+  margin-top: 10px;
+  padding-bottom: 10px;
+  max-width: 955.6px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  border-bottom: 1px solid white;
 `;
 
 const SignInElements = styled.div`
+  width: 95%;
+  height: 50vh;
+  margin-top: 10px;
+  padding-bottom: 10px;
+  max-width: 955.6px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const SignInForm = styled.form`
+  width: 95%;
+  height: 100%;
+  max-width: 955.6px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
 `;
+
+const GoogleAuthContainer = styled.div`
+  width: 95%;
+  height: 100%;
+  max-width: 955.6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+`;
+
+const SignInLabel = styled.label`
+  margin-bottom: 0.5rem;
+`;
+
+const SignInInput = styled.input`
+  width: 50%;
+  height: 2rem;
+  padding: 0.5rem;
+  border-radius: 3px;
+  margin-bottom: 0.5rem;
+`;
+const SignInButton = styled.button`
+  width: 52%;
+  height: 2rem;
+  border-radius: 3px;
+  background-color: #008cff;
+  color: #ffffff;
+  &:hover {
+    background-color: #0099ff;
+    cursor: pointer;
+  }
+`;
+
+const GoogleSignInButton = styled(SignInButton)`
+  background-color: #ffffff;
+  color: #008cff;
+  &:hover {
+    background-color: #f7f8fd;
+    cursor: pointer;
+  }
+`;
+
 
 function SignIn() {
   const [email, setEmail] = useState('');
@@ -49,13 +123,15 @@ function SignIn() {
   };
 
   return (
-    <SignInContainer>
-      <h1>Sign In</h1>
-      <SignInElements>
+    <SignInContainer className="SignInContainer">
+      <SignInHeaderContainer className="HeaderContainer">
+        <h1>Sign In</h1>
+      </SignInHeaderContainer>
+      <SignInElements className="SignInElements">
         {error !== null && <div>{error}</div>}
-        <SignInForm className="">
-          <label htmlFor="userEmail">Email: </label>
-          <input
+        <SignInForm className="SignInForm">
+          <SignInLabel htmlFor="userEmail">Email: </SignInLabel>
+          <SignInInput
             type="email"
             name="userEmail"
             value={email}
@@ -63,8 +139,8 @@ function SignIn() {
             id="userEmail"
             onChange={(event) => onChangeHandler(event)}
           />
-          <label htmlFor="userPassword">Password:</label>
-          <input
+          <SignInLabel htmlFor="userPassword">Password:</SignInLabel>
+          <SignInInput
             type="password"
             name="userPassword"
             value={password}
@@ -72,22 +148,23 @@ function SignIn() {
             id="userPassword"
             onChange={(event) => onChangeHandler(event)}
           />
-          <button 
+          <SignInButton 
             onClick={(event) => {
               signInWithEmailAndPasswordHandler(event, email, password)
             }}
           >
           Sign In
-          </button>
+          </SignInButton>
         </SignInForm>
-        <p>or</p>
-        <button
-          onClick={handleSignInWithGoogleClick}
-        >Sign in with Google</button>
-        <p>Don't have an account?
+        <GoogleAuthContainer className="GoogleAuthContainer">
+          <p>or</p>
+          <GoogleSignInButton
+            onClick={handleSignInWithGoogleClick}
+          >Sign in with Google</GoogleSignInButton>
+          <p>Don't have an account?</p>
           <Link to="/sign-up">Sign up here</Link>
           <Link to="/password-reset">Forgot Password?</Link>
-        </p>
+        </GoogleAuthContainer>
       </SignInElements>
     </SignInContainer>
   );

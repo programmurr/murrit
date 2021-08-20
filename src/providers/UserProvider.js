@@ -7,8 +7,10 @@ function UserProvider(props) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    const posts = [];
+    const comments = [];  
     auth.onAuthStateChanged(async userAuth => {
-      const user = await generateUserDocument(userAuth);
+      const user = await generateUserDocument(userAuth, { posts, comments });
       setUser(user);
     });
   }, []);

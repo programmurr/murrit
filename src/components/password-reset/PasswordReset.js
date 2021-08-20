@@ -5,18 +5,73 @@ import { auth } from '../../firebase';
 
 const PasswordResetContainer = styled.div`
   margin-top: 7vh;
+  width: 100vw;
+  max-width: 100%;
+  height: 100vh%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  background-color: #dae0e6;
+`;
+
+const HeaderContainer = styled.div`
+  width: 95%;
+  margin-top: 10px;
+  padding-bottom: 10px;
+  max-width: 955.6px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  border-bottom: 1px solid white;
 `;
 
 const FormContainer = styled.div`
+  width: 95%;
+  height: 20vh;
+  margin-top: 10px;
+  padding-bottom: 10px;
+  max-width: 955.6px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 `;
+
 const ResetForm = styled.form`
+  width: 95%;
+  height: 100%;
+  max-width: 955.6px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
 `;
+
+const ResetLabel = styled.label`
+  margin-bottom: 0.5rem;
+`;
+
+const ResetInput = styled.input`
+  width: 50%;
+  height: 2rem;
+  padding: 0.5rem;
+  border-radius: 3px;
+  margin-bottom: 0.5rem;
+`;
+
+const ResetButton = styled.button`
+  width: 52%;
+  height: 2rem;
+  border-radius: 3px;
+  background-color: #008cff;
+  color: #ffffff;
+  &:hover {
+    background-color: #0099ff;
+    cursor: pointer;
+  }
+`;
+
 
 function PasswordReset() {
   const [email, setEmail] = useState("");
@@ -45,7 +100,9 @@ function PasswordReset() {
 
   return (
     <PasswordResetContainer>
-      <h1>Reset Your Password</h1>
+      <HeaderContainer>
+        <h1>Reset Your Password</h1>
+      </HeaderContainer>
       <FormContainer>
         <ResetForm action="">
           {emailHasBeenSent && (
@@ -54,8 +111,8 @@ function PasswordReset() {
           {error !== null && (
             <div>{error}</div>
           )}
-          <label htmlFor="userEmail">Email:</label>
-          <input 
+          <ResetLabel htmlFor="userEmail">Email:</ResetLabel>
+          <ResetInput 
             type="email"
             name="userEmail"
             id="userEmail"
@@ -63,12 +120,12 @@ function PasswordReset() {
             placeholder="Type your email here"
             onChange={onChangeHandler}
           />
-          <button onClick={event => {
+          <ResetButton onClick={event => {
             sendResetEmail(event);
           }}
           >
             Send me a reset link
-          </button>
+          </ResetButton>
         </ResetForm>
         <Link to="/sign-in">&larr; Back to sign in page</Link>
       </FormContainer>

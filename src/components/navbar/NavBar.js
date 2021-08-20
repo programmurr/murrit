@@ -16,7 +16,7 @@ const OuterNavContainer = styled.div`
 
 const NavContainer = styled.div`
   height: 6vh;
-  min-height: 50px;
+  min-height: 58px;
   border-bottom: 1px solid #ffffff;
   border-radius: 5px;
   background-color: #ffffff;
