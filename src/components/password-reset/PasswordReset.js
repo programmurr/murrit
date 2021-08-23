@@ -116,6 +116,7 @@ function PasswordReset() {
             type="email"
             name="userEmail"
             id="userEmail"
+            required
             value={email}
             placeholder="Type your email here"
             onChange={onChangeHandler}

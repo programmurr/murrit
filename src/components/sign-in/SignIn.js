@@ -134,6 +134,7 @@ function SignIn() {
           <SignInInput
             type="email"
             name="userEmail"
+            required
             value={email}
             placeholder="youremail@email.com"
             id="userEmail"
@@ -143,6 +144,7 @@ function SignIn() {
           <SignInInput
             type="password"
             name="userPassword"
+            required
             value={password}
             placeholder="Your password"
             id="userPassword"

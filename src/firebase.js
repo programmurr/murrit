@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
+import "firebase/firebase-storage";
 
 // TODO:
 // Set up emulator to test auth functionality
@@ -18,16 +19,22 @@ firebase.initializeApp(firebaseConfig);
 
 // Firestore
 const db = firebase.firestore();
+if (window.location.hostname === "localhost") {
+  db.useEmulator("localhost", 8080);
+}
 
 // Auth
 const auth = firebase.auth();
+if (window.location.hostname === "localhost") {
+  auth.useEmulator("http://localhost:9099");
+}
 
 const provider = new firebase.auth.GoogleAuthProvider();
 const signInWithGoogle = () => {
   auth.signInWithPopup(provider)
 }
 
-// User handling
+// Auth - User handling
 const getUserDocument = async (uid) => {
   if (!uid) return null;
   try {
@@ -60,4 +67,13 @@ export const generateUserDocument = async (user, additionalData) => {
   return getUserDocument(user.uid);
 };
 
-export { db, auth, signInWithGoogle };
+// Storage
+
+const storage = firebase.storage();
+if (window.location.hostname === "localhost") {
+  storage.useEmulator("localhost", 9199);
+}
+storage.useEmulator("localhost", 9199);
+
+
+export { db, auth, signInWithGoogle, storage };
