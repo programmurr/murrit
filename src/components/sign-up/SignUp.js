@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { generateUserDocument, signInWithGoogle } from '../../firebase';
@@ -29,7 +29,7 @@ const SignUpHeaderContainer = styled.div`
 
 const SignUpElements = styled.div`
   width: 95%;
-  height: 50vh;
+  height: 55vh;
   margin-top: 10px;
   padding-bottom: 10px;
   max-width: 955.6px;
@@ -91,20 +91,55 @@ const GoogleSignInButton = styled(SignUpButton)`
   }
 `;
 
-function SignUp() {
+const PasswordErrorSpan = styled.span`
+  display: ${props => props.active ? "block" : "none" };
+  width: 30%;
+  text-align: center;
+  justify-self: center;
+  font-size: 0.75rem;
+  background-color: #ff0000;
+  color: #ffffff;
+  padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid black;
+  border-radius: 3px;
+  font-weight: 600;
+`;
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [displayName, setDisplayName] = useState("");
-  const [error, setError] = useState(null);
+function SignUp() {
   const posts = [];
   const comments = [];
 
-  // TODO:
-  // Set up password verification
+  const passwordErrorSpan = useRef(null);
+  const passwordBox = useRef(null);
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [displayName, setDisplayName] = useState("");
+  const [error, setError] = useState(null);
+
   const verifyPasswords = () => {
-    // verify passwords
+    if (password === confirmPassword) {
+      return true;
+    }
+    return false;
+  }
+
+  const resetForm = () => {
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setDisplayName("");
+  }
+
+  const handlePasswordError = () => {
+    passwordErrorSpan.current.textContent = "Passwords don't match";
+    passwordBox.current.focus();
+    setPasswordError(true);
+    setPassword("");
+    setConfirmPassword("");
   }
 
   const createUserWithEmailAndPasswordHandler = async (event, email, password) => {
@@ -117,14 +152,9 @@ function SignUp() {
       } catch (error) {
         setError("Error signing up with email and password");
       }
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
-      setDisplayName("");
+      resetForm();
     } else {
-      setError("Passwords do not match");
-      setPassword("");
-      setConfirmPassword("");
+      handlePasswordError();
     }
   };
 
@@ -150,15 +180,15 @@ function SignUp() {
   };
 
   return (
-    <SignUpContainer>
-      <SignUpHeaderContainer>
+    <SignUpContainer className="SignUpContainer">
+      <SignUpHeaderContainer className="SignUpHeaderContainer">
         <h1>Sign Up</h1>
       </SignUpHeaderContainer>
-      <SignUpElements>
+      <SignUpElements className="SignUpElements">
         {error !== null && (
           <div>{error}</div>
         )}
-        <SignUpForm>
+        <SignUpForm  className="SignUpForm">
           <SignUpLabel htmlFor="displayName">Display Name:</SignUpLabel>
           <SignUpInput
             type="text"
@@ -179,7 +209,7 @@ function SignUp() {
             required
             onChange={event => onChangeHandler(event)}
           />
-          <SignUpLabel htmlFor="userPassword">Password:</SignUpLabel>
+          <SignUpLabel htmlFor="userPassword">Password (16 - 40 characters):</SignUpLabel>
           <SignUpInput
             type="password"
             name="userPassword"
@@ -189,8 +219,10 @@ function SignUp() {
             required
             minLength="16"
             maxLength="40"
+            ref={passwordBox}
             onChange={event => onChangeHandler(event)}
           />
+          <PasswordErrorSpan active={passwordError} ref={passwordErrorSpan}/>
           <SignUpLabel htmlFor="confirmPassword">Confirm password:</SignUpLabel>
           <SignUpInput
             type="password"

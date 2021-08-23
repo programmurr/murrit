@@ -211,7 +211,6 @@ function Submit() {
     }
   }
 
-
   const resetErrors = () => {
     titleError.current.textContent = "";
     submitError.current.textContent = "";
@@ -278,7 +277,7 @@ function Submit() {
     return false;
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = () => {
     const errors = checkForErrors();
     if (!errors) {
       resetErrors();
