@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router';
 import testPostData from '../../utils/posts';
@@ -8,6 +8,10 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { CancelPost, SubmitPost } from './SubmissionButtons';
 import ImageUploader from './ImageUploader';
+import { UserContext } from '../../providers/UserProvider';
+import { generatePostDocument } from '../../firebase';
+import { format } from 'date-fns';
+
 
 const SubmitContainer = styled.div`
   width: 100vw;
@@ -161,6 +165,12 @@ const SubmitError = styled(TitleError)`
 
 function Submit() {
   let history = useHistory();
+  const user = useContext(UserContext);
+
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => {
+    setCurrentUser(user);
+  }, [user]);
 
   const titleBox = useRef(null);
   const titleError = useRef(null);
@@ -176,7 +186,10 @@ function Submit() {
     setBoards(uniqueBoards);
   }, [data]);
 
-  const [selectedBoard, setSelectedBoard] = useState(boards[0]);
+  const [selectedBoard, setSelectedBoard] = useState([]);
+  useEffect(() => {
+    setSelectedBoard(boards[0]);
+  }, [boards]);
   const [postTabSelected, setPostTabSelected] = useState(true);
   const [imageTabSelected, setImageTabSelected] = useState(false);
 
@@ -279,9 +292,25 @@ function Submit() {
 
   const handleSubmit = () => {
     const errors = checkForErrors();
-    if (!errors) {
+    if (!errors && (currentUser !== null || currentUser !== undefined)) {
+      if (postTabSelected) {
+        const post = {
+          author: currentUser.uid,
+          time: format(new Date(), 'yyyy-MM-dd:HH:mm:ss'),
+          board: selectedBoard,
+          title: title.value,
+          content: text,
+          votes: 1,
+          comments: []
+        };
+        generatePostDocument(post);
+        // Use Cloud Functions to add postId to user's posts Array 
+        // https://firebase.google.com/docs/functions/firestore-events#data_outside_the_trigger_event
+      } else {
+
+      }
       resetErrors();
-      alert("Success");
+      // reset text boxes to blank (beware of title hook)
     }
   }
 

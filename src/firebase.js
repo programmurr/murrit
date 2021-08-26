@@ -23,6 +23,11 @@ if (window.location.hostname === "localhost") {
   db.useEmulator("localhost", 8080);
 }
 
+const generatePostDocument = (post) => {
+  const newPostRef = db.collection("posts").doc();
+  newPostRef.set(post);
+}
+
 // Auth
 const auth = firebase.auth();
 if (window.location.hostname === "localhost") {
@@ -53,11 +58,10 @@ export const generateUserDocument = async (user, additionalData) => {
   const userRef = db.doc(`users/${user.uid}`);
   const snapshot = await userRef.get();
   if (!snapshot.exists) {
-    const { email, displayName } = user;
+    const { displayName } = user;
     try {
       await userRef.set({
         displayName,
-        email,
         ...additionalData
       });
     } catch (error) {
@@ -73,7 +77,6 @@ const storage = firebase.storage();
 if (window.location.hostname === "localhost") {
   storage.useEmulator("localhost", 9199);
 }
-storage.useEmulator("localhost", 9199);
 
 
-export { db, auth, signInWithGoogle, storage };
+export { db, auth, signInWithGoogle, storage, generatePostDocument };
