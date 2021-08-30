@@ -306,10 +306,11 @@ function Submit() {
         };
         generatePostDocument(post);
       } else {
+        // generate a post and image at the same time? 
+        // e.g. upload the image to storage, then make a post referencing that image?
         generateImageDocument(selectedBoard, image);
       }
       resetErrors();
-      // reset text boxes to blank (beware of title hook)
       // redirect to newly-created post page
     }
   }

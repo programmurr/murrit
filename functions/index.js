@@ -1,11 +1,13 @@
+'use strict';
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const path = require("path");
 admin.initializeApp();
 
 const db = admin.firestore();
 
 // Update the user's post history with the postId
-exports.writeToFirestore = functions.firestore
+exports.updateUserPostHistory = functions.firestore
     .document("posts/{postId}")
     .onCreate((snap, context) => {
       const newPost = snap.data();
@@ -28,3 +30,8 @@ exports.writeToFirestore = functions.firestore
           });
     });
 
+exports.makePostFromStorageFile = functions.storage.object().onFinalize(async (object) => {
+  // object.bucket is murrit-ec42e.appspot.com
+  // object.name is food/2021-02-12_22-34.png
+  // object.contentType is image/png
+})

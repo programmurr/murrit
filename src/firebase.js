@@ -3,9 +3,6 @@ import "firebase/firestore";
 import "firebase/auth";
 import "firebase/firebase-storage";
 
-// TODO:
-// Set up emulator to test auth functionality
-
 const firebaseConfig = {
   apiKey: "AIzaSyDMls1bWaSm9CtXGMZN0Ad4VoUWNtDb_mc",
   authDomain: "murrit-ec42e.firebaseapp.com",
@@ -72,7 +69,6 @@ export const generateUserDocument = async (user, additionalData) => {
 };
 
 // Storage
-
 const storage = firebase.storage();
 if (window.location.hostname === "localhost") {
   storage.useEmulator("localhost", 9199);
@@ -91,4 +87,5 @@ export {
   signInWithGoogle,
   storage, 
   generatePostDocument, 
-  generateImageDocument };
+  generateImageDocument 
+};
