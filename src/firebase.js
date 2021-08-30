@@ -78,5 +78,17 @@ if (window.location.hostname === "localhost") {
   storage.useEmulator("localhost", 9199);
 }
 
+const generateImageDocument = (board, file) => {
+  const ref = storage.ref().child(`${board}/${file.name}`);
+  ref.put(file).then(() => {
+    console.log("Uploaded a file!");
+  });
+}
 
-export { db, auth, signInWithGoogle, storage, generatePostDocument };
+export { 
+  db, 
+  auth,
+  signInWithGoogle,
+  storage, 
+  generatePostDocument, 
+  generateImageDocument };

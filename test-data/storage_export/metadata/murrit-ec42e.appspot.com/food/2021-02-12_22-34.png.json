@@ -1,0 +1,19 @@
+{
+  "name": "food/2021-02-12_22-34.png",
+  "bucket": "murrit-ec42e.appspot.com",
+  "contentType": "image/png",
+  "metageneration": 1,
+  "generation": 1630358860132,
+  "storageClass": "STANDARD",
+  "etag": "someETag",
+  "contentDisposition": "inline",
+  "contentEncoding": "identity",
+  "downloadTokens": [
+    "dba0a58b-e96e-43ab-bf14-b063efa57a54"
+  ],
+  "timeCreated": "2021-08-30T21:27:40.131Z",
+  "updated": "2021-08-30T21:27:40.133Z",
+  "size": 339030,
+  "md5Hash": "dRBZKYhvbQIM+0jko+l3Pw==",
+  "crc32c": "3542623639"
+}

@@ -9,7 +9,7 @@ import 'react-quill/dist/quill.snow.css';
 import { CancelPost, SubmitPost } from './SubmissionButtons';
 import ImageUploader from './ImageUploader';
 import { UserContext } from '../../providers/UserProvider';
-import { generatePostDocument } from '../../firebase';
+import { generatePostDocument, generateImageDocument } from '../../firebase';
 import { format } from 'date-fns';
 
 
@@ -190,6 +190,7 @@ function Submit() {
   useEffect(() => {
     setSelectedBoard(boards[0]);
   }, [boards]);
+
   const [postTabSelected, setPostTabSelected] = useState(true);
   const [imageTabSelected, setImageTabSelected] = useState(false);
 
@@ -304,13 +305,12 @@ function Submit() {
           comments: []
         };
         generatePostDocument(post);
-        // Use Cloud Functions to add postId to user's posts Array 
-        // https://firebase.google.com/docs/functions/firestore-events#data_outside_the_trigger_event
       } else {
-
+        generateImageDocument(selectedBoard, image);
       }
       resetErrors();
       // reset text boxes to blank (beware of title hook)
+      // redirect to newly-created post page
     }
   }
 

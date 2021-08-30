@@ -4,6 +4,7 @@ admin.initializeApp();
 
 const db = admin.firestore();
 
+// Update the user's post history with the postId
 exports.writeToFirestore = functions.firestore
     .document("posts/{postId}")
     .onCreate((snap, context) => {
