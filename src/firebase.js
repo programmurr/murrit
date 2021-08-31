@@ -20,9 +20,39 @@ if (window.location.hostname === "localhost") {
   db.useEmulator("localhost", 8080);
 }
 
-const generatePostDocument = (post) => {
-  const newPostRef = db.collection("posts").doc();
-  newPostRef.set(post);
+const generatePostDocId = async (post) => {
+  return await db.collection("posts").add(post)
+    .then((docRef) => {
+      return docRef.id;
+    });
+}
+
+const updateUserDoc = (userId, postId) => {
+  db.collection("users").doc(`${userId}`)
+    .get()
+    .then((doc) => {
+      const userData = doc.data();
+      const newPosts = [...userData.posts, postId];
+      db.collection("users").doc(`${userId}`).update({
+        posts: newPosts,
+      });
+    })
+    .catch((error) => {
+      console.log("Error getting user document: ", error);
+    });
+}
+
+// Storage
+const storage = firebase.storage();
+if (window.location.hostname === "localhost") {
+  storage.useEmulator("localhost", 9199);
+}
+
+const generateImageDocument = (board, file) => {
+  const ref = storage.ref().child(`${board}/${file.name}`);
+  ref.put(file).then(() => {
+    console.log("Uploaded a file!");
+  });
 }
 
 // Auth
@@ -68,24 +98,13 @@ export const generateUserDocument = async (user, additionalData) => {
   return getUserDocument(user.uid);
 };
 
-// Storage
-const storage = firebase.storage();
-if (window.location.hostname === "localhost") {
-  storage.useEmulator("localhost", 9199);
-}
-
-const generateImageDocument = (board, file) => {
-  const ref = storage.ref().child(`${board}/${file.name}`);
-  ref.put(file).then(() => {
-    console.log("Uploaded a file!");
-  });
-}
 
 export { 
   db, 
   auth,
   signInWithGoogle,
   storage, 
-  generatePostDocument, 
-  generateImageDocument 
+  generatePostDocId, 
+  generateImageDocument,
+  updateUserDoc 
 };

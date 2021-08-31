@@ -9,7 +9,11 @@ import 'react-quill/dist/quill.snow.css';
 import { CancelPost, SubmitPost } from './SubmissionButtons';
 import ImageUploader from './ImageUploader';
 import { UserContext } from '../../providers/UserProvider';
-import { generatePostDocument, generateImageDocument } from '../../firebase';
+import { 
+  generatePostDocId, 
+  generateImageDocument,
+  updateUserDoc 
+} from '../../firebase';
 import { format } from 'date-fns';
 
 
@@ -304,11 +308,14 @@ function Submit() {
           votes: 1,
           comments: []
         };
-        generatePostDocument(post);
+        generatePostDocId(post)
+          .then((postId) => {
+            updateUserDoc(currentUser.uid, postId);
+          })
       } else {
         // generate a post and image at the same time? 
         // e.g. upload the image to storage, then make a post referencing that image?
-        generateImageDocument(selectedBoard, image);
+        generateImageDocument(selectedBoard, image)
       }
       resetErrors();
       // redirect to newly-created post page
