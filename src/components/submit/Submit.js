@@ -15,6 +15,7 @@ import {
   updateUserDoc 
 } from '../../firebase';
 import { format } from 'date-fns';
+import { v4 as uuidv4 } from 'uuid';
 
 
 const SubmitContainer = styled.div`
@@ -297,28 +298,39 @@ function Submit() {
 
   const handleSubmit = () => {
     const errors = checkForErrors();
-    if (!errors && (currentUser !== null || currentUser !== undefined)) {
+    if (!errors && currentUser !== null && currentUser !== undefined) {
+      let post = {
+        postId: uuidv4(),
+        author: currentUser.uid,
+        time: format(new Date(), 'yyyy-MM-dd:HH:mm:ss'),
+        board: selectedBoard,
+        title: title.value,
+        votes: 1,
+        comments: []
+      };
       if (postTabSelected) {
-        const post = {
-          author: currentUser.uid,
-          time: format(new Date(), 'yyyy-MM-dd:HH:mm:ss'),
-          board: selectedBoard,
-          title: title.value,
-          content: text,
-          votes: 1,
-          comments: []
-        };
+        post.content = text;
+        post.type = "written";
         generatePostDocId(post)
           .then((postId) => {
             updateUserDoc(currentUser.uid, postId);
+            history.push(`/p/${postId}`);
           })
+          .catch((error) => { console.error(error) });
       } else {
-        // generate a post and image at the same time? 
-        // e.g. upload the image to storage, then make a post referencing that image?
         generateImageDocument(selectedBoard, image)
+          .then((url) => {
+            post.content = url;
+            post.type = "image";    
+            generatePostDocId(post)
+            .then((postId) => {
+              updateUserDoc(currentUser.uid, postId);
+              history.push(`/p/${postId}`);
+            })
+            .catch((error) => { console.error(error) });
+          });
       }
       resetErrors();
-      // redirect to newly-created post page
     }
   }
 

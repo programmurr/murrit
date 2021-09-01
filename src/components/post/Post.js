@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import UpIcon from '../../img/up-arrow.svg'
-import DownIcon from '../../img/down-arrow.svg'
+import UpIcon from '../../img/up-arrow.svg';
+import DownIcon from '../../img/down-arrow.svg';
+import { db } from '../../firebase';
 
 // FIXME:
 // Being too specific with px styles
@@ -34,8 +35,7 @@ const UpvoteIcon = styled.img`
   margin-bottom: 2px;
   &:hover {
     cursor: pointer;
-    position: relative;
-    top: -2px;
+    background-color: green;
   }
 `;
 
@@ -43,7 +43,8 @@ const DownvoteIcon = styled(UpvoteIcon)`
   margin-bottom: 0;
   margin-top: 2px;
   &:hover {
-    top: 2px;
+    cursor: pointer;
+    background-color: red;
   }
 `;
 
@@ -83,8 +84,11 @@ const PostTitle = styled.h3`
 
 const PostBody = styled.p`
   max-height: 140px;
+  max-width: 824px;
   overflow: hidden;
+  overflow-wrap: break-word;
   font-size: 0.85rem;
+  min-height: 60px;
 `;
 
 // TODO:
@@ -99,6 +103,19 @@ const CommentCount = styled.p`
   padding-top: 30px;
   background-image: linear-gradient(to bottom, transparent, white);
 `;
+
+const ImagePostContainer = styled.div``;
+const ImageBody = styled.div``;
+
+const ImagePostBody = (data) => {
+  return (
+    <ImagePostContainer className="ImagePostContainer">
+      <ImageBody className="ImageBody">
+        {data.content}
+      </ImageBody>
+    </ImagePostContainer>
+  )
+}
 
 function Post(props) {
   let history = useHistory();
@@ -120,13 +137,40 @@ function Post(props) {
     setCommentCount(count);
   }, [data.comments]);
 
+  const [author, setAuthor] = useState("");
+  useEffect(() => {
+    db.collection("users").doc(data.author).get()
+      .then((doc) => {
+        if (doc.exists) {
+          const user = doc.data();
+          setAuthor(user.displayName);
+        } else {
+          setAuthor("[deleted]");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+  }, [data.author])
 
   const handlePostClick = () => {
     history.push(`/p/${data.postId}`);
   }
 
-  const handleUpvote = () => {
-    // Handle upvote
+  const handleUpvote = async () => {
+    db.collection("posts").where("postId", "==", `${data.postId}`)
+      .limit(1)
+      .get()
+      .then((querySnapshot) => {
+        const doc = querySnapshot.docs[0];
+        let updatedDoc = doc.data();
+        updatedDoc.votes += 1;
+        doc.ref.update(updatedDoc);
+        // data updated but re-render not triggered by react
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   const handleDownvote = () => {
@@ -143,7 +187,7 @@ function Post(props) {
       <InnerPostContainer className="InnerPostContainer">
         <InfoContainer className="InfoContainer">
           <Info>
-            Posted by <Link to={`/u/${data.author}`}>{data.author}</Link> {data.time} to <Link to={`/m/${data.board}`}>{data.board}</Link>
+            Posted by <Link to={`/u/${author}`}>{author}</Link> at {data.time} to <Link to={`/m/${data.board}`}>{data.board}</Link>
           </Info>
         </InfoContainer>
         <PostContentContainer className="PostContentContainer" onClick={handlePostClick}>

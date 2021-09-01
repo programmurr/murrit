@@ -48,10 +48,15 @@ if (window.location.hostname === "localhost") {
   storage.useEmulator("localhost", 9199);
 }
 
-const generateImageDocument = (board, file) => {
-  const ref = storage.ref().child(`${board}/${file.name}`);
-  ref.put(file).then(() => {
-    console.log("Uploaded a file!");
+const generateImageDocument = async (board, file) => {
+  return await storage.ref().child(`${board}/${file.name}`)
+    .put(file)
+    .then(() => {
+      return storage.ref().child(`${board}/${file.name}`)
+        .getDownloadURL()
+          .then((url) => {
+            return url;
+          })
   });
 }
 

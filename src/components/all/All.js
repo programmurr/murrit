@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import testPostData from '../../utils/posts';
 import Post from '../post/Post';
 import SortBox from '../sort/SortBox';
+import { db } from '../../firebase';
 
 const AllContainer = styled.div`
   width: 100vw;
@@ -37,8 +37,21 @@ const AllWall = styled.div`
 
 function All() {
 
-  // setData later
-  const [data] = useState(testPostData);
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    db.collection("posts").get()
+      .then((querySnapshot) => {
+        let newData = [];
+        querySnapshot.forEach((doc) => {
+          newData.push(doc.data());
+        });
+        setData(newData);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
   
   // TODO: 
   // Format date to 'X ago'
