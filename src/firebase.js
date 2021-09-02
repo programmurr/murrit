@@ -42,6 +42,39 @@ const updateUserDoc = (userId, postId) => {
     });
 }
 
+const checkUserVoted = async (userId, postId) => {
+  const userVotes = await db.collection("users").doc(userId)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        const userDoc = doc.data();
+        return userDoc.votedPosts;
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  console.log(userVotes);
+  console.log(postId);
+  console.log(userVotes.includes(postId));
+  return userVotes.includes(postId);
+}
+
+const updateUserVotes = (userId, postId) => {
+  db.collection("users").doc(`${userId}`)
+  .get()
+  .then((doc) => {
+    const userData = doc.data();
+    const newVotes = [...userData.votedPosts, postId];
+    db.collection("users").doc(`${userId}`).update({
+      votedPosts: newVotes,
+    });
+  })
+  .catch((error) => {
+    console.log("Error getting user document: ", error);
+  });
+}
+
 // Storage
 const storage = firebase.storage();
 if (window.location.hostname === "localhost") {
@@ -111,5 +144,7 @@ export {
   storage, 
   generatePostDocId, 
   generateImageDocument,
-  updateUserDoc 
+  updateUserDoc,
+  checkUserVoted,
+  updateUserVotes 
 };

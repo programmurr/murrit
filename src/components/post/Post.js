@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import UpIcon from '../../img/up-arrow.svg';
 import DownIcon from '../../img/down-arrow.svg';
-import { db } from '../../firebase';
+import { 
+  db, 
+  checkUserVoted,
+  updateUserVotes
+} from '../../firebase';
+import { UserContext } from '../../providers/UserProvider';
 
 // FIXME:
 // Being too specific with px styles
@@ -121,6 +126,13 @@ function Post(props) {
   let history = useHistory();
   const { data } = props;
 
+  const user = useContext(UserContext);
+
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => {
+    setCurrentUser(user);
+  }, [user]);
+
   const [commentCount, setCommentCount] = useState(0);
   useEffect(() => {
     function flatComments(comments) {
@@ -157,32 +169,45 @@ function Post(props) {
     history.push(`/p/${data.postId}`);
   }
 
-  const handleUpvote = async () => {
-    db.collection("posts").where("postId", "==", `${data.postId}`)
+  const changeVote = (votes, operator) => {
+    switch (operator) {
+      case '+': 
+        return votes += 1;
+      case '-': 
+        return votes -= 1;
+      default:
+        return votes;
+    }
+  }
+
+  const handleVote = async (operator) => {
+    const hasVoted = await checkUserVoted(currentUser.uid, data.postId);
+    if (hasVoted) {
+      alert("You have already voted on this post. You made your choice.")
+    } else {
+      db.collection("posts").where("postId", "==", `${data.postId}`)
       .limit(1)
       .get()
       .then((querySnapshot) => {
         const doc = querySnapshot.docs[0];
         let updatedDoc = doc.data();
-        updatedDoc.votes += 1;
+        updatedDoc.votes = changeVote(updatedDoc.votes, operator);
         doc.ref.update(updatedDoc);
-        // data updated but re-render not triggered by react
+        updateUserVotes(currentUser.uid, data.postId)
+        props.refreshData();
       })
       .catch((error) => {
         console.error(error);
       });
-  }
-
-  const handleDownvote = () => {
-    // Handle downvote
+    }
   }
 
   return (
     <PostContainer className="PostContainer">
       <VoteContainer className="VoteContainer">
-          <UpvoteIcon src={UpIcon} onClick={handleUpvote}/>
+          <UpvoteIcon src={UpIcon} onClick={() => {handleVote('+')}}/>
         <VoteCount>{data.votes}</VoteCount>
-          <DownvoteIcon src={DownIcon} onClick={handleDownvote}/>
+          <DownvoteIcon src={DownIcon} onClick={() => {handleVote('-')}}/>
       </VoteContainer>
       <InnerPostContainer className="InnerPostContainer">
         <InfoContainer className="InfoContainer">

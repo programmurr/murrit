@@ -38,19 +38,29 @@ const AllWall = styled.div`
 function All() {
 
   const [data, setData] = useState([]);
+  const [fetchData, setFetchData] = useState(true);
   useEffect(() => {
-    db.collection("posts").get()
+    if (fetchData) {
+      db.collection("posts").get()
       .then((querySnapshot) => {
         let newData = [];
         querySnapshot.forEach((doc) => {
           newData.push(doc.data());
         });
+        console.log("Data set");
+        console.log("-----");
         setData(newData);
+        setFetchData(false)
       })
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+    }
+  }, [fetchData]);
+
+  const handleRefresh = () => {
+    setFetchData(true);
+  }
 
   
   // TODO: 
@@ -67,6 +77,7 @@ function All() {
           <Post
             key={post.title + index} 
             data={post}
+            refreshData={handleRefresh}
           />
         ))}
       </AllWall>

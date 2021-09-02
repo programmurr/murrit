@@ -109,6 +109,7 @@ const PasswordErrorSpan = styled.span`
 function SignUp() {
   const posts = [];
   const comments = [];
+  const votedPosts = [];
 
   const passwordErrorSpan = useRef(null);
   const passwordBox = useRef(null);
@@ -148,7 +149,7 @@ function SignUp() {
     if (verified) {
       try {
         const { user } = await auth.createUserWithEmailAndPassword(email, password);
-        generateUserDocument(user, { displayName, posts, comments });
+        generateUserDocument(user, { displayName, posts, comments, votedPosts });
       } catch (error) {
         setError("Error signing up with email and password");
       }
