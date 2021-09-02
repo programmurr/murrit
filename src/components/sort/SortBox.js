@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 const SortContainer = styled.div`
@@ -19,19 +19,19 @@ const SortElements = styled.div`
 `;
 
 
-function SortBox() {
+function SortBox(props) {
 
-  const [category, setCategory] = useState("New");
+  const { order } = props;
 
   const handleChange = (event) => {
-    setCategory(event.target.value);
+    props.handleOrderChange(event.target.value);
   }
 
   return (
     <SortContainer className="SortContainer">
       <SortElements className="SortElements" >
         <label htmlFor="SortSelect">Sort by:
-          <select value={category} onChange={handleChange}>
+          <select value={order} onChange={handleChange}>
             <option value="new">New</option>
             <option value="best">Best</option>
           </select>

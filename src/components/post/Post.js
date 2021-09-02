@@ -9,6 +9,7 @@ import {
   updateUserVotes
 } from '../../firebase';
 import { UserContext } from '../../providers/UserProvider';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 // FIXME:
 // Being too specific with px styles
@@ -122,6 +123,7 @@ const ImagePostBody = (data) => {
   )
 }
 
+// RENDER MARKUP
 function Post(props) {
   let history = useHistory();
   const { data } = props;
@@ -163,7 +165,8 @@ function Post(props) {
       .catch((error) => {
         console.error(error);
       })
-  }, [data.author])
+  }, [data.author]);
+
 
   const handlePostClick = () => {
     history.push(`/p/${data.postId}`);
@@ -202,6 +205,11 @@ function Post(props) {
     }
   }
 
+  const formatTime = () => {
+    const formattedTime = formatDistanceToNow(data.time, { addSuffix: true });
+    return formattedTime;
+  }
+
   return (
     <PostContainer className="PostContainer">
       <VoteContainer className="VoteContainer">
@@ -212,7 +220,7 @@ function Post(props) {
       <InnerPostContainer className="InnerPostContainer">
         <InfoContainer className="InfoContainer">
           <Info>
-            Posted by <Link to={`/u/${author}`}>{author}</Link> at {data.time} to <Link to={`/m/${data.board}`}>{data.board}</Link>
+            Posted by <Link to={`/u/${author}`}>{author}</Link> {formatTime()} to <Link to={`/m/${data.board}`}>{data.board}</Link>
           </Info>
         </InfoContainer>
         <PostContentContainer className="PostContentContainer" onClick={handlePostClick}>

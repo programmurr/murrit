@@ -14,7 +14,6 @@ import {
   generateImageDocument,
   updateUserDoc 
 } from '../../firebase';
-import { format } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -302,7 +301,7 @@ function Submit() {
       let post = {
         postId: uuidv4(),
         author: currentUser.uid,
-        time: format(new Date(), 'yyyy-MM-dd:HH:mm:ss'),
+        time: Date.now(),
         board: selectedBoard,
         title: title.value,
         votes: 1,

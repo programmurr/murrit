@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Post from '../post/Post';
 import SortBox from '../sort/SortBox';
-import { db } from '../../firebase';
+import { 
+  db
+} from '../../firebase';
 
 const AllContainer = styled.div`
   width: 100vw;
@@ -38,17 +40,29 @@ const AllWall = styled.div`
 function All() {
 
   const [data, setData] = useState([]);
+  const [order, setOrder] = useState("new");
   const [fetchData, setFetchData] = useState(true);
   useEffect(() => {
-    if (fetchData) {
-      db.collection("posts").get()
+    if (order === "new") {
+      db.collection("posts").orderBy("time", "desc").get()
+        .then((querySnapshot) => {
+          let newData = [];
+          querySnapshot.forEach((doc) => {
+            newData.push(doc.data());
+          });
+          setData(newData);
+          setFetchData(false)
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else if (order === "best") {
+      db.collection("posts").orderBy("votes", "desc").get()
       .then((querySnapshot) => {
         let newData = [];
         querySnapshot.forEach((doc) => {
           newData.push(doc.data());
         });
-        console.log("Data set");
-        console.log("-----");
         setData(newData);
         setFetchData(false)
       })
@@ -56,12 +70,15 @@ function All() {
         console.error(error);
       });
     }
-  }, [fetchData]);
+  }, [fetchData, order]);
 
   const handleRefresh = () => {
     setFetchData(true);
   }
 
+  const handleOrderChange = (newOrder) => {
+    setOrder(newOrder);
+  }
   
   // TODO: 
   // Format date to 'X ago'
@@ -70,7 +87,7 @@ function All() {
     <AllContainer className="AllContainer">
       <AllHeaderContainer>
         <h4>All Posts</h4>
-        <SortBox />
+        <SortBox order={order} handleOrderChange={handleOrderChange}/>
       </AllHeaderContainer>
       <AllWall className="AllWall">
         {data.map((post, index) => (

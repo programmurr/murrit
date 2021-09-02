@@ -54,9 +54,6 @@ const checkUserVoted = async (userId, postId) => {
     .catch((error) => {
       console.error(error);
     });
-  console.log(userVotes);
-  console.log(postId);
-  console.log(userVotes.includes(postId));
   return userVotes.includes(postId);
 }
 
@@ -146,5 +143,5 @@ export {
   generateImageDocument,
   updateUserDoc,
   checkUserVoted,
-  updateUserVotes 
+  updateUserVotes,
 };
