@@ -1,11 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import parse from 'html-react-parser';
 import UpIcon from '../../img/up-arrow.svg'
 import DownIcon from '../../img/down-arrow.svg'
-import testPostData from '../../utils/posts';
 import PostComment from './PostComment';
 import SortBox from '../sort/SortBox';
+import { 
+  db,
+  handleVote
+ } from '../../firebase';
+ import formatTime from '../../utils/formatTime';
+ import { UserContext } from '../../providers/UserProvider';
+
 
 const PostPage = styled.div`
   width: 100vw;
@@ -44,8 +51,7 @@ const UpvoteIcon = styled.img`
   margin-bottom: 2px;
   &:hover {
     cursor: pointer;
-    position: relative;
-    top: -2px;
+    background-color: green;
   }
 `;
 
@@ -53,7 +59,7 @@ const DownvoteIcon = styled(UpvoteIcon)`
   margin-bottom: 0;
   margin-top: 2px;
   &:hover {
-    top: 2px;
+    background-color: red;
   }
 `;
 
@@ -88,7 +94,7 @@ const PostTitle = styled.h3`
   font-size: 1.25rem;
 `;
 
-const PostBody = styled.p`
+const PostBody = styled.div`
   overflow: hidden;
   font-size: 1rem;
 `;
@@ -110,16 +116,70 @@ const CommentWall = styled.div`
   background-color: ${props => props.commentCount === 0 ? "#dae0e6" : "c6e8fc"};
 `;
 
+const ImageContainer = styled.div`
+  height: 75%;
+  align-self: center;
+`;
 
+const ImageBody = styled.img`
+  height: 100%;
+`;
+
+function ImagePost(props) {
+  return (
+    <ImageContainer className="ImageContainer">
+      <ImageBody className="ImageBody" src={props.url} alt=""/>
+    </ImageContainer>
+  )
+}
+
+// Make comments and test their display
 function ViewPost() {
   let { postid } = useParams();
 
-  const [data] = useState(testPostData);
-  const [livePost, setLivePost] = useState();
+  const user = useContext(UserContext);
+
+  const [currentUser, setCurrentUser] = useState(null);
   useEffect(() => {
-    const livePost = data.filter((post) => post.postId === postid)[0];
-    setLivePost(livePost);
-  }, [data, postid]);
+    setCurrentUser(user);
+  }, [user]);
+
+  const [livePost, setLivePost] = useState();
+  const [refreshData, setRefreshData] = useState(true);
+  useEffect(() => {
+    if (refreshData) {
+      db.collection("posts").where("postId", "==", `${postid}`)
+      .limit(1)
+      .get()
+      .then((querySnapshot) => {
+        const doc = querySnapshot.docs[0];
+        const post = doc.data();
+        setLivePost(post);
+        setRefreshData(false);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+    }
+  }, [postid, refreshData]);
+
+  const [author, setAuthor] = useState("");
+  useEffect(() => {
+    if (livePost !== undefined) {
+      db.collection("users").doc(livePost.author).get()
+      .then((doc) => {
+        if (doc.exists) {
+          const user = doc.data();
+          setAuthor(user.displayName);
+        } else {
+          setAuthor("[deleted]");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+    }
+  }, [livePost]);
 
   const [commentCount, setCommentCount] = useState(0);
   useEffect(() => {
@@ -139,12 +199,9 @@ function ViewPost() {
     }
   }, [livePost]);
 
-  const handleUpvote = () => {
-    // handle Upvote
-  }
-
-  const handleDownvote = () => {
-    // handle Downvote
+  const handleVoteClick = async (operator) => {
+    await handleVote(operator, currentUser.uid, livePost);
+    setRefreshData(true);
   }
 
   if (livePost !== undefined) {
@@ -152,21 +209,22 @@ function ViewPost() {
       <PostPage className="PostPage">
         <PostContainer className="PostContainer">
           <VoteContainer className="VoteContainer">
-            <UpvoteIcon src={UpIcon} onClick={handleUpvote}/>
+            <UpvoteIcon src={UpIcon} onClick={() => {handleVoteClick('+')}}/>
             <VoteCount>{livePost.votes}</VoteCount>
-            <DownvoteIcon src={DownIcon} onClick={handleDownvote}/>
+            <DownvoteIcon src={DownIcon} onClick={() => {handleVoteClick('-')}}/>
           </VoteContainer>
           <InnerPostContainer className="InnerPostContainer">
           <InfoContainer className="InfoContainer">
             <Info>
-              Posted by <Link to={`/u/${livePost.author}`}>{livePost.author}</Link> {livePost.time} to <Link to={`/m/${livePost.board}`}>{livePost.board}</Link>
+              Posted by <Link to={`/u/${author}`}>{author}</Link> {formatTime(livePost)} to <Link to={`/m/${livePost.board}`}>{livePost.board}</Link>
             </Info>
           </InfoContainer>
           <PostContentContainer className="PostContentContainer">
               <PostTitle >{livePost.title}</PostTitle>
-              <PostBody className="PostBody">
-                {livePost.content}
-              </PostBody>
+              {livePost.type === "written"
+                ? <PostBody className="PostBody">{parse(livePost.content)}</PostBody>
+                : <ImagePost url={livePost.content} />
+              }
               <CommentCount className="CommentCount">{
                 commentCount === 0
                 ? "No comments"
@@ -185,7 +243,7 @@ function ViewPost() {
               <PostComment key={comment.author + index} data={comment} isReply={false}/>
             ))
             : <div>
-                Be the first to comment by logging in or signing up!
+                Sign up or log in and be the first to comment!
               </div>
           }
         </CommentWall>

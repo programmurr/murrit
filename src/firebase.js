@@ -2,6 +2,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
 import "firebase/firebase-storage";
+import changeVote from "./utils/changeVote";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDMls1bWaSm9CtXGMZN0Ad4VoUWNtDb_mc",
@@ -70,6 +71,27 @@ const updateUserVotes = (userId, postId) => {
   .catch((error) => {
     console.log("Error getting user document: ", error);
   });
+}
+
+const handleVote = async (operator, userId, data) => {
+  const hasVoted = await checkUserVoted(userId, data.postId);
+  if (hasVoted) {
+    alert("You have already voted on this post. You made your choice.")
+  } else {
+    db.collection("posts").where("postId", "==", `${data.postId}`)
+    .limit(1)
+    .get()
+    .then((querySnapshot) => {
+      const doc = querySnapshot.docs[0];
+      let updatedDoc = doc.data();
+      updatedDoc.votes = changeVote(updatedDoc.votes, operator);
+      doc.ref.update(updatedDoc);
+      updateUserVotes(userId, data.postId)
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }
 }
 
 // Storage
@@ -144,4 +166,5 @@ export {
   updateUserDoc,
   checkUserVoted,
   updateUserVotes,
+  handleVote
 };

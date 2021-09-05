@@ -6,11 +6,10 @@ import UpIcon from '../../img/up-arrow.svg';
 import DownIcon from '../../img/down-arrow.svg';
 import { 
   db, 
-  checkUserVoted,
-  updateUserVotes
+  handleVote
 } from '../../firebase';
+import formatTime from '../../utils/formatTime';
 import { UserContext } from '../../providers/UserProvider';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 // FIXME:
 // Being too specific with px styles
@@ -100,8 +99,6 @@ const PostBody = styled.div`
   min-height: 60px;
 `;
 
-// TODO:
-// Fix opacity on bottom of body
 const CommentCount = styled.p`
   font-size: 0.75rem;
   width: 100%;
@@ -124,8 +121,6 @@ function ImagePost(props) {
   )
 }
 
-
-// RENDER MARKUP
 function Post(props) {
   let history = useHistory();
   const { data } = props;
@@ -174,55 +169,22 @@ function Post(props) {
     history.push(`/p/${data.postId}`);
   }
 
-  const changeVote = (votes, operator) => {
-    switch (operator) {
-      case '+': 
-        return votes += 1;
-      case '-': 
-        return votes -= 1;
-      default:
-        return votes;
-    }
-  }
-
-  const handleVote = async (operator) => {
-    const hasVoted = await checkUserVoted(currentUser.uid, data.postId);
-    if (hasVoted) {
-      alert("You have already voted on this post. You made your choice.")
-    } else {
-      db.collection("posts").where("postId", "==", `${data.postId}`)
-      .limit(1)
-      .get()
-      .then((querySnapshot) => {
-        const doc = querySnapshot.docs[0];
-        let updatedDoc = doc.data();
-        updatedDoc.votes = changeVote(updatedDoc.votes, operator);
-        doc.ref.update(updatedDoc);
-        updateUserVotes(currentUser.uid, data.postId)
-        props.refreshData();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    }
-  }
-
-  const formatTime = () => {
-    const formattedTime = formatDistanceToNow(data.time, { addSuffix: true });
-    return formattedTime;
+  const handleVoteClick = async (operator) => {
+    await handleVote(operator, currentUser.uid, data);
+    props.refreshData();
   }
 
   return (
     <PostContainer className="PostContainer">
       <VoteContainer className="VoteContainer">
-          <UpvoteIcon src={UpIcon} onClick={() => {handleVote('+')}}/>
+          <UpvoteIcon src={UpIcon} onClick={() => {handleVoteClick('+')}}/>
         <VoteCount>{data.votes}</VoteCount>
-          <DownvoteIcon src={DownIcon} onClick={() => {handleVote('-')}}/>
+          <DownvoteIcon src={DownIcon} onClick={() => {handleVoteClick('-')}}/>
       </VoteContainer>
       <InnerPostContainer className="InnerPostContainer">
         <InfoContainer className="InfoContainer">
           <Info>
-            Posted by <Link to={`/u/${author}`}>{author}</Link> {formatTime()} to <Link to={`/m/${data.board}`}>{data.board}</Link>
+            Posted by <Link to={`/u/${author}`}>{author}</Link> {formatTime(data)} to <Link to={`/m/${data.board}`}>{data.board}</Link>
           </Info>
         </InfoContainer>
         <PostContentContainer className="PostContentContainer" onClick={handlePostClick}>
