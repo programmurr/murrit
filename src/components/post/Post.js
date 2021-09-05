@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import parse from 'html-react-parser';
 import UpIcon from '../../img/up-arrow.svg';
 import DownIcon from '../../img/down-arrow.svg';
 import { 
@@ -17,7 +18,7 @@ const PostContainer = styled.div`
   display: flex;
   width: 95%;
   max-width: 955.6px;
-  max-height: 200px;
+  max-height: 250px;
   margin-top: 5px;
   margin-bottom: 20px;
   border-top: 5px solid white;
@@ -76,8 +77,10 @@ const Info = styled.p`
 `;
 
 const PostContentContainer = styled.div`
-  height: 100%;
-  position: relative;
+  height: 95%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   &:hover {
     cursor: pointer
   }
@@ -88,7 +91,7 @@ const PostTitle = styled.h3`
   font-size: 1.25rem;
 `;
 
-const PostBody = styled.p`
+const PostBody = styled.div`
   max-height: 140px;
   max-width: 824px;
   overflow: hidden;
@@ -101,27 +104,26 @@ const PostBody = styled.p`
 // Fix opacity on bottom of body
 const CommentCount = styled.p`
   font-size: 0.75rem;
-  position: absolute;
-  bottom: 0;
-  left: 0;
   width: 100%;
-  margin: 0;
-  padding-top: 30px;
-  background-image: linear-gradient(to bottom, transparent, white);
 `;
 
-const ImagePostContainer = styled.div``;
-const ImageBody = styled.div``;
+const ImageContainer = styled.div`
+  height: 75%;
+  align-self: center;
+`;
 
-const ImagePostBody = (data) => {
+const ImageBody = styled.img`
+  height: 100%;
+`;
+
+function ImagePost(props) {
   return (
-    <ImagePostContainer className="ImagePostContainer">
-      <ImageBody className="ImageBody">
-        {data.content}
-      </ImageBody>
-    </ImagePostContainer>
+    <ImageContainer className="ImageContainer">
+      <ImageBody className="ImageBody" src={props.url} alt=""/>
+    </ImageContainer>
   )
 }
+
 
 // RENDER MARKUP
 function Post(props) {
@@ -225,9 +227,10 @@ function Post(props) {
         </InfoContainer>
         <PostContentContainer className="PostContentContainer" onClick={handlePostClick}>
             <PostTitle >{data.title}</PostTitle>
-            <PostBody className="PostBody">
-              {data.content}
-            </PostBody>
+            {data.type === "written"
+              ? <PostBody className="PostBody">{parse(data.content)}</PostBody>
+              : <ImagePost url={data.content} />
+            }
             <CommentCount className="CommentCount" onClick={handlePostClick}>{
               commentCount === 0
               ? "No comments"
