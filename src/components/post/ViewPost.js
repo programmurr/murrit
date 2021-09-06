@@ -42,7 +42,7 @@ const VoteContainer = styled.div`
   align-items: center;
   justify-content: center;
   border-right: 1px solid white;
-  width: 40px;
+  width: 5%;
   background-color: #fafafa;
 `;
 
@@ -72,7 +72,7 @@ const VoteCount = styled.p`
 const InnerPostContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 95%;
   background-color: #ffffff;
 `;
 
@@ -85,8 +85,6 @@ const Info = styled.p`
 `;
 
 const PostContentContainer = styled.div`
-  height: 100%;
-  position: relative;
 `;
 
 const PostTitle = styled.h3`
@@ -95,7 +93,8 @@ const PostTitle = styled.h3`
 `;
 
 const PostBody = styled.div`
-  overflow: hidden;
+  overflow-wrap: break-word;
+  height: auto;
   font-size: 1rem;
 `;
 
@@ -117,8 +116,9 @@ const CommentWall = styled.div`
 `;
 
 const ImageContainer = styled.div`
-  height: 75%;
-  align-self: center;
+  height: 90%;
+  display: flex;
+  justify-content: center;
 `;
 
 const ImageBody = styled.img`
@@ -133,7 +133,10 @@ function ImagePost(props) {
   )
 }
 
+// TODO:
+// Fix overflow wrap for comments with lots of text
 // Make comments and test their display
+// Implement voting for comments
 function ViewPost() {
   let { postid } = useParams();
 

@@ -171,6 +171,17 @@ function Submit() {
   let history = useHistory();
   const user = useContext(UserContext);
 
+  const quillModules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline'],
+      ['link'],
+    ],
+  }
+
+  const quillFormats = ['header', 'bold', 'italic', 'underline', 'link']
+  
+
   const [currentUser, setCurrentUser] = useState(null);
   useEffect(() => {
     setCurrentUser(user);
@@ -379,6 +390,8 @@ function Submit() {
               value={text}
               placeholder="Write your post here (optional)" 
               onChange={setText} 
+              modules={quillModules}
+              formats={quillFormats}
             />
           : <ImageUploader handleFile={handleImage}/>
           }
