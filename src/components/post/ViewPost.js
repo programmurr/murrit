@@ -5,6 +5,7 @@ import parse from 'html-react-parser';
 import UpIcon from '../../img/up-arrow.svg'
 import DownIcon from '../../img/down-arrow.svg'
 import PostComment from './PostComment';
+import WriteComment from '../comment/WriteComment';
 import SortBox from '../sort/SortBox';
 import { 
   db,
@@ -134,7 +135,6 @@ function ImagePost(props) {
 }
 
 // TODO:
-// Fix overflow wrap for comments with lots of text
 // Make comments and test their display
 // Implement voting for comments
 function ViewPost() {
@@ -148,6 +148,7 @@ function ViewPost() {
   }, [user]);
 
   const [livePost, setLivePost] = useState();
+  const [commentCount, setCommentCount] = useState(0);
   const [refreshData, setRefreshData] = useState(true);
   useEffect(() => {
     if (refreshData) {
@@ -157,7 +158,9 @@ function ViewPost() {
       .then((querySnapshot) => {
         const doc = querySnapshot.docs[0];
         const post = doc.data();
+        const count = post.comments.length;
         setLivePost(post);
+        setCommentCount(count);
         setRefreshData(false);
       })
       .catch((error) => {
@@ -181,24 +184,6 @@ function ViewPost() {
       .catch((error) => {
         console.error(error);
       })
-    }
-  }, [livePost]);
-
-  const [commentCount, setCommentCount] = useState(0);
-  useEffect(() => {
-    if (livePost !== undefined) {
-      function flatComments(comments) {
-        let result = [];
-        comments.forEach((comment) => {
-          result.push(comment);
-          if (Array.isArray(comment.comments)) {
-            result = result.concat(flatComments(comment.comments));
-          }
-        });
-        return result;
-      };
-      const count = flatComments(livePost.comments).length;
-      setCommentCount(count);
     }
   }, [livePost]);
 
@@ -241,13 +226,16 @@ function ViewPost() {
         <SortBox />
         <CommentWall className="CommentWall" commentCount={commentCount}>
           {
+            currentUser !== undefined
+              ? <WriteComment postId={livePost.postId}/>
+              : <div>Sign up or log in to comment</div>
+          }
+          {
             commentCount > 0
-            ? livePost.comments.map((comment, index) => (
-              <PostComment key={comment.author + index} data={comment} isReply={false}/>
-            ))
-            : <div>
-                Sign up or log in and be the first to comment!
-              </div>
+              ? livePost.comments.map((comment, index) => (
+                <PostComment key={comment.author + index} data={comment} isReply={false}/>
+                ))
+            : <div>No comments</div>
           }
         </CommentWall>
       </PostPage>

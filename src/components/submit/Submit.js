@@ -324,7 +324,7 @@ function Submit() {
         generatePostDocId(post)
           .then((postId) => {
             updateUserDoc(currentUser.uid, postId);
-            history.push(`/p/${postId}`);
+            history.push(`/p/${post.postId}`);
           })
           .catch((error) => { console.error(error) });
       } else {
@@ -335,7 +335,7 @@ function Submit() {
             generatePostDocId(post)
             .then((postId) => {
               updateUserDoc(currentUser.uid, postId);
-              history.push(`/p/${postId}`);
+              history.push(`/p/${post.postId}`);
             })
             .catch((error) => { console.error(error) });
           });
