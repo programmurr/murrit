@@ -43,13 +43,14 @@ const updateUserDoc = (userId, postId) => {
     });
 }
 
+
 const checkUserVoted = async (userId, postId) => {
   const userVotes = await db.collection("users").doc(userId)
     .get()
     .then((doc) => {
       if (doc.exists) {
         const userDoc = doc.data();
-        return userDoc.votedPosts;
+        return userDoc.votes;
       }
     })
     .catch((error) => {
@@ -63,9 +64,9 @@ const updateUserVotes = (userId, postId) => {
   .get()
   .then((doc) => {
     const userData = doc.data();
-    const newVotes = [...userData.votedPosts, postId];
+    const newVotes = [...userData.votes, postId];
     db.collection("users").doc(`${userId}`).update({
-      votedPosts: newVotes,
+      votes: newVotes,
     });
   })
   .catch((error) => {
@@ -92,6 +93,40 @@ const handleVote = async (operator, userId, data) => {
       console.error(error);
     });
   }
+}
+
+const addComment = async (comment) => {
+  return await db.collection("comments").add(comment);
+}
+
+const updateUserCommentDoc = async (userId, commentId) => {
+  return await db.collection("users").doc(`${userId}`)
+    .get()
+    .then((doc) => {
+      const userData = doc.data();
+      const newComments = [...userData.comments, commentId];
+      db.collection("users").doc(`${userId}`).update({
+        comments: newComments,
+      });
+    })
+    .catch((error) => {
+      console.log("Error getting user document: ", error);
+    });
+}
+
+const updatePostComments = async (postId, commentId) => {
+  return await db.collection("posts").where("postId", "==", `${postId}`)
+    .limit(1)
+    .get()
+    .then((querySnapshot) => {
+      const doc = querySnapshot.docs[0];
+      let updatedDoc = doc.data();
+      updatedDoc.comments = [...updatedDoc.comments, commentId];
+      doc.ref.update(updatedDoc);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 }
 
 // Storage
@@ -166,5 +201,8 @@ export {
   updateUserDoc,
   checkUserVoted,
   updateUserVotes,
-  handleVote
+  handleVote,
+  addComment,
+  updateUserCommentDoc,
+  updatePostComments
 };

@@ -230,13 +230,13 @@ function ViewPost() {
               ? <WriteComment postId={livePost.postId}/>
               : <div>Sign up or log in to comment</div>
           }
-          {
+          {/* {
             commentCount > 0
               ? livePost.comments.map((comment, index) => (
                 <PostComment key={comment.author + index} data={comment} isReply={false}/>
                 ))
             : <div>No comments</div>
-          }
+          } */}
         </CommentWall>
       </PostPage>
     );

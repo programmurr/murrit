@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { auth, signInWithGoogle } from '../../firebase';
 
@@ -92,6 +92,8 @@ const GoogleSignInButton = styled(SignInButton)`
 
 
 function SignIn() {
+  let history= useHistory();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -103,6 +105,7 @@ function SignIn() {
         setError("Error signing in with password and email");
         console.error("Error signing in with password and email", error);
       });
+    history.push('/');
   };
 
   const onChangeHandler = (event) => {
@@ -117,6 +120,7 @@ function SignIn() {
   const handleSignInWithGoogleClick = () => {
     try {
       signInWithGoogle();
+      history.push('/');
     } catch (error) {
       console.error("Error signing in with Google", error)
     }

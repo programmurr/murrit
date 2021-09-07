@@ -9,9 +9,9 @@ function UserProvider(props) {
   useEffect(() => {
     const posts = [];
     const comments = [];  
-    const votedPosts = [];  
+    const votes = [];  
     auth.onAuthStateChanged(async userAuth => {
-      const user = await generateUserDocument(userAuth, { posts, comments, votedPosts });
+      const user = await generateUserDocument(userAuth, { posts, comments, votes });
       setUser(user);
     });
   }, []);

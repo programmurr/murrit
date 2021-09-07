@@ -180,7 +180,6 @@ function Submit() {
   }
 
   const quillFormats = ['header', 'bold', 'italic', 'underline', 'link']
-  
 
   const [currentUser, setCurrentUser] = useState(null);
   useEffect(() => {
@@ -309,8 +308,9 @@ function Submit() {
   const handleSubmit = () => {
     const errors = checkForErrors();
     if (!errors && currentUser !== null && currentUser !== undefined) {
+      const postId = `pos_${uuidv4()}`;
       let post = {
-        postId: uuidv4(),
+        postId: postId,
         author: currentUser.uid,
         time: Date.now(),
         board: selectedBoard,
@@ -322,7 +322,7 @@ function Submit() {
         post.content = text;
         post.type = "written";
         generatePostDocId(post)
-          .then((postId) => {
+          .then(() => {
             updateUserDoc(currentUser.uid, postId);
             history.push(`/p/${post.postId}`);
           })
@@ -333,11 +333,11 @@ function Submit() {
             post.content = url;
             post.type = "image";    
             generatePostDocId(post)
-            .then((postId) => {
-              updateUserDoc(currentUser.uid, postId);
-              history.push(`/p/${post.postId}`);
-            })
-            .catch((error) => { console.error(error) });
+              .then(() => {
+                updateUserDoc(currentUser.uid, postId);
+                history.push(`/p/${post.postId}`);
+              })
+              .catch((error) => { console.error(error) });
           });
       }
       resetErrors();

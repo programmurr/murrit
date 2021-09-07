@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { generateUserDocument, signInWithGoogle } from '../../firebase';
 import { auth } from '../../firebase';
 
@@ -107,9 +107,11 @@ const PasswordErrorSpan = styled.span`
 `;
 
 function SignUp() {
+  let history = useHistory();
+
   const posts = [];
   const comments = [];
-  const votedPosts = [];
+  const votes = [];
 
   const passwordErrorSpan = useRef(null);
   const passwordBox = useRef(null);
@@ -149,7 +151,8 @@ function SignUp() {
     if (verified) {
       try {
         const { user } = await auth.createUserWithEmailAndPassword(email, password);
-        generateUserDocument(user, { displayName, posts, comments, votedPosts });
+        generateUserDocument(user, { displayName, posts, comments, votes });
+        history.push('/');
       } catch (error) {
         setError("Error signing up with email and password");
       }
@@ -175,6 +178,7 @@ function SignUp() {
   const handleSignInWithGoogleClick = () => {
     try {
       signInWithGoogle();
+      history.push('/');
     } catch (error) {
       console.error("Error signing in with Google", error)
     }
