@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import UpIcon from '../../img/up-arrow.svg'
-import DownIcon from '../../img/down-arrow.svg'
+import UpIcon from '../../img/up-arrow.svg';
+import DownIcon from '../../img/down-arrow.svg';
+import {
+  db,
+  getComment,
+  getCommentIds
+} from '../../firebase';
 
 const CommentContainer = styled.div`
   display: flex;
@@ -85,6 +90,44 @@ const CommentBody = styled.p`
 function PostComment(props) {
   const { data, isReply } = props;
 
+  const [author, setAuthor] = useState("");
+  useEffect(() => {
+    db.collection("users").doc(data.author).get()
+    .then((doc) => {
+      if (doc.exists) {
+        const user = doc.data();
+        setAuthor(user.displayName);
+      } else {
+        setAuthor("[deleted]");
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    })
+  }, [data]);
+
+  const [comments, setComments] = useState([]);
+  useEffect(() => {
+    if (data.comments.length > 0) {
+      getCommentIds(data.commentId)
+        .then((commentIds) => {
+          const commentPromises = commentIds.map((commentId) => {
+            return getComment(commentId);
+          });
+          Promise.all(commentPromises)
+            .then((comments) => {
+              setComments(comments);
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [data]);
+
   return (
     <CommentContainer className="CommentContainer">
       <ThreadContainer className="ThreadContainer" isReply={isReply}>
@@ -93,7 +136,7 @@ function PostComment(props) {
       <InnerCommentContainer className="InnerCommentContainer">
         <CommentInfo className="CommentInfoContainer">
           <CommentInfoElements className="CommentInfoElements">
-            <Link to={`/u/${data.author}`}>{data.author}</Link>
+            <Link to={`/u/${author}`}>{author}</Link>
             <VoteContainer>
               <Upvote src={UpIcon} alt="Upvote Icon"/>{data.votes} votes<Downvote src={DownIcon} alt="Downvote Icon"/>
             </VoteContainer> 
@@ -104,8 +147,8 @@ function PostComment(props) {
         </CommentInfo>
         <CommentBody className="CommentBody">{data.comment}</CommentBody>
         {
-          data.comments.length > 0
-          ? data.comments.map((comment, index) => (
+          comments.length > 0
+          ? comments.map((comment, index) => (
             <PostComment key={comment.author + index} data={comment} isReply={true}/>
           ))
           : <div className="BlanketyBlank"/>

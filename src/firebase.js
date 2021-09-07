@@ -29,7 +29,7 @@ const generatePostDocId = async (post) => {
 }
 
 const updateUserDoc = (userId, postId) => {
-  db.collection("users").doc(`${userId}`)
+  db.collection("users").doc(userId)
     .get()
     .then((doc) => {
       const userData = doc.data();
@@ -60,7 +60,7 @@ const checkUserVoted = async (userId, postId) => {
 }
 
 const updateUserVotes = (userId, postId) => {
-  db.collection("users").doc(`${userId}`)
+  db.collection("users").doc(userId)
   .get()
   .then((doc) => {
     const userData = doc.data();
@@ -115,7 +115,7 @@ const updateUserCommentDoc = async (userId, commentId) => {
 }
 
 const updatePostComments = async (postId, commentId) => {
-  return await db.collection("posts").where("postId", "==", `${postId}`)
+  return await db.collection("posts").where("postId", "==", postId)
     .limit(1)
     .get()
     .then((querySnapshot) => {
@@ -127,6 +127,49 @@ const updatePostComments = async (postId, commentId) => {
     .catch((error) => {
       console.error(error);
     });
+}
+
+const getPostCommentIds = async (postId) => {
+  let commentsArray = [];
+  await db.collection("posts").where("postId", "==", postId)
+    .limit(1)
+    .get()
+    .then((querySnapshot) => {
+      const doc = querySnapshot.docs[0];
+      const post = doc.data();
+      post.comments.forEach((comment) => {
+        commentsArray.push(comment);
+      })
+    })
+  return commentsArray;
+}
+
+const getCommentIds = async (commentId) => {
+  let commentsArray = [];
+  await db.collection("comments").where("commentId", "==", commentId)
+    .limit(1)
+    .get()
+    .then((querySnapshot) => {
+      const doc = querySnapshot.docs[0];
+      const parentComment = doc.data();
+      parentComment.comments.forEach((comment) => {
+        commentsArray.push(comment);
+      })
+    })
+  return commentsArray;
+}
+
+const getComment = async (commentId) => {
+  return await db.collection("comments").where("commentId", "==", commentId)
+    .limit(1)
+    .get()
+    .then((querySnapshot) => {
+      const doc = querySnapshot.docs[0];
+      return doc.data();
+    })
+    .catch((error) => {
+      console.error(error);
+    })
 }
 
 // Storage
@@ -204,5 +247,8 @@ export {
   handleVote,
   addComment,
   updateUserCommentDoc,
-  updatePostComments
+  updatePostComments,
+  getPostCommentIds,
+  getCommentIds,
+  getComment
 };

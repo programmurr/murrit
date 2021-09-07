@@ -9,7 +9,9 @@ import WriteComment from '../comment/WriteComment';
 import SortBox from '../sort/SortBox';
 import { 
   db,
-  handleVote
+  handleVote,
+  getPostCommentIds,
+  getComment
  } from '../../firebase';
  import formatTime from '../../utils/formatTime';
  import { UserContext } from '../../providers/UserProvider';
@@ -152,7 +154,7 @@ function ViewPost() {
   const [refreshData, setRefreshData] = useState(true);
   useEffect(() => {
     if (refreshData) {
-      db.collection("posts").where("postId", "==", `${postid}`)
+      db.collection("posts").where("postId", "==", postid)
       .limit(1)
       .get()
       .then((querySnapshot) => {
@@ -184,6 +186,28 @@ function ViewPost() {
       .catch((error) => {
         console.error(error);
       })
+    }
+  }, [livePost]);
+
+  const [postComments, setPostComments] = useState([]);
+  useEffect(() => {
+    if (livePost !== undefined) {
+      getPostCommentIds(livePost.postId)
+        .then((commentIds) => {
+          const commentPromises = commentIds.map((commentId) => {
+            return getComment(commentId);
+          });
+          Promise.all(commentPromises)
+            .then((comments) => {
+              setPostComments(comments);
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   }, [livePost]);
 
@@ -230,13 +254,13 @@ function ViewPost() {
               ? <WriteComment postId={livePost.postId}/>
               : <div>Sign up or log in to comment</div>
           }
-          {/* {
+          {
             commentCount > 0
-              ? livePost.comments.map((comment, index) => (
+              ? postComments.map((comment, index) => (
                 <PostComment key={comment.author + index} data={comment} isReply={false}/>
                 ))
             : <div>No comments</div>
-          } */}
+          }
         </CommentWall>
       </PostPage>
     );
