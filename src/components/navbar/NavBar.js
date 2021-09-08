@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Logo from './Logo';
 import Title from './Title';
 import LoginArea from './LoginArea';
 import ProfileArea from './ProfileArea';
-import { UserContext } from '../../providers/UserProvider';
+import useUser from '../../hooks/useUser';
 
 
 const OuterNavContainer = styled.div`
@@ -31,23 +31,16 @@ const NavContainer = styled.div`
 `;
 
 function NavBar() {
-  const user = useContext(UserContext);
-
-  const [currentUser, setCurrentUser] = useState(null);
-  useEffect(() => {
-    setCurrentUser(user);
-  }, [user]);
+  const user = useUser();
 
   return (
     <OuterNavContainer className="NavBarContainer">
       <NavContainer className="NavBar" id="nav-bar">
         <Logo />
         <Title />
-        {currentUser === null
+        {user === undefined
           ? <LoginArea />
-          : currentUser === undefined
-            ? <LoginArea />
-            : <ProfileArea user={currentUser}/>
+          : <ProfileArea user={user}/>
         }
       </NavContainer>
     </OuterNavContainer>

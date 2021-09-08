@@ -34,7 +34,7 @@ const updateUserDoc = (userId, postId) => {
     .then((doc) => {
       const userData = doc.data();
       const newPosts = [...userData.posts, postId];
-      db.collection("users").doc(`${userId}`).update({
+      db.collection("users").doc(userId).update({
         posts: newPosts,
       });
     })
@@ -44,7 +44,7 @@ const updateUserDoc = (userId, postId) => {
 }
 
 
-const checkUserVoted = async (userId, postId) => {
+const checkUserVoted = async (userId, dataId) => {
   const userVotes = await db.collection("users").doc(userId)
     .get()
     .then((doc) => {
@@ -56,16 +56,16 @@ const checkUserVoted = async (userId, postId) => {
     .catch((error) => {
       console.error(error);
     });
-  return userVotes.includes(postId);
+  return userVotes.includes(dataId);
 }
 
-const updateUserVotes = (userId, postId) => {
+const updateUserVotes = (userId, dataId) => {
   db.collection("users").doc(userId)
   .get()
   .then((doc) => {
     const userData = doc.data();
-    const newVotes = [...userData.votes, postId];
-    db.collection("users").doc(`${userId}`).update({
+    const newVotes = [...userData.votes, dataId];
+    db.collection("users").doc(userId).update({
       votes: newVotes,
     });
   })
@@ -74,12 +74,12 @@ const updateUserVotes = (userId, postId) => {
   });
 }
 
-const handleVote = async (operator, userId, data) => {
-  const hasVoted = await checkUserVoted(userId, data.postId);
+const handleVote = async (collection, operator, userId, dataId) => {
+  const hasVoted = await checkUserVoted(userId, dataId);
   if (hasVoted) {
-    alert("You have already voted on this post. You made your choice.")
+    alert("You have already voted on this. You made your choice.")
   } else {
-    db.collection("posts").where("postId", "==", `${data.postId}`)
+    db.collection(collection).where("id", "==", dataId)
     .limit(1)
     .get()
     .then((querySnapshot) => {
@@ -87,7 +87,7 @@ const handleVote = async (operator, userId, data) => {
       let updatedDoc = doc.data();
       updatedDoc.votes = changeVote(updatedDoc.votes, operator);
       doc.ref.update(updatedDoc);
-      updateUserVotes(userId, data.postId)
+      updateUserVotes(userId, dataId)
     })
     .catch((error) => {
       console.error(error);
@@ -100,12 +100,12 @@ const addComment = async (comment) => {
 }
 
 const updateUserCommentDoc = async (userId, commentId) => {
-  return await db.collection("users").doc(`${userId}`)
+  return await db.collection("users").doc(userId)
     .get()
     .then((doc) => {
       const userData = doc.data();
       const newComments = [...userData.comments, commentId];
-      db.collection("users").doc(`${userId}`).update({
+      db.collection("users").doc(userId).update({
         comments: newComments,
       });
     })
@@ -115,7 +115,7 @@ const updateUserCommentDoc = async (userId, commentId) => {
 }
 
 const updatePostComments = async (postId, commentId) => {
-  return await db.collection("posts").where("postId", "==", postId)
+  return await db.collection("posts").where("id", "==", postId)
     .limit(1)
     .get()
     .then((querySnapshot) => {
@@ -129,9 +129,9 @@ const updatePostComments = async (postId, commentId) => {
     });
 }
 
-const getPostCommentIds = async (postId) => {
+const getPostCommentIds = async (id) => {
   let commentsArray = [];
-  await db.collection("posts").where("postId", "==", postId)
+  await db.collection("posts").where("id", "==", id)
     .limit(1)
     .get()
     .then((querySnapshot) => {
@@ -146,7 +146,7 @@ const getPostCommentIds = async (postId) => {
 
 const getCommentIds = async (commentId) => {
   let commentsArray = [];
-  await db.collection("comments").where("commentId", "==", commentId)
+  await db.collection("comments").where("id", "==", commentId)
     .limit(1)
     .get()
     .then((querySnapshot) => {
@@ -160,7 +160,7 @@ const getCommentIds = async (commentId) => {
 }
 
 const getComment = async (commentId) => {
-  return await db.collection("comments").where("commentId", "==", commentId)
+  return await db.collection("comments").where("id", "==", commentId)
     .limit(1)
     .get()
     .then((querySnapshot) => {

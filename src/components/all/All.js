@@ -80,9 +80,6 @@ function All() {
     setOrder(newOrder);
   }
   
-  // TODO: 
-  // Format date to 'X ago'
-  // Lazy load posts
   return (
     <AllContainer className="AllContainer">
       <AllHeaderContainer>

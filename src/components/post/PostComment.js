@@ -6,8 +6,11 @@ import DownIcon from '../../img/down-arrow.svg';
 import {
   db,
   getComment,
-  getCommentIds
+  getCommentIds,
+  handleVote
 } from '../../firebase';
+import formatTime from '../../utils/formatTime';
+import useUser from '../../hooks/useUser';
 
 const CommentContainer = styled.div`
   display: flex;
@@ -15,6 +18,7 @@ const CommentContainer = styled.div`
   background-color: #c6e8fc;
   width: 100%;
   min-width: 300px;
+  margin-bottom: 1rem;
 `;
 
 const ThreadContainer = styled.div`
@@ -66,8 +70,6 @@ const Upvote = styled.img`
   margin-right: 3px;
   &:hover {
     cursor: pointer;
-    position: relative;
-    top: -2px;
     background-color: rgba(156, 255, 147, 0.7);
   }
 `;
@@ -76,7 +78,6 @@ const Downvote = styled(Upvote)`
   margin-right: 0px;
   margin-left: 3px;
   &:hover {
-    top: 2px;
     background-color: rgba(255, 147, 147, 0.3);
   }
 `;
@@ -87,8 +88,12 @@ const CommentBody = styled.p`
   padding-bottom: 5px;
 `;
 
+// TODO:
+// Figure out how to tell if comment is parent-level or replying to comment
+// Use isReply somehow?
 function PostComment(props) {
   const { data, isReply } = props;
+  const user = useUser();
 
   const [author, setAuthor] = useState("");
   useEffect(() => {
@@ -128,6 +133,23 @@ function PostComment(props) {
     }
   }, [data]);
 
+  const [voteString, setVoteString] = useState("");
+  useEffect(() => {
+    if (data.votes === -1 || data.votes === 1) {
+      setVoteString(`${data.votes} vote`);
+    } else {
+      setVoteString(`${data.votes} votes`);
+    }
+  }, [data])
+
+  const handleVoteClick = async (operator) => {
+    if (user !== undefined) {
+      await handleVote("comments", operator, user.uid, data.id);
+      props.refreshComments();
+    }
+  }
+
+
   return (
     <CommentContainer className="CommentContainer">
       <ThreadContainer className="ThreadContainer" isReply={isReply}>
@@ -138,10 +160,20 @@ function PostComment(props) {
           <CommentInfoElements className="CommentInfoElements">
             <Link to={`/u/${author}`}>{author}</Link>
             <VoteContainer>
-              <Upvote src={UpIcon} alt="Upvote Icon"/>{data.votes} votes<Downvote src={DownIcon} alt="Downvote Icon"/>
+              <Upvote 
+                src={UpIcon}
+                alt="Upvote Icon"
+                onClick={() => {handleVoteClick('+')}}
+              />
+              {voteString}
+              <Downvote 
+                src={DownIcon} 
+                alt="Downvote Icon"
+                onClick={() => {handleVoteClick('-')}}
+              />
             </VoteContainer> 
             <TimeStamp>
-              {data.time}
+              {formatTime(data)}
             </TimeStamp>
           </CommentInfoElements>
         </CommentInfo>

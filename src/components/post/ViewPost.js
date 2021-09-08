@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import parse from 'html-react-parser';
@@ -14,13 +14,12 @@ import {
   getComment
  } from '../../firebase';
  import formatTime from '../../utils/formatTime';
- import { UserContext } from '../../providers/UserProvider';
+ import useUser from '../../hooks/useUser';
 
 
 const PostPage = styled.div`
   width: 100vw;
   max-width: 100%;
-  height: 100vh%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -54,7 +53,7 @@ const UpvoteIcon = styled.img`
   margin-bottom: 2px;
   &:hover {
     cursor: pointer;
-    background-color: green;
+    background-color: rgba(156, 255, 147, 0.7);
   }
 `;
 
@@ -62,7 +61,7 @@ const DownvoteIcon = styled(UpvoteIcon)`
   margin-bottom: 0;
   margin-top: 2px;
   &:hover {
-    background-color: red;
+    background-color: rgba(255, 147, 147, 0.3);
   }
 `;
 
@@ -136,25 +135,17 @@ function ImagePost(props) {
   )
 }
 
-// TODO:
-// Make comments and test their display
-// Implement voting for comments
 function ViewPost() {
   let { postid } = useParams();
 
-  const user = useContext(UserContext);
-
-  const [currentUser, setCurrentUser] = useState(null);
-  useEffect(() => {
-    setCurrentUser(user);
-  }, [user]);
+  const user = useUser();
 
   const [livePost, setLivePost] = useState();
   const [commentCount, setCommentCount] = useState(0);
   const [refreshData, setRefreshData] = useState(true);
   useEffect(() => {
     if (refreshData) {
-      db.collection("posts").where("postId", "==", postid)
+      db.collection("posts").where("id", "==", postid)
       .limit(1)
       .get()
       .then((querySnapshot) => {
@@ -189,17 +180,25 @@ function ViewPost() {
     }
   }, [livePost]);
 
+  const [order, setOrder] = useState("new");
   const [postComments, setPostComments] = useState([]);
   useEffect(() => {
     if (livePost !== undefined) {
-      getPostCommentIds(livePost.postId)
+      getPostCommentIds(livePost.id)
         .then((commentIds) => {
           const commentPromises = commentIds.map((commentId) => {
             return getComment(commentId);
           });
           Promise.all(commentPromises)
             .then((comments) => {
-              setPostComments(comments);
+              const sortedComments = comments.sort((a, b) => {
+                if (order === "new") {
+                  return a.time - b.time;
+                } else {
+                  return b.votes - a.votes;
+                }
+              });
+              setPostComments(sortedComments);
             })
             .catch((error) => {
               console.error(error);
@@ -209,11 +208,21 @@ function ViewPost() {
           console.error(error);
         });
     }
-  }, [livePost]);
+  }, [livePost, order]);
 
   const handleVoteClick = async (operator) => {
-    await handleVote(operator, currentUser.uid, livePost);
+    if (user !== undefined) {
+      await handleVote("posts", operator, user.uid, livePost);
+      setRefreshData(true);
+    }
+  }
+
+  const handleRefreshComments = () => {
     setRefreshData(true);
+  }
+
+  const handleOrderChange = (newOrder) => {
+    setOrder(newOrder);
   }
 
   if (livePost !== undefined) {
@@ -247,17 +256,21 @@ function ViewPost() {
           </PostContentContainer>
           </InnerPostContainer>
         </PostContainer>
-        <SortBox />
         <CommentWall className="CommentWall" commentCount={commentCount}>
           {
-            currentUser !== undefined
-              ? <WriteComment postId={livePost.postId}/>
+            user !== undefined
+              ? <WriteComment parentId={livePost.id} refreshComments={handleRefreshComments}/>
               : <div>Sign up or log in to comment</div>
           }
+          <SortBox order={order} handleOrderChange={handleOrderChange} />
           {
             commentCount > 0
               ? postComments.map((comment, index) => (
-                <PostComment key={comment.author + index} data={comment} isReply={false}/>
+                <PostComment 
+                  key={comment.author + index} 
+                  data={comment} 
+                  refreshComments={handleRefreshComments}
+                  isReply={false}/>
                 ))
             : <div>No comments</div>
           }

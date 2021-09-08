@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router';
 import testPostData from '../../utils/posts';
@@ -8,7 +8,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { CancelPost, SubmitPost } from './SubmissionButtons';
 import ImageUploader from './ImageUploader';
-import { UserContext } from '../../providers/UserProvider';
+import useUser from '../../hooks/useUser';
 import { 
   generatePostDocId, 
   generateImageDocument,
@@ -169,7 +169,7 @@ const SubmitError = styled(TitleError)`
 
 function Submit() {
   let history = useHistory();
-  const user = useContext(UserContext);
+  const user = useUser();
 
   const quillModules = {
     toolbar: [
@@ -180,11 +180,6 @@ function Submit() {
   }
 
   const quillFormats = ['header', 'bold', 'italic', 'underline', 'link']
-
-  const [currentUser, setCurrentUser] = useState(null);
-  useEffect(() => {
-    setCurrentUser(user);
-  }, [user]);
 
   const titleBox = useRef(null);
   const titleError = useRef(null);
@@ -307,11 +302,11 @@ function Submit() {
 
   const handleSubmit = () => {
     const errors = checkForErrors();
-    if (!errors && currentUser !== null && currentUser !== undefined) {
-      const postId = `pos_${uuidv4()}`;
+    if (!errors && user !== null && user !== undefined) {
+      const id = `pos_${uuidv4()}`;
       let post = {
-        postId: postId,
-        author: currentUser.uid,
+        id: id,
+        author: user.uid,
         time: Date.now(),
         board: selectedBoard,
         title: title.value,
@@ -323,8 +318,8 @@ function Submit() {
         post.type = "written";
         generatePostDocId(post)
           .then(() => {
-            updateUserDoc(currentUser.uid, postId);
-            history.push(`/p/${post.postId}`);
+            updateUserDoc(user.uid, id);
+            history.push(`/p/${post.id}`);
           })
           .catch((error) => { console.error(error) });
       } else {
@@ -334,8 +329,8 @@ function Submit() {
             post.type = "image";    
             generatePostDocId(post)
               .then(() => {
-                updateUserDoc(currentUser.uid, postId);
-                history.push(`/p/${post.postId}`);
+                updateUserDoc(user.uid, id);
+                history.push(`/p/${post.id}`);
               })
               .catch((error) => { console.error(error) });
           });

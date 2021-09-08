@@ -1,10 +1,10 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { auth, generateUserDocument } from '../firebase';
 
-export const UserContext = createContext({ user: null });
+export const UserContext = createContext({ user: undefined });
 
 function UserProvider(props) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(undefined);
 
   useEffect(() => {
     const posts = [];

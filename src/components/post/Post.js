@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import parse from 'html-react-parser';
@@ -9,10 +9,8 @@ import {
   handleVote
 } from '../../firebase';
 import formatTime from '../../utils/formatTime';
-import { UserContext } from '../../providers/UserProvider';
+import useUser from '../../hooks/useUser';
 
-// FIXME:
-// Being too specific with px styles
 const PostContainer = styled.div`
   display: flex;
   width: 95%;
@@ -41,7 +39,7 @@ const UpvoteIcon = styled.img`
   margin-bottom: 2px;
   &:hover {
     cursor: pointer;
-    background-color: green;
+    background-color: rgba(156, 255, 147, 0.7);
   }
 `;
 
@@ -50,7 +48,7 @@ const DownvoteIcon = styled(UpvoteIcon)`
   margin-top: 2px;
   &:hover {
     cursor: pointer;
-    background-color: red;
+    background-color: rgba(255, 147, 147, 0.3);
   }
 `;
 
@@ -125,12 +123,7 @@ function Post(props) {
   let history = useHistory();
   const { data } = props;
 
-  const user = useContext(UserContext);
-
-  const [currentUser, setCurrentUser] = useState(null);
-  useEffect(() => {
-    setCurrentUser(user);
-  }, [user]);
+  const user = useUser();
 
   const [commentCount, setCommentCount] = useState(0);
   useEffect(() => {
@@ -166,11 +159,11 @@ function Post(props) {
 
 
   const handlePostClick = () => {
-    history.push(`/p/${data.postId}`);
+    history.push(`/p/${data.id}`);
   }
 
   const handleVoteClick = async (operator) => {
-    await handleVote(operator, currentUser.uid, data);
+    await handleVote("posts", operator, user.uid, data.id);
     props.refreshData();
   }
 

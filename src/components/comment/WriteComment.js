@@ -1,7 +1,7 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
-import { UserContext } from '../../providers/UserProvider';
+import useUser from '../../hooks/useUser';
 import {
   addComment,
   updateUserCommentDoc,
@@ -51,15 +51,10 @@ const CommentSubmitButton = styled.button`
 `;
 
 function WriteComment(props) {
-  const { postId } = props;
-  const user = useContext(UserContext);
+  const { parentId } = props;
+  const user = useUser();
 
   const [commentText, setCommentText] = useState("");
-
-  const [currentUser, setCurrentUser] = useState(null);
-  useEffect(() => {
-    setCurrentUser(user);
-  }, [user]);
 
   const handleChange = (event) => {
     setCommentText(event.target.value);
@@ -67,12 +62,12 @@ function WriteComment(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const commentId = `com_${uuidv4()}`;
+    const id = `com_${uuidv4()}`;
     const comment = {
-      commentId: commentId,
-      parentId: "???",
-      parentPostId: postId,
-      author: currentUser.uid,
+      id: id,
+      parentId: parentId,
+      parentPostId: "???",
+      author: user.uid,
       comment: commentText,
       time: Date.now(),
       votes: 1,
@@ -80,11 +75,11 @@ function WriteComment(props) {
     };
     addComment(comment)
       .then(() => {
-        updateUserCommentDoc(currentUser.uid, commentId)
+        updateUserCommentDoc(user.uid, id)
           .then(() => {
-            updatePostComments(postId, commentId)
+            updatePostComments(parentId, id)
               .then(() => {
-                window.location.reload();
+                props.refreshComments();
               })
               // https://www.youtube.com/watch?v=oqwzuiSy9y0
           });
