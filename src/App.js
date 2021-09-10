@@ -26,6 +26,12 @@ const GlobalStyles = styled.div`
   background-color: #dae0e6;
 `;
 
+
+// TODO:
+// Update boards page to fetch data
+// Update user page to fetch data
+// Let users create boards
+// Let users delete their own posts/comments
 function App() {
   const user = useUser();
 

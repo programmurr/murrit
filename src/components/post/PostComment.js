@@ -96,9 +96,6 @@ const CommentBody = styled.p`
   padding-bottom: 5px;
 `;
 
-// TODO:
-// Figure out how to tell if comment is parent-level or replying to comment
-// Use isReply somehow?
 function PostComment(props) {
   const { data, isReply, parentPostId } = props;
   const user = useUser();
