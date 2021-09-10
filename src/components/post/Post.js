@@ -127,19 +127,19 @@ function Post(props) {
 
   const [commentCount, setCommentCount] = useState(0);
   useEffect(() => {
-    function flatComments(comments) {
-      let result = [];
-      comments.forEach((comment) => {
-        result.push(comment);
-        if (Array.isArray(comment.comments)) {
-          result = result.concat(flatComments(comment.comments));
-        }
+    db.collection("comments").where("parentPostId", "==", data.id)
+    .get()
+    .then((querySnapshot) => {
+      let counter = 0;
+      querySnapshot.forEach(() => {
+        counter += 1;
       });
-      return result;
-    };
-    const count = flatComments(data.comments).length;
-    setCommentCount(count);
-  }, [data.comments]);
+      setCommentCount(counter);
+    })
+    .catch((error) => {
+      console.error(error);
+    });  
+}, [data.id]);
 
   const [author, setAuthor] = useState("");
   useEffect(() => {

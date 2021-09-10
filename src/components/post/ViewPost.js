@@ -166,6 +166,9 @@ function ViewPost() {
           });
           setCommentCount(counter);
         })
+        .catch((error) => {
+          console.error(error);
+        });  
     }
   }, [postid, refreshData]);
 
