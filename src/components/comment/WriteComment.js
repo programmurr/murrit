@@ -5,7 +5,8 @@ import useUser from '../../hooks/useUser';
 import {
   addComment,
   updateUserCommentDoc,
-  updatePostComments
+  updatePostComments,
+  updateCommentChildren
 } from '../../firebase';
 
 
@@ -51,7 +52,7 @@ const CommentSubmitButton = styled.button`
 `;
 
 function WriteComment(props) {
-  const { parentId } = props;
+  const { parentId, parentPostId, isReply } = props;
   const user = useUser();
 
   const [commentText, setCommentText] = useState("");
@@ -60,33 +61,53 @@ function WriteComment(props) {
     setCommentText(event.target.value);
   }
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const id = `com_${uuidv4()}`;
-    const comment = {
+  const constructComment = (id, parentId, parentPostId, userId, commentText) => {
+    return {
       id: id,
       parentId: parentId,
-      parentPostId: "???",
-      author: user.uid,
+      parentPostId: parentPostId,
+      author: userId,
       comment: commentText,
       time: Date.now(),
       votes: 1,
       comments: []
-    };
-    addComment(comment)
+    }
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const id = `com_${uuidv4()}`;
+    const comment = constructComment(id, parentId, parentPostId, user.uid, commentText);
+    if (isReply) {
+      addComment(comment)
+        .then(() => {
+          updateUserCommentDoc(user.uid, id)
+            .then(() => {
+              updateCommentChildren(parentId, id)
+                .then(() => {
+                  props.refreshComments();
+                })
+            })
+        })
+        .catch((error) => {
+          console.error(error);
+        })
+    } else {
+      addComment(comment)
       .then(() => {
         updateUserCommentDoc(user.uid, id)
           .then(() => {
             updatePostComments(parentId, id)
               .then(() => {
                 props.refreshComments();
-              })
-              // https://www.youtube.com/watch?v=oqwzuiSy9y0
+                // https://www.youtube.com/watch?v=oqwzuiSy9y0    
+              });
           });
       })
       .catch((error) => {
         console.error(error);
       })
+    }
   }
 
   return (

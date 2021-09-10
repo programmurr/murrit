@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { 
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  Redirect
  } from 'react-router-dom';
 import NavBar from './components/navbar/NavBar';
 import All from './components/all/All';
@@ -15,6 +16,7 @@ import SignUp from './components/sign-up/SignUp';
 import SignIn from './components/sign-in/SignIn';
 import PasswordReset from './components/password-reset/PasswordReset';
 import UserProvider from './providers/UserProvider';
+import useUser from './hooks/useUser';
 
 const GlobalStyles = styled.div`
   font-family: Arial, sans serif;
@@ -24,9 +26,9 @@ const GlobalStyles = styled.div`
   background-color: #dae0e6;
 `;
 
-// TODO: 
-// Re-route submit access to Submit if user not logged in
 function App() {
+  const user = useUser();
+
   return (
     <GlobalStyles className="App">
         <Router>
@@ -55,7 +57,7 @@ function App() {
                 <SignUp />  
               </Route>
               <Route path="/submit">
-                <Submit />  
+                {user === undefined ? <Redirect to="/" /> : <Submit />}
               </Route>
             </Switch>
           </UserProvider>

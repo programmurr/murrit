@@ -151,14 +151,21 @@ function ViewPost() {
       .then((querySnapshot) => {
         const doc = querySnapshot.docs[0];
         const post = doc.data();
-        const count = post.comments.length;
         setLivePost(post);
-        setCommentCount(count);
         setRefreshData(false);
       })
       .catch((error) => {
         console.error(error);
-      })
+      });
+      db.collection("comments").where("parentPostId", "==", postid)
+        .get()
+        .then((querySnapshot) => {
+          let counter = 0;
+          querySnapshot.forEach(() => {
+            counter += 1;
+          });
+          setCommentCount(counter);
+        })
     }
   }, [postid, refreshData]);
 
@@ -259,8 +266,13 @@ function ViewPost() {
         <CommentWall className="CommentWall" commentCount={commentCount}>
           {
             user !== undefined
-              ? <WriteComment parentId={livePost.id} refreshComments={handleRefreshComments}/>
-              : <div>Sign up or log in to comment</div>
+              ? <WriteComment 
+                  parentId={livePost.id} 
+                  parentPostId={livePost.id} 
+                  refreshComments={handleRefreshComments} 
+                  isReply={false}
+                />
+              : <p>Sign up or log in to comment</p>
           }
           <SortBox order={order} handleOrderChange={handleOrderChange} />
           {
@@ -269,10 +281,11 @@ function ViewPost() {
                 <PostComment 
                   key={comment.author + index} 
                   data={comment} 
-                  refreshComments={handleRefreshComments}
+                  handleRefreshComments={handleRefreshComments}
+                  parentPostId={postid}
                   isReply={false}/>
                 ))
-            : <div>No comments</div>
+            : <p>No comments</p>
           }
         </CommentWall>
       </PostPage>

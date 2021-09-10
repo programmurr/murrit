@@ -11,6 +11,7 @@ import {
 } from '../../firebase';
 import formatTime from '../../utils/formatTime';
 import useUser from '../../hooks/useUser';
+import WriteComment from '../comment/WriteComment';
 
 const CommentContainer = styled.div`
   display: flex;
@@ -52,7 +53,7 @@ const CommentInfo = styled.div`
 `;
 
 const CommentInfoElements = styled.div`
-  width: 35%;
+  width: 50%;
   min-width: 300px;
   display: flex;
   justify-content: space-between;
@@ -82,6 +83,13 @@ const Downvote = styled(Upvote)`
   }
 `;
 
+const ReplyLink = styled.p`
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+`;
+
 const CommentBody = styled.p`
   font-size: 0.9rem;
   padding-top: 2px;
@@ -92,7 +100,7 @@ const CommentBody = styled.p`
 // Figure out how to tell if comment is parent-level or replying to comment
 // Use isReply somehow?
 function PostComment(props) {
-  const { data, isReply } = props;
+  const { data, isReply, parentPostId } = props;
   const user = useUser();
 
   const [author, setAuthor] = useState("");
@@ -114,7 +122,7 @@ function PostComment(props) {
   const [comments, setComments] = useState([]);
   useEffect(() => {
     if (data.comments.length > 0) {
-      getCommentIds(data.commentId)
+      getCommentIds(data.id)
         .then((commentIds) => {
           const commentPromises = commentIds.map((commentId) => {
             return getComment(commentId);
@@ -145,10 +153,22 @@ function PostComment(props) {
   const handleVoteClick = async (operator) => {
     if (user !== undefined) {
       await handleVote("comments", operator, user.uid, data.id);
-      props.refreshComments();
+      props.handleRefreshComments();
     }
   }
 
+  const [replyClicked, setReplyClicked] = useState(false);
+
+  const handleReplyClick = () => {
+    setReplyClicked(prevState => !prevState);
+  }
+
+  const handleRefreshComments = () => {
+    if (replyClicked) {
+      setReplyClicked(false);
+    }
+    props.handleRefreshComments();
+  }
 
   return (
     <CommentContainer className="CommentContainer">
@@ -175,15 +195,32 @@ function PostComment(props) {
             <TimeStamp>
               {formatTime(data)}
             </TimeStamp>
+            <ReplyLink onClick={handleReplyClick}>
+              {replyClicked ? "Hide Reply" : "Reply"}
+            </ReplyLink>
           </CommentInfoElements>
         </CommentInfo>
         <CommentBody className="CommentBody">{data.comment}</CommentBody>
+        { 
+          replyClicked 
+            && <WriteComment 
+                 parentId={data.id} 
+                 parentPostId={parentPostId} 
+                 refreshComments={handleRefreshComments} 
+                 isReply={true}
+               />
+        }
         {
           comments.length > 0
           ? comments.map((comment, index) => (
-            <PostComment key={comment.author + index} data={comment} isReply={true}/>
+            <PostComment 
+              key={comment.author + index} 
+              data={comment} 
+              isReply={true} 
+              parentPostId={parentPostId}
+              handleRefreshComments={handleRefreshComments} />
           ))
-          : <div className="BlanketyBlank"/>
+          : <div className="BlanketyBlank" />
         }
       </InnerCommentContainer>
     </CommentContainer>

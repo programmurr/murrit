@@ -172,6 +172,21 @@ const getComment = async (commentId) => {
     })
 }
 
+const updateCommentChildren = async (parentId, commentId) => {
+  return await db.collection("comments").where("id", "==", parentId)
+  .limit(1)
+  .get()
+  .then((querySnapshot) => {
+    const doc = querySnapshot.docs[0];
+    let updatedComment = doc.data();
+    updatedComment.comments = [...updatedComment.comments, commentId];
+    doc.ref.update(updatedComment);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+}
+
 // Storage
 const storage = firebase.storage();
 if (window.location.hostname === "localhost") {
@@ -250,5 +265,6 @@ export {
   updatePostComments,
   getPostCommentIds,
   getCommentIds,
-  getComment
+  getComment,
+  updateCommentChildren
 };
