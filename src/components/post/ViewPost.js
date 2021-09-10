@@ -200,7 +200,7 @@ function ViewPost() {
             .then((comments) => {
               const sortedComments = comments.sort((a, b) => {
                 if (order === "new") {
-                  return a.time - b.time;
+                  return b.time - a.time;
                 } else {
                   return b.votes - a.votes;
                 }
