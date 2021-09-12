@@ -77,7 +77,7 @@ function WriteComment(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
     const id = `com_${uuidv4()}`;
-    const comment = constructComment(id, parentId, parentPostId, user.uid, commentText);
+    const comment = constructComment(id, parentId, parentPostId, user.id, commentText);
     if (isReply) {
       addComment(comment)
         .then(() => {

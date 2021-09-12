@@ -100,21 +100,29 @@ function PostComment(props) {
   const { data, isReply, parentPostId } = props;
   const user = useUser();
 
-  const [author, setAuthor] = useState("");
+  const [author, setAuthor] = useState({});
   useEffect(() => {
-    db.collection("users").doc(data.author).get()
-    .then((doc) => {
-      if (doc.exists) {
-        const user = doc.data();
-        setAuthor(user.displayName);
-      } else {
-        setAuthor("[deleted]");
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    })
-  }, [data]);
+    db.collection("users")
+      .where("id", "==", data.author)
+      .limit(1)
+      .get()
+        .then((querySnapshot) => {
+          const doc = querySnapshot.docs[0];
+          if (doc.exists) {
+            const user = doc.data();
+            setAuthor(user);
+          } else {
+            const nullAuthor = {
+              id: "null",
+              displayName: "[deleted]"
+            };
+            setAuthor(nullAuthor);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+}, [data]);
 
   const [comments, setComments] = useState([]);
   useEffect(() => {
@@ -175,7 +183,7 @@ function PostComment(props) {
       <InnerCommentContainer className="InnerCommentContainer">
         <CommentInfo className="CommentInfoContainer">
           <CommentInfoElements className="CommentInfoElements">
-            <Link to={`/u/${author}`}>{author}</Link>
+            <Link to={`/u/${author.id}`}>{author.displayName}</Link>
             <VoteContainer>
               <Upvote 
                 src={UpIcon}

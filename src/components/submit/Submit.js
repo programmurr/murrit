@@ -306,7 +306,7 @@ function Submit() {
       const id = `pos_${uuidv4()}`;
       let post = {
         id: id,
-        author: user.uid,
+        author: user.id,
         time: Date.now(),
         board: selectedBoard,
         title: title.value,

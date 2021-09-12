@@ -3,10 +3,12 @@ import {
   useParams,
 } from 'react-router-dom';
 import styled from 'styled-components';
-import testPostData from '../../utils/posts';
 import Post from '../post/Post';
 import Comment from '../comment/Comment';
 import SortBox from '../sort/SortBox';
+import {
+  getUserPostsAndComments
+} from '../../firebase';
 
 const UserProfileContainer = styled.div`
   width: 100vw;
@@ -48,34 +50,29 @@ const ContentSelector = styled.p`
 function User() {
   let { username } = useParams();
 
-  const [data] = useState(testPostData);
   const [posts, setPosts] = useState([]);
-  useEffect(() => {
-    const authorPosts = data.filter((post) => post.author === username);
-    setPosts(authorPosts);
-  }, [data, username]);
-
   const [comments, setComments] = useState([]);
+  const [order, setOrder] = useState("time");
+  const [fetchData, setFetchData] = useState(true);
   useEffect(() => {
-    function getAuthorComments(allPosts) {
-      let result = [];
-      allPosts.forEach((post) => {
-        if (
-          post.comment !== undefined 
-          && post.parentId !== undefined
-          && post.author === username
-        ) {
-          result.push(post);
-        }
-        if (Array.isArray(post.comments)) {
-          result = result.concat(getAuthorComments(post.comments));
-        }
-      });
-      return result;
-    };
-    const authorComments = getAuthorComments(data);
-    setComments(authorComments);
-  }, [data, username]);
+    getUserPostsAndComments(username, order)
+      .then((userData) => {
+        setPosts(userData.allPosts);
+        setComments(userData.allComments);
+        setFetchData(false);
+      })
+    .catch((error) => {
+      console.error(error);
+    })
+  }, [fetchData, order, username]);
+
+  const handleRefresh = () => {
+    setFetchData(true);
+  }
+
+  const handleOrderChange = (newOrder) => {
+    setOrder(newOrder);
+  }
 
   const [postsSelected, setPostsSelected] = useState(true);
   const [commentsSelected, setCommentsSelected] = useState(false);
@@ -110,11 +107,11 @@ function User() {
           ALL COMMENTS
         </ContentSelector>
       </ContentSelectorContainer>
-      <SortBox />
+      <SortBox order={order} handleOrderChange={handleOrderChange}/>
       {
         postsSelected
         ? posts.map((post, index) => (
-          <Post key={post.title + index} data={post} />
+          <Post key={post.title + index} data={post} refreshData={handleRefresh} />
           ))
         : comments.map((comment, index) => (
             <Comment 

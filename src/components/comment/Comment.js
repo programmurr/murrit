@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
+import {
+  db
+} from '../../firebase';
+import formatTime from '../../utils/formatTime';
 
 const CommentContainer = styled.div`
   display: flex;
@@ -43,6 +47,30 @@ function Comment(props) {
   const { data, index, length } = props;
   let history = useHistory();
 
+  const [author, setAuthor] = useState({});
+  useEffect(() => {
+    db.collection("users")
+      .where("id", "==", data.author)
+      .limit(1)
+      .get()
+        .then((querySnapshot) => {
+          const doc = querySnapshot.docs[0];
+          if (doc.exists) {
+            const user = doc.data();
+            setAuthor(user);
+          } else {
+            const nullAuthor = {
+              id: "null",
+              displayName: "[deleted]"
+            };
+            setAuthor(nullAuthor);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+  }, [data.author]);
+
   const handleClick = () => {
     history.push(`/p/${data.parentPostId}`);
   }
@@ -50,7 +78,7 @@ function Comment(props) {
   return (
     <CommentContainer className="CommentContainer" index={index} length={length}>
       <InnerCommentContainer className="InnerCommentContainer" onClick={handleClick}>
-        <CommentInfo>{data.author} | {data.votes} votes | {data.time}</CommentInfo>
+        <CommentInfo>{author.displayName} | {data.votes} votes | {formatTime(data)}</CommentInfo>
         <CommentBody>{data.comment}</CommentBody>
       </InnerCommentContainer>
     </CommentContainer>

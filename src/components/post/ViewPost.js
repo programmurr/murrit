@@ -144,49 +144,56 @@ function ViewPost() {
   const [commentCount, setCommentCount] = useState(0);
   const [refreshData, setRefreshData] = useState(true);
   useEffect(() => {
-    if (refreshData) {
-      db.collection("posts").where("id", "==", postid)
-      .limit(1)
+    db.collection("posts").where("id", "==", postid)
+    .limit(1)
+    .get()
+    .then((querySnapshot) => {
+      const doc = querySnapshot.docs[0];
+      const post = doc.data();
+      setLivePost(post);
+      setRefreshData(false);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+    db.collection("comments").where("parentPostId", "==", postid)
       .get()
       .then((querySnapshot) => {
-        const doc = querySnapshot.docs[0];
-        const post = doc.data();
-        setLivePost(post);
+        let counter = 0;
+        querySnapshot.forEach(() => {
+          counter += 1;
+        });
         setRefreshData(false);
+        setCommentCount(counter);
       })
       .catch((error) => {
         console.error(error);
-      });
-      db.collection("comments").where("parentPostId", "==", postid)
-        .get()
+      });  
+  }, [postid, refreshData]);
+
+  const [author, setAuthor] = useState({});
+  useEffect(() => {
+    if (livePost !== undefined) {
+      db.collection("users")
+      .where("id", "==", livePost.author)
+      .limit(1)
+      .get()
         .then((querySnapshot) => {
-          let counter = 0;
-          querySnapshot.forEach(() => {
-            counter += 1;
-          });
-          setCommentCount(counter);
+          const doc = querySnapshot.docs[0];
+          if (doc.exists) {
+            const user = doc.data();
+            setAuthor(user);
+          } else {
+            const nullAuthor = {
+              id: "null",
+              displayName: "[deleted]"
+            };
+            setAuthor(nullAuthor);
+          }
         })
         .catch((error) => {
           console.error(error);
-        });  
-    }
-  }, [postid, refreshData]);
-
-  const [author, setAuthor] = useState("");
-  useEffect(() => {
-    if (livePost !== undefined) {
-      db.collection("users").doc(livePost.author).get()
-      .then((doc) => {
-        if (doc.exists) {
-          const user = doc.data();
-          setAuthor(user.displayName);
-        } else {
-          setAuthor("[deleted]");
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      })
+        });
     }
   }, [livePost]);
 
@@ -216,10 +223,15 @@ function ViewPost() {
     }
   }, [livePost, order]);
 
-  const handleVoteClick = async (operator) => {
+  const handleVoteClick = (operator) => {
     if (user !== undefined) {
-      await handleVote("posts", operator, user.uid, livePost);
-      setRefreshData(true);
+      handleVote("posts", operator, user.uid, livePost.id)
+      .then(() => {
+        setRefreshData(true);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     }
   }
 
@@ -243,7 +255,7 @@ function ViewPost() {
           <InnerPostContainer className="InnerPostContainer">
           <InfoContainer className="InfoContainer">
             <Info>
-              Posted by <Link to={`/u/${author}`}>{author}</Link> {formatTime(livePost)} to <Link to={`/m/${livePost.board}`}>{livePost.board}</Link>
+              Posted by <Link to={`/u/${author.id}`}>{author.displayName}</Link> {formatTime(livePost)} to <Link to={`/m/${livePost.board}`}>{livePost.board}</Link>
             </Info>
           </InfoContainer>
           <PostContentContainer className="PostContentContainer">

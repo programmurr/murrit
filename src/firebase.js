@@ -59,6 +59,36 @@ const getPosts = async (order, board) => {
   return allPosts;
 }
 
+const getUserPostsAndComments = async (userId, order) => {
+  let allPosts = [];
+  await db.collection("posts")
+  .where("author", "==", userId)
+  .orderBy(order, "desc")
+  .get()
+  .then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      allPosts.push(doc.data());
+    });
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+  let allComments = [];
+  await db.collection("comments")
+  .where("author", "==", userId)
+  .orderBy(order, "desc")
+  .get()
+  .then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      allComments.push(doc.data());
+    });
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+  return { allPosts, allComments };
+}
+
 const updateUserDoc = (userId, postId) => {
   db.collection("users").doc(userId)
     .get()
@@ -243,7 +273,7 @@ if (window.location.hostname === "localhost") {
 
 const provider = new firebase.auth.GoogleAuthProvider();
 const signInWithGoogle = () => {
-  auth.signInWithPopup(provider)
+  auth.signInWithPopup(provider);
 }
 
 // Auth - User handling
@@ -286,6 +316,7 @@ export {
   storage, 
   generatePostDocId, 
   getPosts,
+  getUserPostsAndComments,
   generateImageDocument,
   updateUserDoc,
   checkUserVoted,

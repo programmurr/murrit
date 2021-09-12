@@ -141,21 +141,29 @@ function Post(props) {
     });  
 }, [data.id]);
 
-  const [author, setAuthor] = useState("");
+  const [author, setAuthor] = useState({});
   useEffect(() => {
-    db.collection("users").doc(data.author).get()
-      .then((doc) => {
-        if (doc.exists) {
-          const user = doc.data();
-          setAuthor(user.displayName);
-        } else {
-          setAuthor("[deleted]");
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-  }, [data.author]);
+    db.collection("users")
+      .where("id", "==", data.author)
+      .limit(1)
+      .get()
+        .then((querySnapshot) => {
+          const doc = querySnapshot.docs[0];
+          if (doc.exists) {
+            const user = doc.data();
+            setAuthor(user);
+          } else {
+            const nullAuthor = {
+              id: "null",
+              displayName: "[deleted]"
+            };
+            setAuthor(nullAuthor);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+}, [data.author]);
 
 
   const handlePostClick = () => {
@@ -177,7 +185,7 @@ function Post(props) {
       <InnerPostContainer className="InnerPostContainer">
         <InfoContainer className="InfoContainer">
           <Info>
-            Posted by <Link to={`/u/${author}`}>{author}</Link> {formatTime(data)} to <Link to={`/m/${data.board}`}>{data.board}</Link>
+            Posted by <Link to={`/u/${author.id}`}>{author.displayName}</Link> {formatTime(data)} to <Link to={`/m/${data.board}`}>{data.board}</Link>
           </Info>
         </InfoContainer>
         <PostContentContainer className="PostContentContainer" onClick={handlePostClick}>
