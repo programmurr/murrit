@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Post from '../post/Post';
 import SortBox from '../sort/SortBox';
 import { 
-  db
+  getPosts
 } from '../../firebase';
 
 const AllContainer = styled.div`
@@ -40,36 +40,17 @@ const AllWall = styled.div`
 function All() {
 
   const [data, setData] = useState([]);
-  const [order, setOrder] = useState("new");
+  const [order, setOrder] = useState("time");
   const [fetchData, setFetchData] = useState(true);
   useEffect(() => {
-    if (order === "new") {
-      db.collection("posts").orderBy("time", "desc").get()
-        .then((querySnapshot) => {
-          let newData = [];
-          querySnapshot.forEach((doc) => {
-            newData.push(doc.data());
-          });
-          setData(newData);
-          setFetchData(false)
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    } else if (order === "best") {
-      db.collection("posts").orderBy("votes", "desc").get()
-      .then((querySnapshot) => {
-        let newData = [];
-        querySnapshot.forEach((doc) => {
-          newData.push(doc.data());
-        });
-        setData(newData);
+    getPosts(order, "all")
+      .then((posts) => {
+        setData(posts);
         setFetchData(false)
       })
       .catch((error) => {
         console.error(error);
       });
-    }
   }, [fetchData, order]);
 
   const handleRefresh = () => {

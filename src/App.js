@@ -32,6 +32,7 @@ const GlobalStyles = styled.div`
 // Update user page to fetch data
 // Let users create boards
 // Let users delete their own posts/comments
+// Lazy load posts
 function App() {
   const user = useUser();
 

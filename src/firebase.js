@@ -28,6 +28,37 @@ const generatePostDocId = async (post) => {
     });
 }
 
+const getPosts = async (order, board) => {
+  let allPosts = [];
+  if (board === "all") {
+    await db.collection("posts")
+    .orderBy(order, "desc")
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        allPosts.push(doc.data());
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  } else {
+    await db.collection("posts")
+    .where("board", "==", board)
+    .orderBy(order, "desc")
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        allPosts.push(doc.data());
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }
+  return allPosts;
+}
+
 const updateUserDoc = (userId, postId) => {
   db.collection("users").doc(userId)
     .get()
@@ -42,7 +73,6 @@ const updateUserDoc = (userId, postId) => {
       console.log("Error getting user document: ", error);
     });
 }
-
 
 const checkUserVoted = async (userId, dataId) => {
   const userVotes = await db.collection("users").doc(userId)
@@ -255,6 +285,7 @@ export {
   signInWithGoogle,
   storage, 
   generatePostDocId, 
+  getPosts,
   generateImageDocument,
   updateUserDoc,
   checkUserVoted,

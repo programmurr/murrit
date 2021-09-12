@@ -32,8 +32,8 @@ function SortBox(props) {
       <SortElements className="SortElements" >
         <label htmlFor="SortSelect">Sort by:
           <select value={order} onChange={handleChange}>
-            <option value="new">New</option>
-            <option value="best">Best</option>
+            <option value="time">New</option>
+            <option value="votes">Best</option>
           </select>
         </label>
       </SortElements>

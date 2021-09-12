@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
-import testPostData from '../../utils/posts';
 import Post from '../post/Post';
 import SortBox from '../sort/SortBox';
+import {
+  getPosts
+} from '../../firebase';
 
 const BoardContainer = styled.div`
   width: 100vw;
@@ -14,7 +16,7 @@ const BoardContainer = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #dae0e6;
-  margin-top: ${props => props.expand ? "6vh" : "" };
+  margin-top: 6vh;
 `;
 
 const BoardHeaderContainer = styled.div`
@@ -41,47 +43,40 @@ const BoardWBoard = styled.div`
 function Board() {
   let { boardName } = useParams();
 
-  // TODO: 
-  // Board fetches its own data matching the board title. There is no
-  //   point of a board fetching ALL then filtering in production.
-  const [data, setData] = useState(testPostData);
+  const [data, setData] = useState([]);
+  const [order, setOrder] = useState("time");
+  const [fetchData, setFetchData] = useState(true);
   useEffect(() => {
-    const filteredData = data.filter((post) => post.board === boardName);
-    setData(filteredData);
-    // TODO: Remove below rule-ignore when fetching from DB
-    // eslint-disable-next-line
-  }, [boardName])
+    getPosts(order, boardName)
+      .then((posts) => {
+        setData(posts);
+        setFetchData(false)
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [fetchData, order, boardName]);
 
-  const [expand, setExpand] = useState(false);
-  useEffect(() => {
-    let isMounted = true;
-    const navContainer = document.getElementById('nav-bar');
-    const sticky = navContainer.offsetTop;
-    document.addEventListener('scroll', () => {
-      if (window.pageYOffset > sticky) {
-        if (isMounted) setExpand(true);
-      } else {
-        if (isMounted) setExpand(false);
-      }
-    });
-    return () => { isMounted = false };
-  });
+  const handleRefresh = () => {
+    setFetchData(true);
+  }
 
-  // TODO: 
-  // Format date to 'X ago'
-  // Lazy load posts
-  // Add "Sort By New/Rating" to Board Posts Header
+  const handleOrderChange = (newOrder) => {
+    setOrder(newOrder);
+  }
+
   return (
-    <BoardContainer className="BoardContainer" expand={expand}>
+    <BoardContainer className="BoardContainer">
     <BoardHeaderContainer>
       <BoardHeader>{boardName}</BoardHeader>
-      <SortBox />
+      <SortBox order={order} handleOrderChange={handleOrderChange}/>
     </BoardHeaderContainer>
       <BoardWBoard className="BoardWBoard">
         {data.map((post, index) => (
           <Post
             key={post.title + index} 
             data={post}
+            refreshData={handleRefresh}
           />
         ))}
       </BoardWBoard>

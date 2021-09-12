@@ -190,7 +190,7 @@ function ViewPost() {
     }
   }, [livePost]);
 
-  const [order, setOrder] = useState("new");
+  const [order, setOrder] = useState("time");
   const [postComments, setPostComments] = useState([]);
   useEffect(() => {
     if (livePost !== undefined) {
@@ -202,11 +202,7 @@ function ViewPost() {
           Promise.all(commentPromises)
             .then((comments) => {
               const sortedComments = comments.sort((a, b) => {
-                if (order === "new") {
-                  return b.time - a.time;
-                } else {
-                  return b.votes - a.votes;
-                }
+                  return b[`${order}`] - a[`${order}`];
               });
               setPostComments(sortedComments);
             })
