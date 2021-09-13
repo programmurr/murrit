@@ -236,15 +236,32 @@ const updateCommentChildren = async (parentId, commentId) => {
   return await db.collection("comments").where("id", "==", parentId)
   .limit(1)
   .get()
-  .then((querySnapshot) => {
-    const doc = querySnapshot.docs[0];
-    let updatedComment = doc.data();
-    updatedComment.comments = [...updatedComment.comments, commentId];
-    doc.ref.update(updatedComment);
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+    .then((querySnapshot) => {
+      const doc = querySnapshot.docs[0];
+      let updatedComment = doc.data();
+      updatedComment.comments = [...updatedComment.comments, commentId];
+      doc.ref.update(updatedComment);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
+export const getBoards = async () => {
+  let boards = [];
+  await db.collection("boards")
+  .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const board = doc.data();
+        console.log(board);
+        boards.push(board.name);
+      })
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  return boards;
 }
 
 // Storage
@@ -256,12 +273,12 @@ if (window.location.hostname === "localhost") {
 const generateImageDocument = async (board, file) => {
   return await storage.ref().child(`${board}/${file.name}`)
     .put(file)
-    .then(() => {
-      return storage.ref().child(`${board}/${file.name}`)
-        .getDownloadURL()
-          .then((url) => {
-            return url;
-          })
+      .then(() => {
+        return storage.ref().child(`${board}/${file.name}`)
+          .getDownloadURL()
+            .then((url) => {
+              return url;
+            })
   });
 }
 

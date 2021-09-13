@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router';
-import testPostData from '../../utils/posts';
 import useFormInput from '../../hooks/useFormInput';
 import TextareaAutosize from 'react-textarea-autosize';
 import ReactQuill from 'react-quill';
@@ -12,7 +11,8 @@ import useUser from '../../hooks/useUser';
 import { 
   generatePostDocId, 
   generateImageDocument,
-  updateUserDoc 
+  updateUserDoc,
+  getBoards 
 } from '../../firebase';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -165,6 +165,10 @@ const SubmitError = styled(TitleError)`
   grid-column: 1/3;
 `;
 
+// TODO:
+// Add "Create" option to board drop down
+// If Create selected, show a little box to make a board
+// When board added, repopulate Select board box
 function Submit() {
   let history = useHistory();
   const user = useUser();
@@ -186,12 +190,12 @@ function Submit() {
   const [submitErrorActive, setSubmitErrorActive] = useState(false);
 
   const [boards, setBoards] = useState([]);
-  const [data] = useState(testPostData);
   useEffect(() => {
-    const boards = data.map(post => post.board).sort();
-    const uniqueBoards = [...new Set(boards)];
-    setBoards(uniqueBoards);
-  }, [data]);
+    getBoards()
+      .then((fetchedBoards) => {
+        setBoards(fetchedBoards);
+      })
+  }, []);
 
   const [selectedBoard, setSelectedBoard] = useState("");
   useEffect(() => {
