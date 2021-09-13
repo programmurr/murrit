@@ -16,12 +16,10 @@ const BoardContainer = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #dae0e6;
-  margin-top: 6vh;
 `;
 
 const BoardHeaderContainer = styled.div`
   width: 95%;
-  margin-top: 10px;
   max-width: 955.6px;
   display: flex;
   flex-direction: column;

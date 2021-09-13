@@ -15,12 +15,10 @@ const AllContainer = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #dae0e6;
-  margin-top: 6vh;
 `;
 
 const AllHeaderContainer = styled.div`
   width: 95%;
-  margin-top: 10px;
   max-width: 955.6px;
   display: flex;
   flex-direction: column;
@@ -28,7 +26,6 @@ const AllHeaderContainer = styled.div`
 `;
 
 const AllWall = styled.div`
-  margin-top: 0.75%;
   width: 97%;
   max-width: 980px;
   border-radius: 10px;

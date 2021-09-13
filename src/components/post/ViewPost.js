@@ -25,13 +25,11 @@ const PostPage = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #dae0e6;
-  margin-top: 8vh;
 `;
 const PostContainer = styled.div`
   display: flex;
   width: 97%;
   max-width: 955.6px;
-  margin-top: 15px;
   border-top: 5px solid white;
   border-right: 5px solid white;
   border-bottom: 5px solid white;

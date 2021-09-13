@@ -24,13 +24,14 @@ const GlobalStyles = styled.div`
   height: 100vh;
   min-height: 100vh;
   background-color: #dae0e6;
+  display: flex;
+  flex-direction: column;
 `;
 
 // TODO:
 // Test 'nullAuthor' by deleting a user
-// Update user page to fetch data
 // Let users create boards
-// Let users delete their own posts/comments
+// Let users delete their own posts/comments/accounts
 // Lazy load posts
 function App() {
   const user = useUser();

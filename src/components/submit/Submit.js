@@ -26,18 +26,16 @@ const SubmitContainer = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #dae0e6;
-  margin-top: 6vh;
 `;
 
 const SubmitHeaderContainer = styled.div`
   width: 95%;
-  margin-top: 10px;
-  padding-bottom: 10px;
   max-width: 955.6px;
   display: flex;
-  flex-direction: column;
-  align-items: start;
+  justify-content: space-evenly;
   border-bottom: 1px solid white;
+  border-radius: 5px;
+  background-color: #ffffff;
 `;
 
 const BoardSelectionContainer = styled.div`
@@ -195,7 +193,7 @@ function Submit() {
     setBoards(uniqueBoards);
   }, [data]);
 
-  const [selectedBoard, setSelectedBoard] = useState([]);
+  const [selectedBoard, setSelectedBoard] = useState("");
   useEffect(() => {
     setSelectedBoard(boards[0]);
   }, [boards]);
@@ -347,6 +345,7 @@ function Submit() {
     <SubmitContainer className="SubmitContainer">
       <SubmitHeaderContainer className="SubmitHeaderContainer">
         <h2>Create a post</h2>
+        <h2>Create a board</h2>
       </SubmitHeaderContainer>
       <BoardSelectionContainer className="BoardSelectionContainer">
         <BoardSelectionLabel htmlFor="board-select">Choose board:

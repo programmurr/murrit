@@ -6,7 +6,6 @@ import { auth } from '../../firebase';
 import { v4 as uuidv4 } from 'uuid';
 
 const SignUpContainer = styled.div`
-  margin-top: 7vh;
   width: 100vw;
   max-width: 100%;
   height: 100vh%;
@@ -19,7 +18,6 @@ const SignUpContainer = styled.div`
 
 const SignUpHeaderContainer = styled.div`
   width: 95%;
-  margin-top: 10px;
   padding-bottom: 10px;
   max-width: 955.6px;
   display: flex;

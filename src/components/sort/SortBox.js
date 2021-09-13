@@ -18,7 +18,6 @@ const SortElements = styled.div`
   }
 `;
 
-
 function SortBox(props) {
 
   const { order } = props;

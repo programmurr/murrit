@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { auth, signInWithGoogle } from '../../firebase';
 
 const SignInContainer = styled.div`
-  margin-top: 7vh;
   width: 100vw;
   max-width: 100%;
   height: 100vh%;

@@ -19,11 +19,9 @@ const UserProfileContainer = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: #dae0e6;
-  margin-top: 6vh;
 `;
 
 const ContentSelectorContainer = styled.div`
-  margin-top: 1rem;
   width: 95%;
   background-color: #ffffff;
   height: 4vh;

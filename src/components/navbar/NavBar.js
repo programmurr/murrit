@@ -12,11 +12,11 @@ const OuterNavContainer = styled.div`
   display: flex;
   justify-content: center;
   background-color: #dae0e6;
+  height: 6vh;
+  min-height: 58px;
 `;
 
 const NavContainer = styled.div`
-  height: 6vh;
-  min-height: 58px;
   border-bottom: 1px solid #ffffff;
   border-radius: 5px;
   background-color: #ffffff;
