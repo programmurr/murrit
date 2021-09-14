@@ -177,10 +177,6 @@ const SubmitError = styled(TitleError)`
   grid-column: 1/3;
 `;
 
-// TODO:
-// Add "Create" option to board drop down
-// If Create selected, show a little box to make a board
-// When board added, repopulate Select board box
 function Submit() {
   let history = useHistory();
   const user = useUser();

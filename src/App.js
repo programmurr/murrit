@@ -29,7 +29,6 @@ const GlobalStyles = styled.div`
 
 // TODO:
 // Test 'nullAuthor' by deleting a user
-// Let users create boards
 // Let users delete their own posts/comments/accounts
 // Lazy load posts
 function App() {

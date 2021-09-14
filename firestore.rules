@@ -1,4 +1,10 @@
 rules_version = '2';
+// TODO:
+// Character limit for titles
+// Character limit for posts
+// Validate board names
+// Validation for storage?
+// Usernames must be unique
 service cloud.firestore {
   match /databases/{database}/documents {
     function isSignedIn() {
@@ -27,7 +33,3 @@ service cloud.firestore {
     }
   }
 }
-// character limit for titles
-// character limit for posts
-// validate board names
-// validation for storage?
