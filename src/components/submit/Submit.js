@@ -5,14 +5,15 @@ import useFormInput from '../../hooks/useFormInput';
 import TextareaAutosize from 'react-textarea-autosize';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { CancelPost, SubmitPost } from './SubmissionButtons';
+import { CancelPost, SubmitPost, AddBoard } from './SubmissionButtons';
 import ImageUploader from './ImageUploader';
 import useUser from '../../hooks/useUser';
 import { 
   generatePostDocId, 
   generateImageDocument,
   updateUserDoc,
-  getBoards 
+  getBoards,
+  addBoard 
 } from '../../firebase';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -32,20 +33,19 @@ const SubmitHeaderContainer = styled.div`
   width: 95%;
   max-width: 955.6px;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: start;
   border-bottom: 1px solid white;
   border-radius: 5px;
-  background-color: #ffffff;
+  padding-bottom: 0.75rem;
 `;
 
-const BoardSelectionContainer = styled.div`
+const BoardChoiceContainer = styled.div`
   width: 95%;
-  margin-top: 10px;
-  padding-bottom: 10px;
   max-width: 955.6px;
   display: flex;
-  flex-direction: column;
-  align-items: start;
+  justify-content: start;
+  align-items: center;
+  padding-top: 0.75rem;
 `;
 
 const BoardSelectionLabel = styled.label`
@@ -54,8 +54,20 @@ const BoardSelectionLabel = styled.label`
   border-radius: 5px;
 `;
 const BoardSelectionSelect = styled.select`
-  padding: 0.15rem;
+  padding: 0.4rem;
   background-color: #ffffff;
+  border-radius: 5px;
+`;
+
+const BoardCreationLabel = styled(BoardSelectionLabel)``;
+const BoardCreationTextInput = styled.input`
+  padding: 0.4rem;
+  background-color: #ffffff;
+  border-radius: 5px;
+`;
+
+const CreateBoardPara = styled.p`
+  margin: 0 1rem 0 1rem;
 `;
 
 const SubmissionContainer = styled.div`
@@ -175,7 +187,7 @@ function Submit() {
 
   const quillModules = {
     toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
+      [{ 'header': [2, 3, false] }],
       ['bold', 'italic', 'underline'],
       ['link'],
     ],
@@ -193,7 +205,7 @@ function Submit() {
   useEffect(() => {
     getBoards()
       .then((fetchedBoards) => {
-        setBoards(fetchedBoards);
+        setBoards(fetchedBoards.sort());
       })
   }, []);
 
@@ -201,6 +213,32 @@ function Submit() {
   useEffect(() => {
     setSelectedBoard(boards[0]);
   }, [boards]);
+
+  const handleBoardChange = (event) => {
+    setSelectedBoard(event.target.value);
+  }
+
+  const newBoardName = useFormInput("");
+
+  const handleAddBoard = () => {
+    const regex = /^[a-zA-Z0-9\-_]+$/;
+    if (regex.test(newBoardName.value)) {
+      if (!boards.includes(newBoardName.value)) {
+        addBoard(newBoardName.value)
+          .then(() => {
+            let updatedBoards = boards.concat(newBoardName.value);
+            setBoards(updatedBoards);
+          })
+          .catch((error) => {
+            console.error("Error adding new board: ", error);
+          })
+      } else {
+        alert("Board already exists! Please use a different name.");
+      }
+    } else {
+      alert("Ensure there are no special characters in the board name");
+    }
+  }
 
   const [postTabSelected, setPostTabSelected] = useState(true);
   const [imageTabSelected, setImageTabSelected] = useState(false);
@@ -220,10 +258,6 @@ function Submit() {
   const [image, setImage] = useState(null);
   const handleImage = (uploadImage) => {
     setImage(uploadImage);
-  }
-
-  const handleBoardChange = (event) => {
-    setSelectedBoard(event.target.value);
   }
 
   const handleTabClick = (event) => {
@@ -349,17 +383,32 @@ function Submit() {
     <SubmitContainer className="SubmitContainer">
       <SubmitHeaderContainer className="SubmitHeaderContainer">
         <h2>Create a post</h2>
-        <h2>Create a board</h2>
       </SubmitHeaderContainer>
-      <BoardSelectionContainer className="BoardSelectionContainer">
-        <BoardSelectionLabel htmlFor="board-select">Choose board:
+      <BoardChoiceContainer className="BoardChoiceContainer">
+        <BoardSelectionLabel htmlFor="board-select">Choose board:</BoardSelectionLabel> 
           <BoardSelectionSelect value={selectedBoard} onChange={handleBoardChange}>
             {boards.map((board, index) => (
               <option value={board} key={`${board}${index}`}>{board}</option>
             ))}
           </BoardSelectionSelect>
-        </BoardSelectionLabel>
-      </BoardSelectionContainer>
+        <CreateBoardPara>or</CreateBoardPara>
+          <BoardCreationLabel 
+            className="BoardCreationLabel"
+            htmlFor="new-board-name"
+            >
+              Create a Board:
+          </BoardCreationLabel>
+          <BoardCreationTextInput 
+            className="BoardCreationTextInput"
+            name="new-board-name"
+            type="text"
+            placeholder="my-super-board"
+            maxLength="100"
+            value={newBoardName.value}
+            onChange={newBoardName.onChange}
+          />
+          <AddBoard handleAddBoardClick={handleAddBoard} />
+      </BoardChoiceContainer>
       <SubmissionContainer className="SubmissionContainer">
         <TabContainer className="TabContainer">
           <PostTab selected={postTabSelected} onClick={handleTabClick}>
@@ -397,7 +446,7 @@ function Submit() {
             <SubmitError ref={submitError} active={submitErrorActive}></SubmitError>
             <SubButtonContainer className="SubButtonContainer">
               <CancelPost handleCancelClick={handleCancelSubmit}/>
-              <SubmitPost handleSubmitClick={handleSubmit}/>
+              <SubmitPost className="SubmitButton" handleSubmitClick={handleSubmit}/>
             </SubButtonContainer>
           </ButtonContainer>
         </CreatePostContainer>

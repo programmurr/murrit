@@ -247,6 +247,12 @@ const updateCommentChildren = async (parentId, commentId) => {
     });
 }
 
+export const addBoard = async (boardName) => {
+  await db.collection("boards").add({
+    name: boardName
+  });
+}
+
 export const getBoards = async () => {
   let boards = [];
   await db.collection("boards")
@@ -254,7 +260,6 @@ export const getBoards = async () => {
     .then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         const board = doc.data();
-        console.log(board);
         boards.push(board.name);
       })
     })

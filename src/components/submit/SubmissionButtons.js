@@ -23,6 +23,10 @@ const SubmitButton = styled(CancelButton)`
   }
 `;
 
+const AddBoardButton = styled(SubmitButton)`
+  margin-left: 1rem;
+`;
+
 
 export function CancelPost(props) {
 
@@ -44,3 +48,15 @@ export function SubmitPost(props) {
     <SubmitButton onClick={handleClick}>Submit</SubmitButton>
   );
 };
+
+export function AddBoard(props) {
+
+  const handleClick = () => {
+    props.handleAddBoardClick();
+  }
+  
+  return (
+    <AddBoardButton onClick={handleClick}>Add</AddBoardButton>
+  );
+};
+

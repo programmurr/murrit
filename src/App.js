@@ -21,8 +21,7 @@ import useUser from './hooks/useUser';
 const GlobalStyles = styled.div`
   font-family: Arial, sans serif;
   line-height: 1;
-  height: 100vh;
-  min-height: 100vh;
+  height: 100%;
   background-color: #dae0e6;
   display: flex;
   flex-direction: column;

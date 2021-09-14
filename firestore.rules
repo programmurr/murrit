@@ -27,3 +27,7 @@ service cloud.firestore {
     }
   }
 }
+// character limit for titles
+// character limit for posts
+// validate board names
+// validation for storage?
