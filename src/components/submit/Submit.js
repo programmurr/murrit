@@ -236,7 +236,7 @@ function Submit() {
         alert("Board already exists! Please use a different name.");
       }
     } else {
-      alert("Ensure there are no special characters in the board name");
+      alert("Ensure there are no special characters in the board name.");
     }
   }
 
@@ -403,7 +403,7 @@ function Submit() {
             name="new-board-name"
             type="text"
             placeholder="my-super-board"
-            maxLength="100"
+            maxLength="50"
             value={newBoardName.value}
             onChange={newBoardName.onChange}
           />
