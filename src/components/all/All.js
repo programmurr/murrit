@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import Post from '../post/Post';
 import SortBox from '../sort/SortBox';
 import { 
-  getPosts,
-  getPaginatedPosts
+  getPaginatedPosts,
+  getMorePaginatedPosts
 } from '../../firebase';
 
 const AllContainer = styled.div`
@@ -35,25 +35,54 @@ const AllWall = styled.div`
   align-items: center;
 `;
 
+const LoadButton = styled.button`
+  width: 120px;
+  height: 50px;
+  background-color: #008cff;
+  border-radius: 15px;
+  border: 1px solid #008cff;
+  color: #ffffff;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  &:hover {
+    background-color: #0099ff;
+    cursor: pointer;
+  }
+`;
+
 function All() {
 
+  // TODO:
+  // DRY up pagination code
+  // Implement load on scroll
   const [data, setData] = useState([]);
+  const [latestDoc, setLatestDoc] = useState(undefined);
   const [order, setOrder] = useState("time");
   const [fetchData, setFetchData] = useState(true);
   useEffect(() => {
     getPaginatedPosts(order, "all")
-      .then((sixPosts) => {
-        console.log("Six posts", sixPosts);
-      });
-    getPosts(order, "all")
-      .then((posts) => {
-        setData(posts);
+      .then((postsObject) => {
+        setData(postsObject.allPosts);
+        setLatestDoc(postsObject.latestDoc);
         setFetchData(false)
       })
       .catch((error) => {
         console.error(error);
       });
   }, [fetchData, order]);
+
+  const handlePostLoad = () => {
+    getMorePaginatedPosts(order, "all", latestDoc)
+      .then((postsObject) => {
+        const newPosts = [...data].concat(postsObject.allPosts);
+        setData(newPosts);
+        setLatestDoc(postsObject.latestDoc);
+        setFetchData(false)
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
 
   const handleRefresh = () => {
     setFetchData(true);
@@ -77,6 +106,7 @@ function All() {
             refreshData={handleRefresh}
           />
         ))}
+        <LoadButton onClick={handlePostLoad}>Load more posts</LoadButton>
       </AllWall>
     </AllContainer>
   )

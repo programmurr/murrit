@@ -30,18 +30,48 @@ const generatePostDocId = async (post) => {
 
 export const getPaginatedPosts = async(order, board) => {
   if (board === "all") {
-    const ref = db.collection("posts")
-      .orderBy(order, "desc")
-      .limit(6);
-
-    const data = ref.get();
-    
     let allPosts = [];
-    (await data).docs.forEach((doc) => {
-      const post = doc.data();
-      allPosts.push(post);
-    });
-    return allPosts;
+    let index = -1;
+    const postsObject = await db.collection("posts")
+      .orderBy(order, "desc")
+      .limit(6)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const post = doc.data();
+          allPosts.push(post);
+          index ++;
+        });
+        return { 
+          allPosts: allPosts, 
+          latestDoc: querySnapshot.docs[index]
+        }
+      });
+    return postsObject;
+  }
+}
+
+export const getMorePaginatedPosts = async(order, board, lastDoc) => {
+  if (board === "all") {
+    let allPosts = [];
+    let index = -1;
+    const postsObject = await db.collection("posts")
+      .orderBy(order, "desc")
+      .startAfter(lastDoc)
+      .limit(6)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const post = doc.data();
+          allPosts.push(post);
+          index ++;
+        });
+        return { 
+          allPosts: allPosts, 
+          latestDoc: querySnapshot.docs[index]
+        }
+      });
+    return postsObject;
   }
 }
 
