@@ -5,6 +5,7 @@ rules_version = '2';
 // Validate board names
 // Validation for storage?
 // Usernames must be unique
+// Timeout between firestore/storage creation
 service cloud.firestore {
   match /databases/{database}/documents {
     function isSignedIn() {

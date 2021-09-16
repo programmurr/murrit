@@ -28,7 +28,24 @@ const generatePostDocId = async (post) => {
     });
 }
 
-const getPosts = async (order, board) => {
+export const getPaginatedPosts = async(order, board) => {
+  if (board === "all") {
+    const ref = db.collection("posts")
+      .orderBy(order, "desc")
+      .limit(6);
+
+    const data = ref.get();
+    
+    let allPosts = [];
+    (await data).docs.forEach((doc) => {
+      const post = doc.data();
+      allPosts.push(post);
+    });
+    return allPosts;
+  }
+}
+
+export const getPosts = async (order, board) => {
   let allPosts = [];
   if (board === "all") {
     await db.collection("posts")
@@ -337,7 +354,6 @@ export {
   signInWithGoogle,
   storage, 
   generatePostDocId, 
-  getPosts,
   getUserPostsAndComments,
   generateImageDocument,
   updateUserDoc,

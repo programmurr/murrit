@@ -232,7 +232,7 @@ function Submit() {
         alert("Board already exists! Please use a different name.");
       }
     } else {
-      alert("Ensure there are no special characters in the board name.");
+      alert("Ensure there are no special characters or spaces in the board name.");
     }
   }
 

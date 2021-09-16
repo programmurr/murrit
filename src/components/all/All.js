@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import Post from '../post/Post';
 import SortBox from '../sort/SortBox';
 import { 
-  getPosts
+  getPosts,
+  getPaginatedPosts
 } from '../../firebase';
 
 const AllContainer = styled.div`
@@ -40,6 +41,10 @@ function All() {
   const [order, setOrder] = useState("time");
   const [fetchData, setFetchData] = useState(true);
   useEffect(() => {
+    getPaginatedPosts(order, "all")
+      .then((sixPosts) => {
+        console.log("Six posts", sixPosts);
+      });
     getPosts(order, "all")
       .then((posts) => {
         setData(posts);
