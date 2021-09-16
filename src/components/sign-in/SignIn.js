@@ -47,6 +47,11 @@ const SignInForm = styled.form`
   justify-content: space-around;
 `;
 
+const ErrorSpan = styled.span`
+  color: red;
+  font-weight: 600;
+`;
+
 const GoogleAuthContainer = styled.div`
   width: 95%;
   height: 100%;
@@ -100,11 +105,13 @@ function SignIn() {
   const signInWithEmailAndPasswordHandler = (event, email, password) => {
     event.preventDefault();
     auth.signInWithEmailAndPassword(email, password)
+      .then(() => {
+        history.push('/');
+      })
       .catch((error) => {
-        setError("Error signing in with password and email");
+        setError(error.message);
         console.error("Error signing in with password and email", error);
       });
-    history.push('/');
   };
 
   const onChangeHandler = (event) => {
@@ -131,7 +138,7 @@ function SignIn() {
         <h1>Sign In</h1>
       </SignInHeaderContainer>
       <SignInElements className="SignInElements">
-        {error !== null && <div>{error}</div>}
+      <div>{error !== null && <ErrorSpan>{error}</ErrorSpan>}</div>
         <SignInForm className="SignInForm">
           <SignInLabel htmlFor="userEmail">Email: </SignInLabel>
           <SignInInput

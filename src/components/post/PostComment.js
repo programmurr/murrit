@@ -200,9 +200,11 @@ function PostComment(props) {
             <TimeStamp>
               {formatTime(data)}
             </TimeStamp>
-            <ReplyLink onClick={handleReplyClick}>
-              {replyClicked ? "Hide Reply" : "Reply"}
-            </ReplyLink>
+            {user !== undefined && 
+              <ReplyLink onClick={handleReplyClick}>
+                {replyClicked ? "Hide Reply" : "Reply"}
+              </ReplyLink>
+            }
           </CommentInfoElements>
         </CommentInfo>
         <CommentBody className="CommentBody">{data.comment}</CommentBody>
