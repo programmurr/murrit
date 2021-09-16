@@ -159,6 +159,8 @@ function PostComment(props) {
     if (user !== undefined) {
       await handleVote("comments", operator, user.uid, data.id);
       props.handleRefreshComments();
+    } else {
+      alert("Sign in or make an account to vote!");
     }
   }
 

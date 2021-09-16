@@ -230,6 +230,8 @@ function ViewPost() {
       .catch((error) => {
         console.error(error);
       });
+    } else {
+      alert("Sign in or make an account to vote!");
     }
   }
 

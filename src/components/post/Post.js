@@ -171,8 +171,12 @@ function Post(props) {
   }
 
   const handleVoteClick = async (operator) => {
-    await handleVote("posts", operator, user.uid, data.id);
-    props.refreshData();
+    if (user !== undefined) {
+      await handleVote("posts", operator, user.uid, data.id);
+      props.refreshData();
+    } else {
+      alert("Sign in or make an account to vote!");
+    }
   }
 
   return (
