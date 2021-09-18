@@ -44,9 +44,33 @@ export const getPaginatedPosts = async(order, board) => {
           allPosts: allPosts, 
           latestDoc: querySnapshot.docs[querySnapshot.docs.length - 1]
         }
+      })    
+      .catch((error) => {
+        console.error(error);
       });
     return postsObject;
-  }}
+  } else {
+    let allPosts = [];
+    const postsObject = await db.collection("posts")
+    .where("board", "==", board)
+    .orderBy(order, "desc")
+    .limit(6)
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        allPosts.push(doc.data());
+      });
+      return { 
+        allPosts: allPosts, 
+        latestDoc: querySnapshot.docs[querySnapshot.docs.length - 1]
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+    return postsObject;
+  }
+}
 
 export const getMorePaginatedPosts = async(order, board, lastDoc) => {
   if (board === "all") {
@@ -67,7 +91,30 @@ export const getMorePaginatedPosts = async(order, board, lastDoc) => {
         }
       });
     return postsObject;
-  }}
+  } else {
+    let allPosts = [];
+    const postsObject = await db.collection("posts")
+      .where("board", "==", board)
+      .orderBy(order, "desc")
+      .startAfter(lastDoc)
+      .limit(6)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const post = doc.data();
+          allPosts.push(post);
+        });
+        return { 
+          allPosts: allPosts, 
+          latestDoc: querySnapshot.docs[querySnapshot.docs.length - 1]
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    return postsObject;
+  }
+}
 
 export const getPosts = async (order, board) => {
   let allPosts = [];

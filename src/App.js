@@ -30,7 +30,9 @@ const GlobalStyles = styled.div`
 // TODO:
 // Test 'nullAuthor' by deleting a user
 // Let users delete their own posts/comments/accounts
-// Lazy load posts
+// Lazy load posts/comments in user profile
+// DRY the code between ALl.js and Board.js. They're basically the same.
+//   Use a HOC?
 // Update README with features and gifs of action
 function App() {
   const user = useUser();

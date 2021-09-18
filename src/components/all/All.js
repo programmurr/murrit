@@ -42,8 +42,6 @@ const AllWall = styled.div`
 `;
 
 function All() {
-  // TODO:
-  // Implement load on scroll
   const [data, setData] = useState([]);
   const [latestDoc, setLatestDoc] = useState(undefined);
   const [order, setOrder] = useState("time");

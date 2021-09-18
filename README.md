@@ -14,6 +14,12 @@ Capstone JavaScript project from [The Odin Project](https://www.theodinproject.c
   - Cloud Storage
   - Hosting
 
+## Features
+- User accounts
+- Posting, commenting and voting on other user's posts
+- Data pagination with infinite scrolling
+- 
+
 ## Installation Instructions
 
 Pending.
