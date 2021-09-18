@@ -31,6 +31,7 @@ const GlobalStyles = styled.div`
 // Test 'nullAuthor' by deleting a user
 // Let users delete their own posts/comments/accounts
 // Lazy load posts
+// Update README with features and gifs of action
 function App() {
   const user = useUser();
 

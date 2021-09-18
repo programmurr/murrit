@@ -31,7 +31,6 @@ const generatePostDocId = async (post) => {
 export const getPaginatedPosts = async(order, board) => {
   if (board === "all") {
     let allPosts = [];
-    let index = -1;
     const postsObject = await db.collection("posts")
       .orderBy(order, "desc")
       .limit(6)
@@ -40,21 +39,18 @@ export const getPaginatedPosts = async(order, board) => {
         querySnapshot.forEach((doc) => {
           const post = doc.data();
           allPosts.push(post);
-          index ++;
         });
         return { 
           allPosts: allPosts, 
-          latestDoc: querySnapshot.docs[index]
+          latestDoc: querySnapshot.docs[querySnapshot.docs.length - 1]
         }
       });
     return postsObject;
-  }
-}
+  }}
 
 export const getMorePaginatedPosts = async(order, board, lastDoc) => {
   if (board === "all") {
     let allPosts = [];
-    let index = -1;
     const postsObject = await db.collection("posts")
       .orderBy(order, "desc")
       .startAfter(lastDoc)
@@ -64,16 +60,14 @@ export const getMorePaginatedPosts = async(order, board, lastDoc) => {
         querySnapshot.forEach((doc) => {
           const post = doc.data();
           allPosts.push(post);
-          index ++;
         });
         return { 
           allPosts: allPosts, 
-          latestDoc: querySnapshot.docs[index]
+          latestDoc: querySnapshot.docs[querySnapshot.docs.length - 1]
         }
       });
     return postsObject;
-  }
-}
+  }}
 
 export const getPosts = async (order, board) => {
   let allPosts = [];

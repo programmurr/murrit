@@ -9,9 +9,8 @@ import {
 
 const AllContainer = styled.div`
   width: 100vw;
+  height: 100%;
   max-width: 100%;
-  height: 100vh%;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -28,37 +27,29 @@ const AllHeaderContainer = styled.div`
 
 const AllWall = styled.div`
   width: 97%;
+  height: 100vh;
+  overflow: scroll;
+  max-height: 80%;
   max-width: 980px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const LoadButton = styled.button`
-  width: 120px;
-  height: 50px;
-  background-color: #008cff;
-  border-radius: 15px;
-  border: 1px solid #008cff;
-  color: #ffffff;
-  font-weight: 600;
-  margin-bottom: 2rem;
-  &:hover {
-    background-color: #0099ff;
-    cursor: pointer;
-  }
+  &::-webkit-scrollbar {
+    display: none;
+  };
+  scrollbar-width: none;
 `;
 
 function All() {
-
   // TODO:
-  // DRY up pagination code
   // Implement load on scroll
   const [data, setData] = useState([]);
   const [latestDoc, setLatestDoc] = useState(undefined);
   const [order, setOrder] = useState("time");
   const [fetchData, setFetchData] = useState(true);
+
+
   useEffect(() => {
     getPaginatedPosts(order, "all")
       .then((postsObject) => {
@@ -71,17 +62,23 @@ function All() {
       });
   }, [fetchData, order]);
 
-  const handlePostLoad = () => {
-    getMorePaginatedPosts(order, "all", latestDoc)
-      .then((postsObject) => {
-        const newPosts = [...data].concat(postsObject.allPosts);
-        setData(newPosts);
-        setLatestDoc(postsObject.latestDoc);
-        setFetchData(false)
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  const handleScroll = () => {
+    if (latestDoc !== undefined) {
+      const wall = document.getElementById("all-wall");
+      const triggerHeight = wall.scrollTop + wall.offsetHeight;
+      if (triggerHeight >= wall.scrollHeight) {
+        getMorePaginatedPosts(order, "all", latestDoc)
+        .then((postsObject) => {
+          const newPosts = [...data].concat(postsObject.allPosts);
+          setData(newPosts);
+          setLatestDoc(postsObject.latestDoc);
+          setFetchData(false)
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      }
+    }
   }
 
   const handleRefresh = () => {
@@ -98,7 +95,7 @@ function All() {
         <h4>All Posts</h4>
         <SortBox order={order} handleOrderChange={handleOrderChange}/>
       </AllHeaderContainer>
-      <AllWall className="AllWall">
+      <AllWall className="AllWall" id="all-wall" onScroll={handleScroll}>
         {data.map((post, index) => (
           <Post
             key={post.title + index} 
@@ -106,7 +103,6 @@ function All() {
             refreshData={handleRefresh}
           />
         ))}
-        <LoadButton onClick={handlePostLoad}>Load more posts</LoadButton>
       </AllWall>
     </AllContainer>
   )
