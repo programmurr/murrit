@@ -4,10 +4,11 @@ Capstone JavaScript project from [The Odin Project](https://www.theodinproject.c
 
 *"Replicate your favorite website as close as possible - Pinterest, Facebook, Twitter, etc. Just make sure it has lots of interesting functionality. You’ll be integrating a full array of skills into this one. If you have completed a backend course, you may use that for this project, otherwise use Firebase. This should prove that you now have all the tools and knowledge needed to build a website, just like the ones you use every day."*
 
-## Technologies
+## Core Technologies
 - [ReactJS](https://reactjs.org/)
   - [Styled Components](https://styled-components.com/)
   - [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
+  - [React Router DOM](https://reactrouter.com/)
 - [Firebase](https://firebase.google.com/)
   - Authentication
   - Cloud Firestore
@@ -16,9 +17,11 @@ Capstone JavaScript project from [The Odin Project](https://www.theodinproject.c
 
 ## Features
 - User accounts
-- Posting, commenting and voting on other user's posts
+- Text posts with markdown
+- Image posts facilitated with Drag and Drop and File APIs
 - Data pagination with infinite scrolling
-- 
+- Board creation by users
+- New/Highest vote count sorting
 
 ## Installation Instructions
 

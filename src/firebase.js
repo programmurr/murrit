@@ -116,34 +116,88 @@ export const getMorePaginatedPosts = async(order, board, lastDoc) => {
   }
 }
 
-const getUserPostsAndComments = async (userId, order) => {
+export const getPaginatedUserPostsAndComments = async (userId, order) => {
   let allPosts = [];
-  await db.collection("posts")
-  .where("author", "==", userId)
-  .orderBy(order, "desc")
-  .get()
-  .then((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      allPosts.push(doc.data());
+  const postObject = await db.collection("posts")
+    .where("author", "==", userId)
+    .orderBy(order, "desc")
+    .limit(6)
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        allPosts.push(doc.data());
+      });
+      return { 
+        allPosts: allPosts, 
+        latestPost: querySnapshot.docs[querySnapshot.docs.length - 1]
+      }
+    })
+    .catch((error) => {
+      console.error(error);
     });
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+
   let allComments = [];
-  await db.collection("comments")
-  .where("author", "==", userId)
-  .orderBy(order, "desc")
-  .get()
-  .then((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      allComments.push(doc.data());
+  const commentObject = await db.collection("comments")
+    .where("author", "==", userId)
+    .orderBy(order, "desc")
+    .limit(6)
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        allComments.push(doc.data());
+      });
+      return { 
+        allComments: allComments, 
+        latestComment: querySnapshot.docs[querySnapshot.docs.length - 1]
+      }
+    })
+    .catch((error) => {
+      console.error(error);
     });
-  })
-  .catch((error) => {
-    console.error(error);
-  });
-  return { allPosts, allComments };
+  return { ...postObject, ...commentObject };
+}
+
+export const getMorePaginatedUserPostsAndComments = async (userId, order, latestPost, latestComment) => {
+  let allPosts = [];
+  const postObject = await db.collection("posts")
+    .where("author", "==", userId)
+    .orderBy(order, "desc")
+    .startAfter(latestPost)
+    .limit(6)
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        allPosts.push(doc.data());
+      });
+      return { 
+        allPosts: allPosts, 
+        latestPost: querySnapshot.docs[querySnapshot.docs.length - 1]
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+
+  let allComments = [];
+  const commentObject = await db.collection("comments")
+    .where("author", "==", userId)
+    .orderBy(order, "desc")
+    .startAfter(latestComment)
+    .limit(6)
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        allComments.push(doc.data());
+      });
+      return { 
+        allComments: allComments, 
+        latestComment: querySnapshot.docs[querySnapshot.docs.length - 1]
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  return { ...postObject, ...commentObject };
 }
 
 const updateUserDoc = (userId, postId) => {
@@ -394,7 +448,6 @@ export {
   signInWithGoogle,
   storage, 
   generatePostDocId, 
-  getUserPostsAndComments,
   generateImageDocument,
   updateUserDoc,
   checkUserVoted,

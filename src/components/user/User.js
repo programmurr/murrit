@@ -7,14 +7,14 @@ import Post from '../post/Post';
 import Comment from '../comment/Comment';
 import SortBox from '../sort/SortBox';
 import {
-  getUserPostsAndComments
+  getPaginatedUserPostsAndComments,
+  getMorePaginatedUserPostsAndComments
 } from '../../firebase';
 
 const UserProfileContainer = styled.div`
   width: 100vw;
-  max-width: 100%;
   height: 100%;
-  min-height: 100%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -45,24 +45,66 @@ const ContentSelector = styled.p`
   }
 `;
 
+const PostWall = styled.div`
+  width: 97%;
+  height: 100vh;
+  overflow: scroll;
+  max-height: 80%;
+  max-width: 980px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  &::-webkit-scrollbar {
+    display: none;
+  };
+  scrollbar-width: none;
+`;
+
 function User() {
   let { username } = useParams();
 
   const [posts, setPosts] = useState([]);
+  const [latestPost, setLatestPost] = useState(undefined);
   const [comments, setComments] = useState([]);
+  const [latestComment, setLatestComment] = useState(undefined);
   const [order, setOrder] = useState("time");
   const [fetchData, setFetchData] = useState(true);
   useEffect(() => {
-    getUserPostsAndComments(username, order)
-      .then((userData) => {
-        setPosts(userData.allPosts);
-        setComments(userData.allComments);
-        setFetchData(false);
-      })
+    getPaginatedUserPostsAndComments(username, order)
+    .then((userData) => {
+      setPosts(userData.allPosts);
+      setComments(userData.allComments);
+      setLatestPost(userData.latestPost);
+      setLatestComment(userData.latestComment);
+      setFetchData(false);
+    })
     .catch((error) => {
       console.error(error);
     })
   }, [fetchData, order, username]);
+
+  const handleScroll = () => {
+    if (latestPost && latestComment) {
+      const wall = document.getElementById("wall");
+      const triggerHeight = wall.scrollTop + wall.offsetHeight;
+      if (triggerHeight >= wall.scrollHeight) {
+        getMorePaginatedUserPostsAndComments(username, order, latestPost, latestComment)
+        .then((userData) => {
+          const newPosts = [...posts].concat(userData.allPosts);
+          const newComments = [...comments].concat(userData.allComments);
+          setPosts(newPosts);
+          setComments(newComments);
+          setLatestPost(userData.latestPost);
+          setLatestComment(userData.latestComment);
+          setFetchData(false);
+            })
+        .catch((error) => {
+          console.error(error);
+        });
+      }
+    }
+  }
 
   const handleRefresh = () => {
     setFetchData(true);
@@ -106,20 +148,22 @@ function User() {
         </ContentSelector>
       </ContentSelectorContainer>
       <SortBox order={order} handleOrderChange={handleOrderChange}/>
-      {
-        postsSelected
-        ? posts.map((post, index) => (
-          <Post key={post.title + index} data={post} refreshData={handleRefresh} />
-          ))
-        : comments.map((comment, index) => (
-            <Comment 
-              key={comment.author + index} 
-              data={comment} 
-              index={index}
-              length={comments.length - 1}
-            />
-          ))
-      }
+      <PostWall className="PostWall" id="wall" onScroll={handleScroll}>
+        {
+          postsSelected
+          ? posts.map((post, index) => (
+            <Post key={post.title + index} data={post} refreshData={handleRefresh} />
+            ))
+          : comments.map((comment, index) => (
+              <Comment 
+                key={comment.author + index} 
+                data={comment} 
+                index={index}
+                length={comments.length - 1}
+              />
+            ))
+        }
+      </PostWall>
     </UserProfileContainer>
   );
 }

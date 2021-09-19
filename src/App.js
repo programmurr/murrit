@@ -31,6 +31,7 @@ const GlobalStyles = styled.div`
 // Let users delete their own posts/comments/accounts
 // Lazy load posts/comments in user profile
 // Update README with features and gifs of action
+// Select board dropdown from home page
 function App() {
   const user = useUser();
 
