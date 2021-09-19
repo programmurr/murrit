@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useLocation } from 'react-router-dom';
 import Post from '../post/Post';
 import SortBox from '../sort/SortBox';
-import { 
+import {
   getPaginatedPosts,
   getMorePaginatedPosts
 } from '../../firebase';
 
-const AllContainer = styled.div`
+const WallContainer = styled.div`
   width: 100vw;
   height: 100%;
   max-width: 100%;
@@ -17,7 +18,7 @@ const AllContainer = styled.div`
   background-color: #dae0e6;
 `;
 
-const AllHeaderContainer = styled.div`
+const WallHeaderContainer = styled.div`
   width: 95%;
   max-width: 955.6px;
   display: flex;
@@ -25,7 +26,7 @@ const AllHeaderContainer = styled.div`
   align-items: start;
 `;
 
-const AllWall = styled.div`
+const InnerWall = styled.div`
   width: 97%;
   height: 100vh;
   overflow: scroll;
@@ -41,15 +42,26 @@ const AllWall = styled.div`
   scrollbar-width: none;
 `;
 
-function All() {
+function Wall() {
+  let location = useLocation();
+
+  const [boardName, setBoardName] = useState("");
+  useEffect(() => {
+    const { pathname } = location;
+    if (pathname === "/") {
+      setBoardName("all");
+    } else {
+      const index = pathname.indexOf('/m/');
+      setBoardName(pathname.slice(index + 3));
+    }
+  }, [location]);
+
   const [data, setData] = useState([]);
   const [latestDoc, setLatestDoc] = useState(undefined);
   const [order, setOrder] = useState("time");
   const [fetchData, setFetchData] = useState(true);
-
-
   useEffect(() => {
-    getPaginatedPosts(order, "all")
+    getPaginatedPosts(order, boardName)
       .then((postsObject) => {
         setData(postsObject.allPosts);
         setLatestDoc(postsObject.latestDoc);
@@ -58,14 +70,14 @@ function All() {
       .catch((error) => {
         console.error(error);
       });
-  }, [fetchData, order]);
+  }, [fetchData, order, boardName]);
 
   const handleScroll = () => {
     if (latestDoc !== undefined) {
-      const wall = document.getElementById("all-wall");
+      const wall = document.getElementById("wall");
       const triggerHeight = wall.scrollTop + wall.offsetHeight;
       if (triggerHeight >= wall.scrollHeight) {
-        getMorePaginatedPosts(order, "all", latestDoc)
+        getMorePaginatedPosts(order, boardName, latestDoc)
         .then((postsObject) => {
           const newPosts = [...data].concat(postsObject.allPosts);
           setData(newPosts);
@@ -86,14 +98,14 @@ function All() {
   const handleOrderChange = (newOrder) => {
     setOrder(newOrder);
   }
-  
+
   return (
-    <AllContainer className="AllContainer">
-      <AllHeaderContainer>
-        <h4>All Posts</h4>
-        <SortBox order={order} handleOrderChange={handleOrderChange}/>
-      </AllHeaderContainer>
-      <AllWall className="AllWall" id="all-wall" onScroll={handleScroll}>
+    <WallContainer className="WallContainer">
+    <WallHeaderContainer>
+      <h4>{boardName}</h4>
+      <SortBox order={order} handleOrderChange={handleOrderChange}/>
+    </WallHeaderContainer>
+      <InnerWall className="Wall" id="wall" onScroll={handleScroll}>
         {data.map((post, index) => (
           <Post
             key={post.title + index} 
@@ -101,9 +113,9 @@ function All() {
             refreshData={handleRefresh}
           />
         ))}
-      </AllWall>
-    </AllContainer>
+      </InnerWall>
+    </WallContainer>
   )
 }
 
-export default All;
+export default Wall;

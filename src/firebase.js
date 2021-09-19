@@ -116,37 +116,6 @@ export const getMorePaginatedPosts = async(order, board, lastDoc) => {
   }
 }
 
-export const getPosts = async (order, board) => {
-  let allPosts = [];
-  if (board === "all") {
-    await db.collection("posts")
-    .orderBy(order, "desc")
-    .get()
-    .then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        allPosts.push(doc.data());
-      });
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-  } else {
-    await db.collection("posts")
-    .where("board", "==", board)
-    .orderBy(order, "desc")
-    .get()
-    .then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        allPosts.push(doc.data());
-      });
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-  }
-  return allPosts;
-}
-
 const getUserPostsAndComments = async (userId, order) => {
   let allPosts = [];
   await db.collection("posts")

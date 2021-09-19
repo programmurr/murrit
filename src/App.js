@@ -7,8 +7,7 @@ import {
   Redirect
  } from 'react-router-dom';
 import NavBar from './components/navbar/NavBar';
-import All from './components/all/All';
-import Board from './components/board/Board';
+import Wall from './components/wall/Wall';
 import User from './components/user/User';
 import ViewPost from './components/post/ViewPost';
 import Submit from './components/submit/Submit';
@@ -31,8 +30,6 @@ const GlobalStyles = styled.div`
 // Test 'nullAuthor' by deleting a user
 // Let users delete their own posts/comments/accounts
 // Lazy load posts/comments in user profile
-// DRY the code between ALl.js and Board.js. They're basically the same.
-//   Use a HOC?
 // Update README with features and gifs of action
 function App() {
   const user = useUser();
@@ -44,10 +41,10 @@ function App() {
             <NavBar />
             <Switch>
               <Route exact path="/">
-                <All />  
+                <Wall />  
               </Route>
-              <Route path="/m/:boardName">
-                <Board />  
+              <Route exact path="/m/:boardName">
+                <Wall />  
               </Route>
               <Route path="/u/:username">
                 <User />  
