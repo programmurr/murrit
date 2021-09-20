@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import Post from '../post/Post';
 import SortBox from '../sort/SortBox';
+import BoardPicker from '../board-picker/BoardPicker';
 import {
   getPaginatedPosts,
   getMorePaginatedPosts
@@ -19,11 +20,24 @@ const WallContainer = styled.div`
 `;
 
 const WallHeaderContainer = styled.div`
-  width: 95%;
+  width: 93%;
+  height: 5vh;
+  min-height: 45px;
   max-width: 955.6px;
   display: flex;
   flex-direction: column;
   align-items: start;
+`;
+
+const WallHeader = styled.h4`
+  height: 50%;
+`;
+
+const Organisation = styled.div`
+  display: flex;
+  height: 50%;
+  width: 55%;
+  justify-content: space-between;
 `;
 
 const InnerWall = styled.div`
@@ -99,11 +113,18 @@ function Wall() {
     setOrder(newOrder);
   }
 
+  const handleBoardChange = (newBoard) => {
+    setBoardName(newBoard);
+  }
+
   return (
     <WallContainer className="WallContainer">
-    <WallHeaderContainer>
-      <h4>{boardName}</h4>
-      <SortBox order={order} handleOrderChange={handleOrderChange}/>
+    <WallHeaderContainer className="WallHeaderContainer">
+      <WallHeader>{boardName}</WallHeader>
+      <Organisation className="Organisation">
+        <SortBox order={order} handleOrderChange={handleOrderChange}/>
+        <BoardPicker handleBoardChange={handleBoardChange} />
+      </Organisation>
     </WallHeaderContainer>
       <InnerWall className="Wall" id="wall" onScroll={handleScroll}>
         {data.map((post, index) => (
