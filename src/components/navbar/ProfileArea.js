@@ -13,8 +13,8 @@ const ProfileAreaContainer = styled.div`
 `;
 
 const SignOutButton = styled.button`
-  width: 90px;
-  height: 25px;
+  width: fit-content;
+  padding: 0.25rem 1rem 0.25rem 1rem;
   background-color: #ffffff;
   border-radius: 15px;
   border: 1px solid #008cff;
@@ -34,18 +34,27 @@ const CreateButton = styled(SignOutButton)`
   }
 `;
 
+const ProfileButton = styled(SignOutButton)`
+  border: 1px solid #000000;
+  color: #000000;
+`;
+
 function ProfileArea(props) {
   let history = useHistory();
 
-  const { displayName } = props.user;
+  const { displayName, id } = props.user;
 
   const handleCreateClick = () => {
     history.push('/submit')
   }
 
+  const handleNameClick = () => {
+    history.push(`/u/${id}`);
+  }
+
   return (
     <ProfileAreaContainer className="ProfileArea">
-      <p>{displayName}</p>
+      <ProfileButton onClick={handleNameClick}>{displayName}</ProfileButton>
       <SignOutButton onClick={() => {auth.signOut()}}>
         Sign out
       </SignOutButton>

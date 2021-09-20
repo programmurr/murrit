@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import Logo from './Logo';
 import Title from './Title';
 import LoginArea from './LoginArea';
 import ProfileArea from './ProfileArea';
@@ -21,9 +20,11 @@ const NavContainer = styled.div`
   border-radius: 5px;
   background-color: #ffffff;
   width: 95%;
+  height: 5vh;
+  min-height: 45px;
   max-width: 955.6px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   justify-items: center;
   align-items: center;
   position: fixed;
@@ -34,9 +35,8 @@ function NavBar() {
   const user = useUser();
 
   return (
-    <OuterNavContainer className="NavBarContainer">
-      <NavContainer className="NavBar" id="nav-bar">
-        <Logo />
+    <OuterNavContainer className="OuterNavContainer">
+      <NavContainer className="NavContainer" id="nav-bar">
         <Title />
         {user === undefined
           ? <LoginArea />
