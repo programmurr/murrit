@@ -4,10 +4,10 @@ import { useLocation } from 'react-router-dom';
 import Post from '../post/Post';
 import SortBox from '../sort/SortBox';
 import BoardPicker from '../board-picker/BoardPicker';
+import useBoards from '../../hooks/useBoards';
 import {
   getPaginatedPosts,
-  getMorePaginatedPosts,
-  getBoards
+  getMorePaginatedPosts
 } from '../../firebase';
 
 const WallContainer = styled.div`
@@ -59,15 +59,7 @@ const InnerWall = styled.div`
 
 function Wall() {
   let location = useLocation();
-
-  const [boards, setBoards] = useState([]);
-  useEffect(() => {
-    getBoards()
-      .then((fetchedBoards) => {
-        const sortedBoards = fetchedBoards.sort();
-        setBoards(sortedBoards);
-      })
-  }, []);
+  const boardHook = useBoards();
 
   const [boardName, setBoardName] = useState("");
   useEffect(() => {
@@ -134,7 +126,7 @@ function Wall() {
       <WallHeader>{boardName}</WallHeader>
       <Organisation className="Organisation">
         <SortBox order={order} handleOrderChange={handleOrderChange}/>
-        <BoardPicker boards={boards} handleBoardChange={handleBoardChange} />
+        <BoardPicker boards={boardHook.boards} handleBoardChange={handleBoardChange} />
       </Organisation>
     </WallHeaderContainer>
       <InnerWall className="Wall" id="wall" onScroll={handleScroll}>

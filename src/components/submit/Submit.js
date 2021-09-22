@@ -9,11 +9,11 @@ import { CancelPost, SubmitPost, AddBoard } from './SubmissionButtons';
 import ImageUploader from './ImageUploader';
 import BoardPicker from '../board-picker/BoardPicker';
 import useUser from '../../hooks/useUser';
+import useBoards from '../../hooks/useBoards';
 import { 
   generatePostDocId, 
   generateImageDocument,
   updateUserDoc,
-  getBoards,
   addBoard 
 } from '../../firebase';
 import { v4 as uuidv4 } from 'uuid';
@@ -174,6 +174,7 @@ const SubmitError = styled(TitleError)`
 function Submit() {
   let history = useHistory();
   const user = useUser();
+  const boardHook = useBoards();
 
   const quillModules = {
     toolbar: [
@@ -191,24 +192,13 @@ function Submit() {
   const [titleErrorActive, setTitleErrorActive] = useState(false);
   const [submitErrorActive, setSubmitErrorActive] = useState(false);
 
-  const [boards, setBoards] = useState([]);
-  useEffect(() => {
-      getBoards()
-        .then((fetchedBoards) => {
-          setBoards(fetchedBoards.sort());
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-  }, []);
-
   const [selectedBoard, setSelectedBoard] = useState("");
   useEffect(() => {
-    setSelectedBoard(boards[0]);
-  }, [boards]);
+    setSelectedBoard(boardHook.boards[0]);
+  }, [boardHook.boards]);
 
-  const handleBoardChange = (event) => {
-    setSelectedBoard(event.target.value);
+  const handleBoardChange = (newBoard) => {
+    setSelectedBoard(newBoard);
   }
 
   const newBoardName = useFormInput("");
@@ -216,11 +206,12 @@ function Submit() {
   const handleAddBoard = () => {
     const regex = /^[a-zA-Z0-9\-_]+$/;
     if (regex.test(newBoardName.value)) {
-      if (!boards.includes(newBoardName.value)) {
+      if (!boardHook.boards.includes(newBoardName.value)) {
         addBoard(newBoardName.value)
           .then(() => {
-            let updatedBoards = boards.concat(newBoardName.value);
-            setBoards(updatedBoards);
+            let updatedBoards = boardHook.boards.concat(newBoardName.value);
+            boardHook.update(updatedBoards);
+            newBoardName.clear();
           })
           .catch((error) => {
             console.error("Error adding new board: ", error);
@@ -378,7 +369,7 @@ function Submit() {
         <h2>Create a post</h2>
       </SubmitHeaderContainer>
       <BoardHandling>
-        <BoardPicker boards={boards} handleBoardChange={handleBoardChange} />
+        <BoardPicker boards={boardHook.boards} handleBoardChange={handleBoardChange} />
         <CreateBoardPara>or</CreateBoardPara>
           <BoardCreationLabel 
             className="BoardCreationLabel"
