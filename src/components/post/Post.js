@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import parse from 'html-react-parser';
 import UpIcon from '../../img/up-arrow.svg';
 import DownIcon from '../../img/down-arrow.svg';
+import TrashIcon from '../../img/trash.svg'
 import { 
   db, 
   handleVote
@@ -67,10 +68,18 @@ const InnerPostContainer = styled.div`
 
 const InfoContainer = styled.div`
   display: flex;
+  justify-content: space-between;
 `;
 
 const Info = styled.p`
   font-size: 0.75rem;
+`;
+
+const TrashImage = styled.img`
+  max-height: 20px;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const PostContentContainer = styled.div`
@@ -120,10 +129,18 @@ function ImagePost(props) {
 }
 
 function Post(props) {
-  let history = useHistory();
   const { data } = props;
-
+  let history = useHistory();
   const user = useUser();
+
+  const [isUserPost, setIsUserPost] = useState(false);
+  useEffect(() => {
+    if (user && data.author === user.id) {
+      setIsUserPost(true);
+    } else {
+      setIsUserPost(false);
+    }
+  }, [data, user])
 
   const [commentCount, setCommentCount] = useState(0);
   useEffect(() => {
@@ -163,8 +180,7 @@ function Post(props) {
         .catch((error) => {
           console.error(error);
         });
-}, [data.author]);
-
+    }, [data.author]);
 
   const handlePostClick = () => {
     history.push(`/p/${data.id}`);
@@ -191,6 +207,7 @@ function Post(props) {
           <Info>
             Posted by <Link to={`/u/${author.id}`}>{author.displayName}</Link> {formatTime(data)} to <Link to={`/m/${data.board}`}>{data.board}</Link>
           </Info>
+          {isUserPost && <TrashImage src={TrashIcon} alt="trash-can" />}
         </InfoContainer>
         <PostContentContainer className="PostContentContainer" onClick={handlePostClick}>
             <PostTitle >{data.title}</PostTitle>

@@ -30,8 +30,9 @@ const GlobalStyles = styled.div`
 // Test 'nullAuthor' by deleting a user
 // Let users delete their own posts/comments/accounts
 // Update README with features and gifs of action
-// Resolve conflict in board data between Submit.js and BoardPicker
-//   Make a useBoards hook?
+// Fix bug in Wall.js:
+//   - If first, already-appearing, board is selected in the boardPicker is selected,
+//   the wall does not refresh. Have to click another board first. 
 function App() {
   const user = useUser();
 

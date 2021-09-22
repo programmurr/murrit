@@ -29,6 +29,7 @@ const ContentSelectorContainer = styled.div`
   border-radius: 5px;
   display: flex;
   max-width: 955.6px;
+  margin-bottom: 1vh;
 `;
 
 const ContentSelector = styled.p`
@@ -45,13 +46,18 @@ const ContentSelector = styled.p`
   }
 `;
 
+const SortOuterContainer = styled.div`
+  width: 95%;
+  max-width: 955.6px;
+  display: flex;
+`;
+
 const PostWall = styled.div`
   width: 97%;
   height: 100vh;
   overflow: scroll;
   max-height: 80%;
   max-width: 980px;
-  border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -59,6 +65,7 @@ const PostWall = styled.div`
     display: none;
   };
   scrollbar-width: none;
+  margin-top: 0.5vh;
 `;
 
 function User() {
@@ -147,7 +154,9 @@ function User() {
           ALL COMMENTS
         </ContentSelector>
       </ContentSelectorContainer>
-      <SortBox order={order} handleOrderChange={handleOrderChange}/>
+      <SortOuterContainer className="SortOuterContainer">
+        <SortBox order={order} handleOrderChange={handleOrderChange}/>
+      </SortOuterContainer>
       <PostWall className="PostWall" id="wall" onScroll={handleScroll}>
         {
           postsSelected
