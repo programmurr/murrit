@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import UpIcon from '../../img/up-arrow.svg';
 import DownIcon from '../../img/down-arrow.svg';
+import TrashIcon from '../../img/trash.svg';
 import {
   db,
   getComment,
@@ -52,11 +53,19 @@ const CommentInfo = styled.div`
   font-size: 0.85rem;
 `;
 
+const TrashImage = styled.img`
+  max-height: 15px;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
 const CommentInfoElements = styled.div`
   width: 50%;
   min-width: 300px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `;
 
 const VoteContainer = styled.div`
@@ -153,7 +162,17 @@ function PostComment(props) {
     } else {
       setVoteString(`${data.votes} votes`);
     }
-  }, [data])
+  }, [data]);
+
+  const [isUserComment, setIsUserComment] = useState(false);
+  useEffect(() => {
+    if (user && data.author === user.id) {
+      setIsUserComment(true);
+    } else {
+      setIsUserComment(false);
+    }
+  }, [data, user])
+
 
   const handleVoteClick = async (operator) => {
     if (user !== undefined) {
@@ -175,6 +194,11 @@ function PostComment(props) {
       setReplyClicked(false);
     }
     props.handleRefreshComments();
+  }
+
+  const handleDelete = () => {
+    alert("Delete me!");
+    // Delete post
   }
 
   return (
@@ -207,6 +231,7 @@ function PostComment(props) {
                 {replyClicked ? "Hide Reply" : "Reply"}
               </ReplyLink>
             }
+            {isUserComment && <TrashImage src={TrashIcon} alt="trash-can" onClick={handleDelete} />}
           </CommentInfoElements>
         </CommentInfo>
         <CommentBody className="CommentBody">{data.comment}</CommentBody>

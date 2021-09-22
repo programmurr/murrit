@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import parse from 'html-react-parser';
 import UpIcon from '../../img/up-arrow.svg'
 import DownIcon from '../../img/down-arrow.svg'
+import TrashIcon from '../../img/trash.svg'
 import PostComment from './PostComment';
 import WriteComment from '../comment/WriteComment';
 import SortBox from '../sort/SortBox';
@@ -78,10 +79,18 @@ const InnerPostContainer = styled.div`
 
 const InfoContainer = styled.div`
   display: flex;
+  justify-content: space-between;
 `;
 
 const Info = styled.p`
   font-size: 0.75rem;
+`;
+
+const TrashImage = styled.img`
+  max-height: 20px;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const PostContentContainer = styled.div`
@@ -137,6 +146,7 @@ function ViewPost() {
   let { postid } = useParams();
 
   const user = useUser();
+
 
   const [livePost, setLivePost] = useState();
   const [commentCount, setCommentCount] = useState(0);
@@ -195,6 +205,15 @@ function ViewPost() {
     }
   }, [livePost]);
 
+  const [isUserPost, setIsUserPost] = useState(false);
+  useEffect(() => {
+    if (livePost && user && livePost.author === user.id) {
+      setIsUserPost(true);
+    } else {
+      setIsUserPost(false);
+    }
+  }, [livePost, user])
+
   const [order, setOrder] = useState("time");
   const [postComments, setPostComments] = useState([]);
   useEffect(() => {
@@ -243,6 +262,11 @@ function ViewPost() {
     setOrder(newOrder);
   }
 
+  const handleDelete = () => {
+    alert("Delete me!");
+    // Delete post
+  }
+
   if (livePost !== undefined) {
     return (
       <PostPage className="PostPage">
@@ -257,6 +281,7 @@ function ViewPost() {
             <Info>
               Posted by <Link to={`/u/${author.id}`}>{author.displayName}</Link> {formatTime(livePost)} to <Link to={`/m/${livePost.board}`}>{livePost.board}</Link>
             </Info>
+            {isUserPost && <TrashImage src={TrashIcon} alt="trash-can" onClick={handleDelete} />}
           </InfoContainer>
           <PostContentContainer className="PostContentContainer">
               <PostTitle >{livePost.title}</PostTitle>

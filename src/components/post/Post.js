@@ -195,6 +195,11 @@ function Post(props) {
     }
   }
 
+  const handleDelete = () => {
+    alert("Delete me!");
+    // Delete post
+  }
+
   return (
     <PostContainer className="PostContainer">
       <VoteContainer className="VoteContainer">
@@ -207,7 +212,7 @@ function Post(props) {
           <Info>
             Posted by <Link to={`/u/${author.id}`}>{author.displayName}</Link> {formatTime(data)} to <Link to={`/m/${data.board}`}>{data.board}</Link>
           </Info>
-          {isUserPost && <TrashImage src={TrashIcon} alt="trash-can" />}
+          {isUserPost && <TrashImage src={TrashIcon} alt="trash-can" onClick={handleDelete} />}
         </InfoContainer>
         <PostContentContainer className="PostContentContainer" onClick={handlePostClick}>
             <PostTitle >{data.title}</PostTitle>

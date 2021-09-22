@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
+import TrashIcon from '../../img/trash.svg';
 import {
   db
 } from '../../firebase';
 import formatTime from '../../utils/formatTime';
+import useUser from '../../hooks/useUser';
 
 const CommentContainer = styled.div`
   display: flex;
   justify-content: center;
+  align-items: space-between;
   width: 97%;
   max-width: 955.6px;
   border-top: 5px solid #ffffff;
@@ -35,10 +38,26 @@ const InnerCommentContainer = styled.div`
   }
 `;
 
-const CommentInfo = styled.p`
-  font-size: 0.75rem;
-  margin-bottom: 5px;
+const CommentInfo = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
+
+const TrashImage = styled.img`
+  max-height: 15px;
+  z-index: 10;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const CommentInfoText = styled.p`
+  font-size: 0.75rem;
+  width: 100%;
+`;
+
+
 const CommentBody = styled.p`
   font-size: 0.85rem;
 `;
@@ -46,6 +65,7 @@ const CommentBody = styled.p`
 function Comment(props) {
   const { data, index, length } = props;
   let history = useHistory();
+  const user = useUser();
 
   const [author, setAuthor] = useState({});
   useEffect(() => {
@@ -71,15 +91,34 @@ function Comment(props) {
         });
   }, [data.author]);
 
+  const [isUserComment, setIsUserComment] = useState(false);
+  useEffect(() => {
+    if (user && data.author === user.id) {
+      setIsUserComment(true);
+    } else {
+      setIsUserComment(false);
+    }
+  }, [data, user])
+
   const handleClick = () => {
     history.push(`/p/${data.parentPostId}`);
   }
 
+  const handleDelete = () => {
+    alert("Delete me!");
+    // Delete post
+  }
+
   return (
     <CommentContainer className="CommentContainer" index={index} length={length}>
-      <InnerCommentContainer className="InnerCommentContainer" onClick={handleClick}>
-        <CommentInfo>{author.displayName} | {data.votes} votes | {formatTime(data)}</CommentInfo>
-        <CommentBody>{data.comment}</CommentBody>
+      <InnerCommentContainer className="InnerCommentContainer">
+        <CommentInfo className="CommentInfo">
+          <CommentInfoText className="CommentInfoText" onClick={handleClick}>
+            {author.displayName} | {data.votes} votes | {formatTime(data)}
+          </CommentInfoText>
+          {isUserComment && <TrashImage src={TrashIcon} alt="trash-can" onClick={handleDelete} />}
+        </CommentInfo>
+        <CommentBody onClick={handleClick}>{data.comment}</CommentBody>
       </InnerCommentContainer>
     </CommentContainer>
   );
