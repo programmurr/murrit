@@ -22,18 +22,9 @@ const BoardSelectionSelect = styled.select`
 
 function BoardPicker(props) {
 
-  const [boards, setBoards] = useState([]);
-  useEffect(() => {
-    getBoards()
-      .then((fetchedBoards) => {
-        setBoards(fetchedBoards.sort());
-      })
-  }, []);
+  const { boards } = props; 
 
   const [selectedBoard, setSelectedBoard] = useState("");
-  useEffect(() => {
-    setSelectedBoard(boards[0]);
-  }, [boards]);
 
   const handleBoardChange = (event) => {
     setSelectedBoard(event.target.value);

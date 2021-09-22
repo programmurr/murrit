@@ -30,7 +30,8 @@ const GlobalStyles = styled.div`
 // Test 'nullAuthor' by deleting a user
 // Let users delete their own posts/comments/accounts
 // Update README with features and gifs of action
-// Select board dropdown from home page
+// Resolve conflict in board data between Submit.js and BoardPicker
+//   Make a useBoards hook?
 function App() {
   const user = useUser();
 

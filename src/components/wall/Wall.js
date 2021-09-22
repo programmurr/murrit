@@ -6,7 +6,8 @@ import SortBox from '../sort/SortBox';
 import BoardPicker from '../board-picker/BoardPicker';
 import {
   getPaginatedPosts,
-  getMorePaginatedPosts
+  getMorePaginatedPosts,
+  getBoards
 } from '../../firebase';
 
 const WallContainer = styled.div`
@@ -59,6 +60,15 @@ const InnerWall = styled.div`
 function Wall() {
   let location = useLocation();
 
+  const [boards, setBoards] = useState([]);
+  useEffect(() => {
+    getBoards()
+      .then((fetchedBoards) => {
+        const sortedBoards = fetchedBoards.sort();
+        setBoards(sortedBoards);
+      })
+  }, []);
+
   const [boardName, setBoardName] = useState("");
   useEffect(() => {
     const { pathname } = location;
@@ -69,6 +79,10 @@ function Wall() {
       setBoardName(pathname.slice(index + 3));
     }
   }, [location]);
+
+  const handleBoardChange = (newBoard) => {
+    setBoardName(newBoard);
+  }
 
   const [data, setData] = useState([]);
   const [latestDoc, setLatestDoc] = useState(undefined);
@@ -113,9 +127,6 @@ function Wall() {
     setOrder(newOrder);
   }
 
-  const handleBoardChange = (newBoard) => {
-    setBoardName(newBoard);
-  }
 
   return (
     <WallContainer className="WallContainer">
@@ -123,7 +134,7 @@ function Wall() {
       <WallHeader>{boardName}</WallHeader>
       <Organisation className="Organisation">
         <SortBox order={order} handleOrderChange={handleOrderChange}/>
-        <BoardPicker handleBoardChange={handleBoardChange} />
+        <BoardPicker boards={boards} handleBoardChange={handleBoardChange} />
       </Organisation>
     </WallHeaderContainer>
       <InnerWall className="Wall" id="wall" onScroll={handleScroll}>

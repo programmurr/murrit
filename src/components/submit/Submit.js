@@ -7,6 +7,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { CancelPost, SubmitPost, AddBoard } from './SubmissionButtons';
 import ImageUploader from './ImageUploader';
+import BoardPicker from '../board-picker/BoardPicker';
 import useUser from '../../hooks/useUser';
 import { 
   generatePostDocId, 
@@ -39,7 +40,7 @@ const SubmitHeaderContainer = styled.div`
   padding-bottom: 0.75rem;
 `;
 
-const BoardChoiceContainer = styled.div`
+const BoardHandling = styled.div`
   width: 95%;
   max-width: 955.6px;
   display: flex;
@@ -48,20 +49,13 @@ const BoardChoiceContainer = styled.div`
   padding-top: 0.75rem;
 `;
 
-const BoardSelectionLabel = styled.label`
-  padding: 0.5rem;
+const BoardCreationLabel = styled.label`
+  padding: 0.3rem;
   background-color: #ffffff;
   border-radius: 5px;
 `;
-const BoardSelectionSelect = styled.select`
-  padding: 0.4rem;
-  background-color: #ffffff;
-  border-radius: 5px;
-`;
-
-const BoardCreationLabel = styled(BoardSelectionLabel)``;
 const BoardCreationTextInput = styled.input`
-  padding: 0.4rem;
+  padding: 0.3rem;
   background-color: #ffffff;
   border-radius: 5px;
 `;
@@ -199,10 +193,13 @@ function Submit() {
 
   const [boards, setBoards] = useState([]);
   useEffect(() => {
-    getBoards()
-      .then((fetchedBoards) => {
-        setBoards(fetchedBoards.sort());
-      })
+      getBoards()
+        .then((fetchedBoards) => {
+          setBoards(fetchedBoards.sort());
+        })
+        .catch((error) => {
+          console.error(error);
+        });
   }, []);
 
   const [selectedBoard, setSelectedBoard] = useState("");
@@ -380,13 +377,8 @@ function Submit() {
       <SubmitHeaderContainer className="SubmitHeaderContainer">
         <h2>Create a post</h2>
       </SubmitHeaderContainer>
-      <BoardChoiceContainer className="BoardChoiceContainer">
-        <BoardSelectionLabel htmlFor="board-select">Choose board:</BoardSelectionLabel> 
-          <BoardSelectionSelect value={selectedBoard} onChange={handleBoardChange}>
-            {boards.map((board, index) => (
-              <option value={board} key={`${board}${index}`}>{board}</option>
-            ))}
-          </BoardSelectionSelect>
+      <BoardHandling>
+        <BoardPicker boards={boards} handleBoardChange={handleBoardChange} />
         <CreateBoardPara>or</CreateBoardPara>
           <BoardCreationLabel 
             className="BoardCreationLabel"
@@ -404,7 +396,7 @@ function Submit() {
             onChange={newBoardName.onChange}
           />
           <AddBoard handleAddBoardClick={handleAddBoard} />
-      </BoardChoiceContainer>
+      </BoardHandling>
       <SubmissionContainer className="SubmissionContainer">
         <TabContainer className="TabContainer">
           <PostTab selected={postTabSelected} onClick={handleTabClick}>
