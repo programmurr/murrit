@@ -27,8 +27,12 @@ const GlobalStyles = styled.div`
 `;
 
 // TODO:
+// Make popup modal for delete post/comment
+// - Will delete all child comments
+// Need to change user id and post ids to be the google UIDs :(
+  
 // Test 'nullAuthor' by deleting a user
-// Let users delete their own posts/comments/accounts
+// Implement delete functions
 // Update README with features and gifs of action
 // Fix bug in Wall.js:
 //   - If first, already-appearing, board is selected in the boardPicker is selected,

@@ -116,6 +116,66 @@ export const getMorePaginatedPosts = async(order, board, lastDoc) => {
   }
 }
 
+const deleteComments = async (comments) => {
+  if (comments.length > 0) {
+    comments.forEach((comment) => {
+      db.collection("comments").where("id", "==", comment)
+        .limit(1)
+        .get()
+        .then((querySnapshot) => {
+          const doc = querySnapshot.docs[0];
+          const ref = querySnapshot.docs[0].ref;
+          const comment = doc.data();
+          deleteComments(comment.comments);
+          ref.delete();
+        })
+        .catch((error) => {
+          console.error("Error deleting comment: ", error);
+        })
+    })
+  }
+}
+
+export const deletePost = async (postid) => {
+  db.collection("posts").where("id", "==", postid)
+    .limit(1)
+    .get()
+    .then((querySnapshot) => {
+      // const doc = querySnapshot.docs[0];
+      const ref = querySnapshot.docs[0].ref;
+      // const post = doc.data();
+      // deleteComments(post.comments);
+      ref.delete();
+    })
+    .catch((error) => {
+      console.error("Error deleting post: ", error);
+    })
+}
+
+export const getPostAuthor = async (authorid) => {
+  if (authorid) {
+    const author = db.collection("users")
+      .where("id", "==", authorid)
+      .limit(1)
+      .get()
+      .then((querySnapshot) => {
+        const doc = querySnapshot.docs[0];
+        const user = doc.data();
+        return user
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+      return author;
+  } else {
+    const author = {
+      id: "deleted",
+      displayName: "deleted"
+    }
+    return author;
+  }
+}
+
 export const getPaginatedUserPostsAndComments = async (userId, order) => {
   let allPosts = [];
   const postObject = await db.collection("posts")
@@ -411,7 +471,7 @@ const signInWithGoogle = () => {
 
 // Auth - User handling
 const getUserDocument = async (uid) => {
-  if (!uid) return null;
+  if (!uid) return undefined;
   try {
     const userDocument = await db.doc(`users/${uid}`).get();
     return {

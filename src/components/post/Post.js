@@ -196,8 +196,7 @@ function Post(props) {
   }
 
   const handleDelete = () => {
-    alert("Delete me!");
-    // Delete post
+    console.log(data);
   }
 
   return (

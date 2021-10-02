@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
 import { generateUserDocument, signInWithGoogle } from '../../firebase';
 import { auth } from '../../firebase';
-import { v4 as uuidv4 } from 'uuid';
 
 const SignUpContainer = styled.div`
   width: 100vw;
@@ -149,8 +148,8 @@ function SignUp() {
     const verified = verifyPasswords();
     if (verified) {
       try {
-        const id = `usr_${uuidv4()}`;
         const { user } = await auth.createUserWithEmailAndPassword(email, password);
+        const id = user.uid;
         generateUserDocument(user, { displayName, id, posts, comments, votes });
         history.push('/');
       } catch (error) {

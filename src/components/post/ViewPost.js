@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import parse from 'html-react-parser';
 import UpIcon from '../../img/up-arrow.svg'
@@ -12,7 +12,9 @@ import {
   db,
   handleVote,
   getPostCommentIds,
-  getComment
+  getComment,
+  deletePost,
+  getPostAuthor
  } from '../../firebase';
  import formatTime from '../../utils/formatTime';
  import useUser from '../../hooks/useUser';
@@ -143,10 +145,9 @@ function ImagePost(props) {
 }
 
 function ViewPost() {
+  let history = useHistory();
   let { postid } = useParams();
-
   const user = useUser();
-
 
   const [livePost, setLivePost] = useState();
   const [commentCount, setCommentCount] = useState(0);
@@ -182,25 +183,12 @@ function ViewPost() {
   const [author, setAuthor] = useState({});
   useEffect(() => {
     if (livePost !== undefined) {
-      db.collection("users")
-      .where("id", "==", livePost.author)
-      .limit(1)
-      .get()
-        .then((querySnapshot) => {
-          const doc = querySnapshot.docs[0];
-          if (doc.exists) {
-            const user = doc.data();
-            setAuthor(user);
-          } else {
-            const nullAuthor = {
-              id: "null",
-              displayName: "[deleted]"
-            };
-            setAuthor(nullAuthor);
-          }
+      getPostAuthor(livePost.author)
+        .then((authorObject) => {
+          setAuthor(authorObject);
         })
         .catch((error) => {
-          console.error(error);
+          console.error("Error getting author: ", error);
         });
     }
   }, [livePost]);
@@ -263,8 +251,13 @@ function ViewPost() {
   }
 
   const handleDelete = () => {
-    alert("Delete me!");
-    // Delete post
+    deletePost(postid)
+      .then(() => {
+        history.push("/");
+      })
+      .catch((error) => {
+        console.error("Error deleting post: ", error);
+      });
   }
 
   if (livePost !== undefined) {
