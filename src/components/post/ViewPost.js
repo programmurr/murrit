@@ -13,7 +13,7 @@ import {
   handleVote,
   getPostCommentIds,
   getComment,
-  deletePost,
+  deleteDocument,
   getPostAuthor
  } from '../../firebase';
  import formatTime from '../../utils/formatTime';
@@ -251,7 +251,7 @@ function ViewPost() {
   }
 
   const handleDelete = () => {
-    deletePost(postid)
+    deleteDocument(postid, "posts")
       .then(() => {
         history.push("/");
       })
@@ -320,7 +320,11 @@ function ViewPost() {
       </PostPage>
     );
   } else {
-    return <div>Post not found</div>
+    return (
+      <PostPage className="PostPage">
+        <p>Post not found</p>
+      </PostPage>
+    )
   }
   
 }

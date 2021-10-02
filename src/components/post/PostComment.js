@@ -8,6 +8,7 @@ import {
   db,
   getComment,
   getCommentIds,
+  deleteComment,
   handleVote
 } from '../../firebase';
 import formatTime from '../../utils/formatTime';
@@ -111,13 +112,14 @@ function PostComment(props) {
 
   const [author, setAuthor] = useState({});
   useEffect(() => {
+    console.log("author", data.author)
     db.collection("users")
       .where("id", "==", data.author)
       .limit(1)
       .get()
         .then((querySnapshot) => {
           const doc = querySnapshot.docs[0];
-          if (doc.exists) {
+          if (doc) {
             const user = doc.data();
             setAuthor(user);
           } else {
@@ -197,8 +199,13 @@ function PostComment(props) {
   }
 
   const handleDelete = () => {
-    alert("Delete me!");
-    // Delete post
+    deleteComment(data.id)
+      .then(() => {
+        props.handleRefreshComments();
+      })
+      .catch((error) => {
+        console.error("Error deleting post: ", error);
+      });
   }
 
   return (

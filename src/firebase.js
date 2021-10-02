@@ -116,39 +116,16 @@ export const getMorePaginatedPosts = async(order, board, lastDoc) => {
   }
 }
 
-const deleteComments = async (comments) => {
-  if (comments.length > 0) {
-    comments.forEach((comment) => {
-      db.collection("comments").where("id", "==", comment)
-        .limit(1)
-        .get()
-        .then((querySnapshot) => {
-          const doc = querySnapshot.docs[0];
-          const ref = querySnapshot.docs[0].ref;
-          const comment = doc.data();
-          deleteComments(comment.comments);
-          ref.delete();
-        })
-        .catch((error) => {
-          console.error("Error deleting comment: ", error);
-        })
-    })
-  }
-}
-
-export const deletePost = async (postid) => {
-  db.collection("posts").where("id", "==", postid)
+export const deleteDocument = async (docId, docType) => {
+  db.collection(docType).where("id", "==", docId)
     .limit(1)
     .get()
     .then((querySnapshot) => {
-      // const doc = querySnapshot.docs[0];
       const ref = querySnapshot.docs[0].ref;
-      // const post = doc.data();
-      // deleteComments(post.comments);
       ref.delete();
     })
     .catch((error) => {
-      console.error("Error deleting post: ", error);
+      console.error(`Error deleting from ${docType}: `, error);
     })
 }
 
@@ -388,6 +365,22 @@ const getCommentIds = async (commentId) => {
       })
     })
   return commentsArray;
+}
+
+export const deleteComment = async (commentId) => {
+  await db.collection("comments").where("id", "==", commentId)
+    .limit(1)
+    .get()
+    .then((querySnapshot) => {
+      const ref = querySnapshot.docs[0].ref;
+      ref.update({
+        author: "[deleted]",
+        comment: "[deleted]"
+      })
+    })
+    .catch((error) => {
+      console.error(error);
+    })
 }
 
 const getComment = async (commentId) => {

@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import TrashIcon from '../../img/trash.svg';
 import {
-  db
+  db,
+  deleteComment
 } from '../../firebase';
 import formatTime from '../../utils/formatTime';
 import useUser from '../../hooks/useUser';
@@ -75,7 +76,7 @@ function Comment(props) {
       .get()
         .then((querySnapshot) => {
           const doc = querySnapshot.docs[0];
-          if (doc.exists) {
+          if (doc) {
             const user = doc.data();
             setAuthor(user);
           } else {
@@ -105,8 +106,13 @@ function Comment(props) {
   }
 
   const handleDelete = () => {
-    alert("Delete me!");
-    // Delete post
+    deleteComment(data.id)
+      .then(() => {
+        props.refreshData();
+      })
+      .catch((error) => {
+        console.error("Error deleting post: ", error);
+      });
   }
 
   return (

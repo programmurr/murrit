@@ -169,6 +169,7 @@ function User() {
                 data={comment} 
                 index={index}
                 length={comments.length - 1}
+                refreshData={handleRefresh}
               />
             ))
         }
