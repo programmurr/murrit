@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import parse from 'html-react-parser';
@@ -12,6 +12,8 @@ import {
 } from '../../firebase';
 import formatTime from '../../utils/formatTime';
 import useUser from '../../hooks/useUser';
+import { DeleteContext } from '../../providers/DeleteProvider';
+
 
 const PostContainer = styled.div`
   display: flex;
@@ -133,6 +135,7 @@ function Post(props) {
   const { data } = props;
   let history = useHistory();
   const user = useUser();
+  const deletePost = useContext(DeleteContext);
 
   const [isUserPost, setIsUserPost] = useState(false);
   useEffect(() => {
@@ -197,13 +200,14 @@ function Post(props) {
   }
 
   const handleDelete = () => {
-    deleteDocument(data.id, "posts")
-      .then(() => {
-        props.refreshData();
-      })
-      .catch((error) => {
-        console.error("Error deleting post: ", error);
-      });
+    deletePost.setDeleteActive(true);
+    // deleteDocument(data.id, "posts")
+    //   .then(() => {
+    //     props.refreshData();
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error deleting post: ", error);
+    //   });
   }
 
   return (

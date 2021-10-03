@@ -1,12 +1,14 @@
-import React from "react";
-// import ReactDOM from 'react-dom';
-
+import React, { useContext } from "react";
 import styled from "styled-components";
+import { DeleteContext } from "../../providers/DeleteProvider";
 
 const DeleteContainer = styled.div`
   width: 100vw;
   height: 100vh;
   max-width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -40,6 +42,7 @@ const DeleteBox = styled.div`
 const DeleteText = styled.p`
   padding: 1rem;
   text-align: center;
+  font-family: Arial, sans-serif;
 `;
 
 const ButtonContainer = styled.div`
@@ -68,6 +71,12 @@ const CancelButton = styled(DeleteButton)`
 `;
 
 function DeleteModal() {
+  const deletePost = useContext(DeleteContext);
+  
+  const handleCancelClick = () => {
+    deletePost.setDeleteActive(false);
+  }
+
   return (
     <DeleteContainer className="DeleteContainer">
       <DeletePage className="DeletePage" />
@@ -75,7 +84,7 @@ function DeleteModal() {
         <DeleteText>Are you sure you want to delete this post? This page cannot be visited again and the post will be removed from your history, but user comments will still be visible on their profiles.</DeleteText>
         <ButtonContainer className="ButtonContainer">
           <DeleteButton>Delete</DeleteButton>
-          <CancelButton>Cancel</CancelButton>
+          <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>
         </ButtonContainer>
       </DeleteBox>
     </DeleteContainer>

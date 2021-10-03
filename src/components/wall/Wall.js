@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import Post from '../post/Post';
@@ -9,6 +9,9 @@ import {
   getPaginatedPosts,
   getMorePaginatedPosts
 } from '../../firebase';
+import Portal from '../delete/Portal';
+import DeleteModal from '../delete/DeleteModal';
+import { DeleteContext } from '../../providers/DeleteProvider';
 
 const WallContainer = styled.div`
   width: 100vw;
@@ -58,6 +61,7 @@ const InnerWall = styled.div`
 `;
 
 function Wall() {
+  const deletePost = useContext(DeleteContext);
   let location = useLocation();
   const boardHook = useBoards();
 
@@ -138,6 +142,12 @@ function Wall() {
           />
         ))}
       </InnerWall>
+      {
+        deletePost.deleteActive &&
+          <Portal>
+            <DeleteModal />
+          </Portal>
+      }
     </WallContainer>
   )
 }
