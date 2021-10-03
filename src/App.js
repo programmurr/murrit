@@ -16,6 +16,7 @@ import SignIn from './components/sign-in/SignIn';
 import PasswordReset from './components/password-reset/PasswordReset';
 import UserProvider from './providers/UserProvider';
 import useUser from './hooks/useUser';
+import DeleteModal from './components/delete/DeleteModal';
 
 const GlobalStyles = styled.div`
   font-family: Arial, sans serif;
@@ -29,10 +30,7 @@ const GlobalStyles = styled.div`
 // TODO:
 // Make popup modal for delete post/comment
 // - Will delete all child comments
-// Need to change user id and post ids to be the google UIDs :(
-  
-// Test 'nullAuthor' by deleting a user
-// Implement delete functions
+// Test user deletion
 // Update README with features and gifs of action
 // Fix bug in Wall.js:
 //   - If first, already-appearing, board is selected in the boardPicker is selected,
@@ -44,6 +42,7 @@ function App() {
     <GlobalStyles className="App">
         <Router>
           <UserProvider>
+            <DeleteModal />  
             <NavBar />
             <Switch>
               <Route exact path="/">
