@@ -213,8 +213,6 @@ function Post(props) {
     }
   }, [deletePost.refresh])
 
-
-
   return (
     <PostContainer className="PostContainer">
       <VoteContainer className="VoteContainer">

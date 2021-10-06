@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useParams, useHistory } from 'react-router-dom';
+import React, { useEffect, useState, useContext } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import parse from 'html-react-parser';
 import UpIcon from '../../img/up-arrow.svg'
@@ -13,11 +13,14 @@ import {
   handleVote,
   getPostCommentIds,
   getComment,
-  deleteDocument,
   getPostAuthor
  } from '../../firebase';
- import formatTime from '../../utils/formatTime';
- import useUser from '../../hooks/useUser';
+import formatTime from '../../utils/formatTime';
+import useUser from '../../hooks/useUser';
+import Portal from '../delete/Portal';
+import DeleteModal from '../delete/DeleteModal';
+import { DeleteContext } from '../../providers/DeleteProvider';
+
 
 
 const PostPage = styled.div`
@@ -145,9 +148,9 @@ function ImagePost(props) {
 }
 
 function ViewPost() {
-  let history = useHistory();
   let { postid } = useParams();
   const user = useUser();
+  const deletePost = useContext(DeleteContext);
 
   const [livePost, setLivePost] = useState();
   const [commentCount, setCommentCount] = useState(0);
@@ -158,12 +161,14 @@ function ViewPost() {
     .get()
     .then((querySnapshot) => {
       const doc = querySnapshot.docs[0];
-      const post = doc.data();
-      setLivePost(post);
-      setRefreshData(false);
+      if (doc) {
+        const post = doc.data();
+        setLivePost(post);
+        setRefreshData(false);
+      }
     })
     .catch((error) => {
-      console.error(error);
+      console.error("Cannot fetch post: ", error);
     });
     db.collection("comments").where("parentPostId", "==", postid)
       .get()
@@ -251,14 +256,19 @@ function ViewPost() {
   }
 
   const handleDelete = () => {
-    deleteDocument(postid, "posts")
-      .then(() => {
-        history.push("/");
-      })
-      .catch((error) => {
-        console.error("Error deleting post: ", error);
-      });
+    deletePost.setItem({
+      id: livePost.id,
+      type: "posts"
+    });
+    deletePost.setDeleteActive(true);
   }
+
+  useEffect(() => {
+    if (deletePost.refresh) {
+      deletePost.setRefresh(false);
+      setLivePost(undefined);
+    }
+  }, [deletePost])
 
   if (livePost !== undefined) {
     return (
@@ -317,6 +327,12 @@ function ViewPost() {
             : <p>No comments</p>
           }
         </CommentWall>
+        {
+          deletePost.deleteActive &&
+            <Portal>
+              <DeleteModal />
+            </Portal>
+        }
       </PostPage>
     );
   } else {
