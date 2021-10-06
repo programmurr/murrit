@@ -112,7 +112,6 @@ function PostComment(props) {
 
   const [author, setAuthor] = useState({});
   useEffect(() => {
-    console.log("author", data.author)
     db.collection("users")
       .where("id", "==", data.author)
       .limit(1)

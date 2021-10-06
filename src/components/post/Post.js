@@ -7,8 +7,7 @@ import DownIcon from '../../img/down-arrow.svg';
 import TrashIcon from '../../img/trash.svg'
 import { 
   db, 
-  handleVote,
-  deleteDocument
+  handleVote
 } from '../../firebase';
 import formatTime from '../../utils/formatTime';
 import useUser from '../../hooks/useUser';
@@ -200,15 +199,21 @@ function Post(props) {
   }
 
   const handleDelete = () => {
+    deletePost.setItem({
+      id: data.id,
+      type: "posts"
+    });
     deletePost.setDeleteActive(true);
-    // deleteDocument(data.id, "posts")
-    //   .then(() => {
-    //     props.refreshData();
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error deleting post: ", error);
-    //   });
   }
+
+  useEffect(() => {
+    if (deletePost.refresh) {
+      deletePost.setRefresh(false);
+      props.refreshData();
+    }
+  }, [deletePost.refresh])
+
+
 
   return (
     <PostContainer className="PostContainer">

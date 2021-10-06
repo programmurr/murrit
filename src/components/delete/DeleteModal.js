@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 import { DeleteContext } from "../../providers/DeleteProvider";
+import { deleteDocument } from "../../firebase";
 
 const DeleteContainer = styled.div`
   width: 100vw;
@@ -72,6 +73,18 @@ const CancelButton = styled(DeleteButton)`
 
 function DeleteModal() {
   const deletePost = useContext(DeleteContext);
+
+  const handleDelete = () => {
+    const { id, type } = deletePost.item;
+    deleteDocument(id, type)
+      .then(() => {
+        deletePost.setDeleteActive(false);
+        deletePost.setRefresh(true);
+      })
+      .catch((error) => {
+        console.error("Error deleting post: ", error);
+      });
+  }
   
   const handleCancelClick = () => {
     deletePost.setDeleteActive(false);
@@ -83,7 +96,7 @@ function DeleteModal() {
       <DeleteBox className="DeleteBox">
         <DeleteText>Are you sure you want to delete this post? This page cannot be visited again and the post will be removed from your history, but user comments will still be visible on their profiles.</DeleteText>
         <ButtonContainer className="ButtonContainer">
-          <DeleteButton>Delete</DeleteButton>
+          <DeleteButton onClick={handleDelete}>Delete</DeleteButton>
           <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>
         </ButtonContainer>
       </DeleteBox>
