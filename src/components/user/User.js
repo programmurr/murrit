@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { 
   useParams,
 } from 'react-router-dom';
@@ -10,6 +10,9 @@ import {
   getPaginatedUserPostsAndComments,
   getMorePaginatedUserPostsAndComments
 } from '../../firebase';
+import Portal from '../delete/Portal';
+import DeleteModal from '../delete/DeleteModal';
+import { DeleteContext } from '../../providers/DeleteProvider';
 
 const UserProfileContainer = styled.div`
   width: 100vw;
@@ -70,6 +73,7 @@ const PostWall = styled.div`
 
 function User() {
   let { username } = useParams();
+  const deletePost = useContext(DeleteContext);
 
   const [posts, setPosts] = useState([]);
   const [latestPost, setLatestPost] = useState(undefined);
@@ -174,6 +178,12 @@ function User() {
             ))
         }
       </PostWall>
+      {
+        deletePost.deleteActive &&
+          <Portal>
+            <DeleteModal />
+          </Portal>
+      }
     </UserProfileContainer>
   );
 }
