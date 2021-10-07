@@ -28,7 +28,6 @@ const GlobalStyles = styled.div`
 `;
 
 // TODO:
-// Delete comments (no modal)
 // Fix margin bottom on Delete Modal
 // Test user profile deletion
 // Update README with features and gifs of action

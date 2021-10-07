@@ -112,6 +112,10 @@ const PostBody = styled.div`
   font-size: 1rem;
 `;
 
+const OuterSortContainer = styled.div`
+  width: 100%;
+`;
+
 const CommentCount = styled.p`
   font-size: 0.75rem;
   width: 100%;
@@ -124,9 +128,9 @@ const CommentWall = styled.div`
   align-items: center;
   width: 97%;
   max-width: 955.6px; 
-  border: ${props => props.commentCount === 0 ? "none" : "2px solid #c4c4c4"};
-  border-radius: 5px;
+  margin-top: 0.5rem;
   background-color: ${props => props.commentCount === 0 ? "#dae0e6" : "c6e8fc"};
+  margin-bottom: 2rem;
 `;
 
 const ImageContainer = styled.div`
@@ -313,7 +317,9 @@ function ViewPost() {
                 />
               : <p>Sign up or log in to comment</p>
           }
-          <SortBox order={order} handleOrderChange={handleOrderChange} />
+          <OuterSortContainer className="OuterSortContainer">
+            <SortBox order={order} handleOrderChange={handleOrderChange} />
+          </OuterSortContainer>
           {
             commentCount > 0
               ? postComments.map((comment, index) => (

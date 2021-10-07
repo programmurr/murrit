@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import TrashIcon from '../../img/trash.svg';
 import {
-  db,
-  deleteComment
+  db
 } from '../../firebase';
 import formatTime from '../../utils/formatTime';
 import useUser from '../../hooks/useUser';

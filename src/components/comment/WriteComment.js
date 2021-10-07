@@ -85,6 +85,7 @@ function WriteComment(props) {
             .then(() => {
               updateCommentChildren(parentId, id)
                 .then(() => {
+                  setCommentText("");
                   props.refreshComments();
                 })
             })
@@ -99,6 +100,7 @@ function WriteComment(props) {
           .then(() => {
             updatePostComments(parentId, id)
               .then(() => {
+                setCommentText("");
                 props.refreshComments();
                 // https://www.youtube.com/watch?v=oqwzuiSy9y0    
               });

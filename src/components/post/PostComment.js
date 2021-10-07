@@ -21,19 +21,19 @@ const CommentContainer = styled.div`
   background-color: #c6e8fc;
   width: 100%;
   min-width: 300px;
-  margin-bottom: 1rem;
+  margin-top: 0.75rem;
 `;
 
 const ThreadContainer = styled.div`
   display: ${props => props.isReply ? "flex": "none"};
-  width: 10px;
+  width: 5px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 `;
 
 const CommentThread = styled.div`
-  width: 3px;
+  width: 2px;
   background-color: rgba(0,0,0,0.3);
   height: calc(100% - 5px);
   &:hover {
