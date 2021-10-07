@@ -28,10 +28,9 @@ const GlobalStyles = styled.div`
 `;
 
 // TODO:
-// Make popup modal for delete post/comment
-// - Will delete all child comments
+// Delete comments (no modal)
 // Fix margin bottom on Delete Modal
-// Test user deletion
+// Test user profile deletion
 // Update README with features and gifs of action
 // Fix bug in Wall.js:
 //   - If first, already-appearing, board is selected in the boardPicker is selected,

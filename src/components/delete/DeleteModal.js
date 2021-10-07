@@ -1,7 +1,10 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 import { DeleteContext } from "../../providers/DeleteProvider";
-import { deleteDocument } from "../../firebase";
+import { 
+  deleteDocument,
+  deleteComment
+ } from "../../firebase";
 
 const DeleteContainer = styled.div`
   width: 100vw;
@@ -71,12 +74,23 @@ const CancelButton = styled(DeleteButton)`
   background-color: #000;
 `;
 
+const postText = `
+  Are you sure you want to delete this post? This page cannot be visited again 
+  and the post will be removed from your history, but user comments will still
+  be visible on their profiles.
+`;
+
+const commentText = `
+  Are you sure you want to delete your comment? Replies are still visible.
+`;
+
 function DeleteModal() {
   const deletePost = useContext(DeleteContext);
 
   const handleDelete = () => {
     const { id, type } = deletePost.item;
-    deleteDocument(id, type)
+    if (type === "posts") {
+      deleteDocument(id, type)
       .then(() => {
         deletePost.setDeleteActive(false);
         deletePost.setRefresh(true);
@@ -84,6 +98,17 @@ function DeleteModal() {
       .catch((error) => {
         console.error("Error deleting post: ", error);
       });
+    } else if (type === "comments") {
+      deleteComment(id)
+      .then(() => {
+        deletePost.setDeleteActive(false);
+        deletePost.setRefresh(true);
+      })
+      .catch((error) => {
+        console.error("Error deleting comment: ", error);
+      });
+
+    }
   }
   
   const handleCancelClick = () => {
@@ -94,7 +119,9 @@ function DeleteModal() {
     <DeleteContainer className="DeleteContainer">
       <DeletePage className="DeletePage" />
       <DeleteBox className="DeleteBox">
-        <DeleteText>Are you sure you want to delete this post? This page cannot be visited again and the post will be removed from your history, but user comments will still be visible on their profiles.</DeleteText>
+        <DeleteText>
+          {deletePost.item.type === "posts" ? postText : commentText}
+        </DeleteText>
         <ButtonContainer className="ButtonContainer">
           <DeleteButton onClick={handleDelete}>Delete</DeleteButton>
           <CancelButton onClick={handleCancelClick}>Cancel</CancelButton>

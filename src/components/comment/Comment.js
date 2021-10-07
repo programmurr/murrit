@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import TrashIcon from '../../img/trash.svg';
@@ -8,6 +8,7 @@ import {
 } from '../../firebase';
 import formatTime from '../../utils/formatTime';
 import useUser from '../../hooks/useUser';
+import { DeleteContext } from '../../providers/DeleteProvider';
 
 const CommentContainer = styled.div`
   display: flex;
@@ -67,6 +68,7 @@ function Comment(props) {
   const { data, index, length } = props;
   let history = useHistory();
   const user = useUser();
+  const deletePost = useContext(DeleteContext);
 
   const [author, setAuthor] = useState({});
   useEffect(() => {
@@ -99,21 +101,26 @@ function Comment(props) {
     } else {
       setIsUserComment(false);
     }
-  }, [data, user])
+  }, [data, user]);
 
   const handleClick = () => {
     history.push(`/p/${data.parentPostId}`);
-  }
+  };
 
   const handleDelete = () => {
-    deleteComment(data.id)
-      .then(() => {
-        props.refreshData();
-      })
-      .catch((error) => {
-        console.error("Error deleting post: ", error);
-      });
-  }
+    deletePost.setItem({
+      id: data.id,
+      type: "comments"
+    });
+    deletePost.setDeleteActive(true);
+  };
+
+  useEffect(() => {
+    if (deletePost.refresh) {
+      deletePost.setRefresh(false);
+      props.refreshData();
+    }
+  }, [deletePost]);
 
   return (
     <CommentContainer className="CommentContainer" index={index} length={length}>

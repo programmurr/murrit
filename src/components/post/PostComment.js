@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import UpIcon from '../../img/up-arrow.svg';
@@ -8,12 +8,12 @@ import {
   db,
   getComment,
   getCommentIds,
-  deleteComment,
   handleVote
 } from '../../firebase';
 import formatTime from '../../utils/formatTime';
 import useUser from '../../hooks/useUser';
 import WriteComment from '../comment/WriteComment';
+import { DeleteContext } from '../../providers/DeleteProvider';
 
 const CommentContainer = styled.div`
   display: flex;
@@ -109,6 +109,7 @@ const CommentBody = styled.p`
 function PostComment(props) {
   const { data, isReply, parentPostId } = props;
   const user = useUser();
+  const deletePost = useContext(DeleteContext);
 
   const [author, setAuthor] = useState({});
   useEffect(() => {
@@ -172,7 +173,7 @@ function PostComment(props) {
     } else {
       setIsUserComment(false);
     }
-  }, [data, user])
+  }, [data, user]);
 
 
   const handleVoteClick = async (operator) => {
@@ -182,30 +183,35 @@ function PostComment(props) {
     } else {
       alert("Sign in or make an account to vote!");
     }
-  }
+  };
 
   const [replyClicked, setReplyClicked] = useState(false);
 
   const handleReplyClick = () => {
     setReplyClicked(prevState => !prevState);
-  }
+  };
 
   const handleRefreshComments = () => {
     if (replyClicked) {
       setReplyClicked(false);
     }
     props.handleRefreshComments();
-  }
+  };
 
   const handleDelete = () => {
-    deleteComment(data.id)
-      .then(() => {
-        props.handleRefreshComments();
-      })
-      .catch((error) => {
-        console.error("Error deleting post: ", error);
-      });
-  }
+    deletePost.setItem({
+      id: data.id,
+      type: "comments"
+    });
+    deletePost.setDeleteActive(true);
+  };
+
+  useEffect(() => {
+    if (deletePost.refresh) {
+      deletePost.setRefresh(false);
+      props.handleRefreshComments();
+    }
+  }, [deletePost]);
 
   return (
     <CommentContainer className="CommentContainer">
