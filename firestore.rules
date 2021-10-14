@@ -14,23 +14,33 @@ service cloud.firestore {
     function uidMatchesId(userId) {
       return request.auth.uid == userId;
     }
+    function belongsToUser(userId, author) {
+      return userId == author;
+    }
     match /users/{userId} {
       allow read;
-      allow write: if isSignedIn() && uidMatchesId(userId);
+      allow write: 
+        if isSignedIn() 
+        && uidMatchesId(userId);
     }
     match /posts/{postId} {
       allow read; 
       allow create, update: if isSignedIn();
-      allow delete: if isSignedIn() && request.auth.uid == resource.data.author;
+      allow delete: 
+        if isSignedIn() 
+        && belongsToUser(request.auth.uid, resource.data.author);
     }
     match /comments/{commentId} {
       allow read; 
       allow create, update: if isSignedIn();
-      allow delete: if isSignedIn() && request.auth.uid == resource.data.author;
+      allow delete: 
+        if isSignedIn() 
+        && belongsToUser(request.auth.uid, resource.data.author);
     }
     match /boards/{document=**} {
       allow read;
-      allow create, update: if isSignedIn();
+      allow create, update: 
+        if isSignedIn();
     }
   }
 }

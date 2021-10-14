@@ -15,7 +15,7 @@ import { DeleteContext } from '../../providers/DeleteProvider';
 
 const WallContainer = styled.div`
   width: 100vw;
-  height: 100%;
+  height: 100vh;
   max-width: 100%;
   display: flex;
   flex-direction: column;
@@ -122,7 +122,6 @@ function Wall() {
   const handleOrderChange = (newOrder) => {
     setOrder(newOrder);
   }
-
 
   return (
     <WallContainer className="WallContainer">

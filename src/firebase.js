@@ -116,12 +116,48 @@ export const getMorePaginatedPosts = async(order, board, lastDoc) => {
   }
 }
 
+export const deleteUserData = async(userId, docType) => {
+  const deletedUser = {
+    displayName: "[deleted]",
+    id: "deleted"
+  };
+  db.collection(docType).doc(userId).get()
+    .then((doc) => {
+      return doc.data();
+    })
+    .then((data) => {
+      data.comments.map((comment) => {
+        return deleteComment(comment);
+      });
+      data.posts.map((post) => {
+        return deleteDocument(post, "posts")
+      });
+    })
+    .then(() => {
+      db.collection(docType).doc(userId).set(deletedUser)
+        .then(() => {
+          const user = firebase.auth().currentUser;
+          user.delete().then(() => console.log("blah"))
+        })
+        .catch((error) => { console.error(error)});
+    })
+    .then(() => {
+      ;
+    })
+    .catch((error) => {
+      console.error("Error deleting user: ", error);
+    });
+}
+
 export const deleteDocument = async (docId, docType) => {
   db.collection(docType).where("id", "==", docId)
     .limit(1)
     .get()
     .then((querySnapshot) => {
       const ref = querySnapshot.docs[0].ref;
+      // const doc = querySnapshot.docs[0];
+      // const data = doc.data();
+      // console.log(data);
       ref.delete();
     })
     .catch((error) => {

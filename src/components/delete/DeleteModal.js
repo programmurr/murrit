@@ -3,12 +3,13 @@ import styled from "styled-components";
 import { DeleteContext } from "../../providers/DeleteProvider";
 import { 
   deleteDocument,
-  deleteComment
+  deleteComment,
+  deleteUserData
  } from "../../firebase";
 
 const DeleteContainer = styled.div`
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh + 5vh);
   max-width: 100%;
   position: absolute;
   top: 0;
@@ -81,33 +82,58 @@ const postText = `
 `;
 
 const commentText = `
-  Are you sure you want to delete your comment? Replies are still visible.
+  Are you sure you want to delete your comment? Replies are still visible on the
+  main post.
+`;
+
+const userText = `
+  Are you sure you want to delete your profile?
 `;
 
 function DeleteModal() {
   const deletePost = useContext(DeleteContext);
 
+  const deletePostDoc = (id, type) => {
+    deleteDocument(id, type)
+    .then(() => {
+      deletePost.setDeleteActive(false);
+      deletePost.setRefresh(true);
+    })
+    .catch((error) => {
+      console.error(`Error deleting from ${type}: `, error);
+    });
+  };
+
+  const deleteCommentDoc = (id, type) => {
+    deleteComment(id)
+    .then(() => {
+      deletePost.setDeleteActive(false);
+      deletePost.setRefresh(true);
+    })
+    .catch((error) => {
+      console.error(`Error deleting from ${type}: `, error);
+    });
+  }
+
+  const deleteUserDoc = (id, type) => {
+    deleteUserData(id, type)
+      .then(() => {
+        deletePost.setDeleteActive(false);
+        deletePost.setRefresh(true);
+      })
+      .catch((error) => {
+        console.error(`Error deleting from ${type}: `, error);
+      });
+  }
+
   const handleDelete = () => {
     const { id, type } = deletePost.item;
     if (type === "posts") {
-      deleteDocument(id, type)
-      .then(() => {
-        deletePost.setDeleteActive(false);
-        deletePost.setRefresh(true);
-      })
-      .catch((error) => {
-        console.error("Error deleting post: ", error);
-      });
+      deletePostDoc(id, type);
     } else if (type === "comments") {
-      deleteComment(id)
-      .then(() => {
-        deletePost.setDeleteActive(false);
-        deletePost.setRefresh(true);
-      })
-      .catch((error) => {
-        console.error("Error deleting comment: ", error);
-      });
-
+      deleteCommentDoc(id, type)
+    } else if (type === "users") {
+      deleteUserDoc(id, type);
     }
   }
   
@@ -120,7 +146,11 @@ function DeleteModal() {
       <DeletePage className="DeletePage" />
       <DeleteBox className="DeleteBox">
         <DeleteText>
-          {deletePost.item.type === "posts" ? postText : commentText}
+          {deletePost.item.type === "posts" 
+          ? postText 
+          : deletePost.item.type === "comments"
+            ? commentText
+            : userText}
         </DeleteText>
         <ButtonContainer className="ButtonContainer">
           <DeleteButton onClick={handleDelete}>Delete</DeleteButton>

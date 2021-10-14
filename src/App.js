@@ -28,8 +28,6 @@ const GlobalStyles = styled.div`
 `;
 
 // TODO:
-// Fix margin bottom on Delete Modal
-// Test user profile deletion
 // Update README with features and gifs of action
 // Fix bug in Wall.js:
 //   - If first, already-appearing, board is selected in the boardPicker is selected,

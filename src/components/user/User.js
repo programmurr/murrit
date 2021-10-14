@@ -13,6 +13,7 @@ import {
 import Portal from '../delete/Portal';
 import DeleteModal from '../delete/DeleteModal';
 import { DeleteContext } from '../../providers/DeleteProvider';
+import useUser from '../../hooks/useUser';
 
 const UserProfileContainer = styled.div`
   width: 100vw;
@@ -25,7 +26,7 @@ const UserProfileContainer = styled.div`
 `;
 
 const ContentSelectorContainer = styled.div`
-  width: 95%;
+  width: 93%;
   background-color: #ffffff;
   height: 4vh;
   min-height: 30px;
@@ -35,9 +36,14 @@ const ContentSelectorContainer = styled.div`
   margin-bottom: 1vh;
 `;
 
+const AllDocumentsContainer = styled.div`
+  width: 50%;
+  display: flex;
+`;
+
 const ContentSelector = styled.p`
   font-size: 0.8rem;
-  width: 12.5%;
+  width: 30%;
   font-weight: ${props => props.active ? "700" : 100};
   text-decoration: ${props => props.active ? "underline" : "none"};
   display: flex;
@@ -49,8 +55,28 @@ const ContentSelector = styled.p`
   }
 `;
 
+const DeleteProfileContainer = styled.div`
+  width: 50%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+`;
+
+const DeleteProfileButton = styled.button`
+  width: 130px;
+  height: 22px;
+  margin-right: 1rem;
+  background-color: red;
+  border-radius: 15px;
+  color: #fff;
+  font-weight: 600;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
 const SortOuterContainer = styled.div`
-  width: 95%;
+  width: 93%;
   max-width: 955.6px;
   display: flex;
 `;
@@ -71,7 +97,9 @@ const PostWall = styled.div`
   margin-top: 0.5vh;
 `;
 
+
 function User() {
+  const authUser = useUser();
   let { username } = useParams();
   const deletePost = useContext(DeleteContext);
 
@@ -115,15 +143,15 @@ function User() {
         });
       }
     }
-  }
+  };
 
   const handleRefresh = () => {
     setFetchData(true);
-  }
+  };
 
   const handleOrderChange = (newOrder) => {
     setOrder(newOrder);
-  }
+  };
 
   const [postsSelected, setPostsSelected] = useState(true);
   const [commentsSelected, setCommentsSelected] = useState(false);
@@ -133,30 +161,57 @@ function User() {
       setPostsSelected(true);
       setCommentsSelected(false);
     }
-  }
+  };
   
   const toggleComments = () => {
     if (!commentsSelected) {
       setCommentsSelected(true);
       setPostsSelected(false);
     }
-  }
+  };
+
+  const handleDeleteProfile = () => {
+    deletePost.setItem({
+      id: username,
+      type: "users"
+    });
+    deletePost.setDeleteActive(true);
+  };
+
+  useEffect(() => {
+    if (deletePost.refresh) {
+      deletePost.setRefresh(false);
+      handleRefresh();
+    }
+  }, [deletePost]);
 
   return (
     <UserProfileContainer className="UserProfileContainer">
       <ContentSelectorContainer className="ContentSelectorContainer">
-        <ContentSelector 
-          active={postsSelected}
-          onClick={togglePosts}
-        >
-            ALL POSTS
-        </ContentSelector>
-        <ContentSelector 
-          active={commentsSelected}
-          onClick={toggleComments}
-        >
-          ALL COMMENTS
-        </ContentSelector>
+        <AllDocumentsContainer className="AllDocumentsContainer">
+          <ContentSelector 
+            className="ContentSelector"
+            active={postsSelected}
+            onClick={togglePosts}
+          >
+              ALL POSTS
+          </ContentSelector>
+          <ContentSelector 
+            className="ContentSelector"
+            active={commentsSelected}
+            onClick={toggleComments}
+          >
+            ALL COMMENTS
+          </ContentSelector>
+        </AllDocumentsContainer>
+        {
+          (authUser !== undefined && authUser.uid === username) &&
+          <DeleteProfileContainer className="DeleteProfileContainer">
+            <DeleteProfileButton className="DeleteProfileButton" onClick={handleDeleteProfile}>
+              Delete profile
+            </DeleteProfileButton>
+          </DeleteProfileContainer>
+        }
       </ContentSelectorContainer>
       <SortOuterContainer className="SortOuterContainer">
         <SortBox order={order} handleOrderChange={handleOrderChange}/>

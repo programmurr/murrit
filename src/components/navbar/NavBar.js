@@ -16,7 +16,6 @@ const OuterNavContainer = styled.div`
 `;
 
 const NavContainer = styled.div`
-  ${'' /* border-bottom: 1px solid #ffffff; */}
   border-right: 2px solid #c4c4c4;
   border-bottom: 2px solid #c4c4c4;
   border-left: 2px solid #c4c4c4;
