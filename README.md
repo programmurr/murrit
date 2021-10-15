@@ -25,7 +25,7 @@ Capstone JavaScript project from [The Odin Project](https://www.theodinproject.c
 
 ## Installation Instructions (Mac/Linux)
 
-*Please not these instructions are for personal use. The Firebase Emulator Suite requires linking your Google account
+*Please note these instructions are for personal use. The Firebase Emulator Suite requires linking your Google account
 to the Firebase CLI. If you install the CLI and link your account, you will be authorised to install and run your
 projects but not mine.*
 
